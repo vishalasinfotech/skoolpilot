@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('subscription_plans', function (Blueprint $table) {
@@ -15,26 +18,16 @@ return new class extends Migration
             $table->enum('plan_status', ['free', 'paid'])->default('paid')->after('tier');
         });
 
-        // Enum change सिर्फ MySQL पर करो
-        if (DB::getDriverName() === 'mysql') {
-            DB::statement("
-                ALTER TABLE subscription_plans 
-                MODIFY COLUMN type ENUM('monthly', 'quarterly', 'yearly', 'lifetime') NOT NULL
-            ");
-        }
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('subscription_plans', function (Blueprint $table) {
             $table->dropColumn(['offer_price', 'description', 'plan_status']);
         });
 
-        if (DB::getDriverName() === 'mysql') {
-            DB::statement("
-                ALTER TABLE subscription_plans 
-                MODIFY COLUMN type ENUM('monthly', 'quarterly', 'yearly') NOT NULL
-            ");
-        }
-    }
+   }
 };
