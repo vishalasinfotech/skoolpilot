@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('subscription_plans', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['monthly', 'quarterly', 'yearly']);
-            $table->enum('tier', ['basic', 'standard', 'premium']);
+            $table->string('type');
+            $table->string('tier');
             $table->decimal('price', 10, 2);
             $table->json('features')->nullable();
             $table->integer('trial_days')->default(15);
