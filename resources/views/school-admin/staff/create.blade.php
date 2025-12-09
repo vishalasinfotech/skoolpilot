@@ -84,13 +84,6 @@
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="qualification" class="form-label">Qualification</label>
-                                        <x-input type="text" name="qualification" id="qualification" :value="old('qualification')" placeholder="Enter qualification" />
-                                        @error('qualification')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
                                 </div>
 
                                 <div class="row">
@@ -130,6 +123,57 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_type" class="form-label">Document Type</label>
+                                        <x-select
+                                            name="doc_type"
+                                            id="doc_type"
+                                            :options="[
+                                                'aadhar' => 'Aadhar',
+                                                'pancard' => 'PAN Card',
+                                                'other' => 'Other',
+                                            ]"
+                                            :value="old('doc_type')"
+                                            placeholder="Select document type"
+                                        />
+                                        @error('doc_type')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_image" class="form-label">Document Image</label>
+                                        <x-input type="file" name="doc_image" id="doc_image" accept="image/*" />
+                                        @error('doc_image')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="password" value="{{ old('password') }}" placeholder="Enter password" class="form-control @error('password') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="togglePassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" id="password_confirmation" value="{{ old('password_confirmation') }}" placeholder="Enter confirm password" class="form-control @error('password_confirmation') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="toggleConfirmPassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password_confirmation')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">

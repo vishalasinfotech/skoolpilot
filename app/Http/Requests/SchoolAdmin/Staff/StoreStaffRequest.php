@@ -3,6 +3,7 @@
 namespace App\Http\Requests\SchoolAdmin\Staff;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreStaffRequest extends FormRequest
 {
@@ -17,9 +18,9 @@ class StoreStaffRequest extends FormRequest
             'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:staff,email'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'staff')],
             'phone' => ['nullable', 'string', 'max:20'],
-            'employee_id' => ['required', 'string', 'max:50', 'unique:staff,employee_id'],
+            'employee_id' => ['required', 'string', 'max:50', Rule::unique('users', 'employee_id')->where('role', 'staff')],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'address' => ['nullable', 'string', 'max:500'],
@@ -28,6 +29,9 @@ class StoreStaffRequest extends FormRequest
             'joining_date' => ['nullable', 'date'],
             'salary' => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
             'profile_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'doc_type' => ['nullable', 'string', 'max:255'],
+            'doc_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

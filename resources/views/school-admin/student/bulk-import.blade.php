@@ -89,6 +89,9 @@
                                                         <th>parent_name</th>
                                                         <th>parent_phone</th>
                                                         <th>is_active</th>
+                                                        <th>doc_type</th>
+                                                        <th>doc_image</th>
+                                                        <th>password</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -107,6 +110,9 @@
                                                         <td>Jane Doe</td>
                                                         <td>9876543210</td>
                                                         <td>1</td>
+                                                        <td>aadhar</td>
+                                                        <td>https://example.com/doc_image.jpg</td>
+                                                        <td>password</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -119,6 +125,9 @@
                                                     <li>Gender values: male, female, other</li>
                                                     <li>is_active: 1 for active, 0 for inactive</li>
                                                     <li>Empty fields will be stored as NULL</li>
+                                                    <li>doc_type: aadhar, pancard, other</li>
+                                                    <li>doc_image: URL of the document image</li>
+                                                    <li>password: password for the student</li>
                                                 </ul>
                                             </small>
                                         </div>
@@ -155,7 +164,7 @@
     @push('scripts')
     <script>
         function downloadSampleCSV() {
-            const csvContent = "first_name,last_name,email,admission_number,phone,gender,date_of_birth,class,section,admission_date,address,parent_name,parent_phone,is_active\n" +
+            const csvContent = "first_name,last_name,email,admission_number,phone,gender,date_of_birth,class,section,admission_date,address,parent_name,parent_phone,is_active,doc_type,doc_image,password\n" +
                               "John,Doe,john@example.com,ADM001,1234567890,male,2010-05-15,10,B,2024-01-01,123 Main St,Jane Doe,9876543210,1\n" +
                               "Jane,Smith,jane@example.com,ADM002,0987654321,female,2011-08-20,9,A,2024-01-01,456 Oak Avenue,John Smith,8765432109,1";
 

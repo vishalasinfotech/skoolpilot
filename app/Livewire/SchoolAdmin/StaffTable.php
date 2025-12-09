@@ -3,14 +3,15 @@
 namespace App\Livewire\SchoolAdmin;
 
 use App\Livewire\Components\DataTable;
-use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 
 class StaffTable extends DataTable
 {
     protected function getQuery()
     {
-        return Staff::query()
+        return User::query()
+            ->staff()
             ->with('school')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -28,7 +29,7 @@ class StaffTable extends DataTable
 
     public function delete(int $id): void
     {
-        $staff = Staff::query()->findOrFail($id);
+        $staff = User::query()->staff()->findOrFail($id);
 
         if ($staff->profile_image && file_exists(public_path($staff->profile_image))) {
             unlink(public_path($staff->profile_image));

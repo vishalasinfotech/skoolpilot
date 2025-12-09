@@ -89,6 +89,9 @@
                                                         <th>qualification</th>
                                                         <th>emergency_contact</th>
                                                         <th>is_active</th>
+                                                        <th>doc_type</th>
+                                                        <th>doc_image</th>
+                                                        <th>password</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -107,6 +110,9 @@
                                                         <td>M.Sc., B.Ed.</td>
                                                         <td>5559876543</td>
                                                         <td>1</td>
+                                                        <td>aadhar</td>
+                                                        <td>https://example.com/doc_image.jpg</td>
+                                                        <td>password</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -119,6 +125,9 @@
                                                     <li>Gender values: male, female, other</li>
                                                     <li>is_active: 1 for active, 0 for inactive</li>
                                                     <li>Empty fields will be stored as NULL</li>
+                                                    <li>doc_type: aadhar, pancard, other</li>
+                                                    <li>doc_image: URL of the document image</li>
+                                                    <li>password: password for the staff</li>
                                                 </ul>
                                             </small>
                                         </div>
@@ -155,7 +164,7 @@
     @push('scripts')
     <script>
         function downloadSampleCSV() {
-            const csvContent = "first_name,last_name,email,employee_number,phone,gender,date_of_birth,designation,department,joining_date,address,qualification,emergency_contact,is_active\n" +
+            const csvContent = "first_name,last_name,email,employee_number,phone,gender,date_of_birth,designation,department,joining_date,address,qualification,emergency_contact,is_active,doc_type,doc_image,password\n" +
                               "Alice,Johnson,alice.johnson@example.com,EMP001,5551234567,female,1985-04-18,Teacher,Mathematics,2022-09-01,900 Apple Street,M.Sc., B.Ed.,5559876543,1\n" +
                               "Bob,Williams,bob.williams@example.com,EMP002,5557654321,male,1979-12-02,Admin,Administration,2020-03-20,1200 Orange Ave,B.A.,5551239876,1";
 

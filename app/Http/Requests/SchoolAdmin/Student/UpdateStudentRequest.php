@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\SchoolAdmin\Student;
 
-use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStudentRequest extends FormRequest
 {
@@ -15,21 +16,23 @@ class UpdateStudentRequest extends FormRequest
     public function rules(): array
     {
         $student = $this->route('student');
-        $studentId = $student instanceof Student ? $student->id : $student;
+        $studentId = $student instanceof User ? $student->id : $student;
 
         return [
             'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:students,email,'.$studentId],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'student')->ignore($studentId)],
             'phone' => ['nullable', 'string', 'max:20'],
             'parent_phone' => ['nullable', 'string', 'max:20'],
-            'admission_number' => ['required', 'string', 'max:50', 'unique:students,admission_number,'.$studentId],
+            'admission_number' => ['required', 'string', 'max:50', Rule::unique('users', 'admission_number')->where('role', 'student')->ignore($studentId)],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'address' => ['nullable', 'string', 'max:500'],
             'class' => ['nullable', 'string', 'max:50'],
             'section' => ['nullable', 'string', 'max:50'],
+            'class_id' => ['nullable', 'exists:academic_classes,id'],
+            'section_id' => ['nullable', 'exists:sections,id'],
             'roll_number' => ['nullable', 'string', 'max:50'],
             'admission_date' => ['nullable', 'date'],
             'parent_name' => ['nullable', 'string', 'max:255'],
@@ -37,6 +40,9 @@ class UpdateStudentRequest extends FormRequest
             'blood_group' => ['nullable', 'string', 'max:10'],
             'profile_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
             'is_active' => ['nullable', 'boolean'],
+            'doc_type' => ['nullable', 'string', 'max:255'],
+            'doc_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
     }
 

@@ -69,16 +69,16 @@
 
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
-                                        <label for="class" class="form-label">Class <span class="text-danger">*</span></label>
-                                        <x-input type="text" name="class" id="class" :value="old('class')" required placeholder="Enter class" />
-                                        @error('class')
+                                        <label for="class_id" class="form-label">Class</label>
+                                        <x-select name="class_id" id="class_id" :options="$classes" :value="old('class_id')" placeholder="Select Class" />
+                                        @error('class_id')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="section" class="form-label">Section</label>
-                                        <x-input type="text" name="section" id="section" :value="old('section')" placeholder="Enter section" />
-                                        @error('section')
+                                        <label for="section_id" class="form-label">Section</label>
+                                        <x-select name="section_id" id="section_id" :options="$sections" :value="old('section_id')" placeholder="Select Section" />
+                                        @error('section_id')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
@@ -182,6 +182,49 @@
                                         <label for="address" class="form-label">Address</label>
                                         <x-textarea name="address" id="address" rows="3" placeholder="Enter full address">{{ old('address') }}</x-textarea>
                                         @error('address')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_type" class="form-label">Document Type</label>
+                                        <x-select name="doc_type" id="doc_type" :options="[
+                                            'aadhar' => 'Aadhar',
+                                            'pancard' => 'PAN Card',
+                                            'other' => 'Other',
+                                        ]" :value="old('doc_type')" placeholder="Select document type" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_image" class="form-label">Document Image</label>
+                                        <x-input type="file" name="doc_image" id="doc_image" accept="image/*" />
+                                        @error('doc_image')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="password" value="{{ old('password') }}" placeholder="Enter password" class="form-control @error('password') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="togglePassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" id="password_confirmation" value="{{ old('password_confirmation') }}" placeholder="Enter confirm password" class="form-control @error('password_confirmation') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="toggleConfirmPassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password_confirmation')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>

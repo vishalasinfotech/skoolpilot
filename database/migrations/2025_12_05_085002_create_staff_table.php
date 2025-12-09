@@ -27,8 +27,12 @@ return new class extends Migration
             $table->date('joining_date')->nullable();
             $table->decimal('salary', 10, 2)->nullable();
             $table->string('profile_image')->nullable();
+            $table->string('doc_type')->nullable();
+            $table->string('doc_image')->nullable();
+            $table->string('password')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

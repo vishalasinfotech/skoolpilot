@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\SchoolAdmin\Teacher;
 
-use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTeacherRequest extends FormRequest
 {
@@ -23,15 +24,15 @@ class UpdateTeacherRequest extends FormRequest
     public function rules(): array
     {
         $teacher = $this->route('teacher');
-        $teacherId = $teacher instanceof Teacher ? $teacher->id : $teacher;
+        $teacherId = $teacher instanceof User ? $teacher->id : $teacher;
 
         return [
             'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:teachers,email,'.$teacherId],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'teacher')->ignore($teacherId)],
             'phone' => ['nullable', 'string', 'max:20'],
-            'employee_id' => ['required', 'string', 'max:50', 'unique:teachers,employee_id,'.$teacherId],
+            'employee_id' => ['required', 'string', 'max:50', Rule::unique('users', 'employee_id')->where('role', 'teacher')->ignore($teacherId)],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'address' => ['nullable', 'string', 'max:500'],
@@ -41,6 +42,9 @@ class UpdateTeacherRequest extends FormRequest
             'salary' => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
             'profile_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
             'is_active' => ['nullable', 'boolean'],
+            'doc_type' => ['nullable', 'string', 'max:255'],
+            'doc_image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
     }
 

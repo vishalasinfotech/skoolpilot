@@ -44,6 +44,28 @@
 <!-- Modal Js -->
 <script src="{{ asset('admin_theme/assets/js/pages/modal.init.js') }}"></script>
 
+<script>
+    // Toggle password visibility
+    $(document).on('click', '.toggle-password', function (e) {
+        e.preventDefault();
+        var inputGroup = $(this).closest('.input-group');
+        var input = inputGroup.find('input[type="password"], input[type="text"]');
+        var icon = $(this).find('i');
+
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('ri-eye-line').addClass('ri-eye-off-line');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('ri-eye-off-line').addClass('ri-eye-line');
+        }
+    });
+</script>
+
+
+
 @livewireScripts
 
 @yield('scripts')
+
+

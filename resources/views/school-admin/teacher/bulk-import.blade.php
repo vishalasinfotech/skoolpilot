@@ -88,6 +88,9 @@
                                                         <th>salary</th>
                                                         <th>address</th>
                                                         <th>is_active</th>
+                                                        <th>doc_type</th>
+                                                        <th>doc_image</th>
+                                                        <th>password</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -105,6 +108,9 @@
                                                         <td>50000</td>
                                                         <td>123 Main St</td>
                                                         <td>1</td>
+                                                        <td>aadhar</td>
+                                                        <td>https://example.com/doc_image.jpg</td>
+                                                        <td>password</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -117,6 +123,9 @@
                                                     <li>Gender values: male, female, other</li>
                                                     <li>is_active: 1 for active, 0 for inactive</li>
                                                     <li>Empty fields will be stored as NULL</li>
+                                                    <li>doc_type: aadhar, pancard, other</li>
+                                                    <li>doc_image: URL of the document image</li>
+                                                    <li>password: password for the teacher</li>
                                                 </ul>
                                             </small>
                                         </div>
@@ -153,18 +162,18 @@
     @push('scripts')
     <script>
         function downloadSampleCSV() {
-            const csvContent = "first_name,last_name,email,employee_id,phone,gender,date_of_birth,qualification,specialization,joining_date,salary,address,is_active\n" +
+            const csvContent = "first_name,last_name,email,employee_id,phone,gender,date_of_birth,qualification,specialization,joining_date,salary,address,is_active,doc_type,doc_image,password\n" +
                               "John,Doe,john@example.com,EMP001,1234567890,male,1990-05-15,M.Ed,Mathematics,2024-01-01,50000,123 Main Street,1\n" +
                               "Jane,Smith,jane@example.com,EMP002,0987654321,female,1988-08-20,B.Ed,Science,2024-01-01,48000,456 Oak Avenue,1";
-            
+
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
-            
+
             link.setAttribute("href", url);
             link.setAttribute("download", "teachers_sample.csv");
             link.style.visibility = 'hidden';
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

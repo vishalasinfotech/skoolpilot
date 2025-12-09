@@ -1,8 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SchoolAdmin\AcademicClassController;
+use App\Http\Controllers\SchoolAdmin\AttendanceController;
+use App\Http\Controllers\SchoolAdmin\CalendarController;
+use App\Http\Controllers\SchoolAdmin\EventController;
+use App\Http\Controllers\SchoolAdmin\FeeStructureController;
+use App\Http\Controllers\SchoolAdmin\HolidayController;
+use App\Http\Controllers\SchoolAdmin\SectionController;
 use App\Http\Controllers\SchoolAdmin\StaffController;
 use App\Http\Controllers\SchoolAdmin\StudentController;
+use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
 use App\Http\Controllers\SuperAdmin\SubscriptionPlanController;
@@ -40,5 +48,21 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::resource('school-admin/staff', StaffController::class)->names('school-admin.staff');
     Route::get('school-admin/staff-bulk-import', [StaffController::class, 'bulkImport'])->name('school-admin.staff.bulk-import');
     Route::post('school-admin/staff-bulk-import', [StaffController::class, 'processBulkImport'])->name('school-admin.staff.process-bulk-import');
+
+    Route::resource('school-admin/section', SectionController::class)->names('school-admin.section');
+    Route::resource('school-admin/academic-class', AcademicClassController::class)->names('school-admin.academic-class');
+    Route::resource('school-admin/subject', SubjectController::class)->names('school-admin.subject');
+    Route::resource('school-admin/fee-structure', FeeStructureController::class)->names('school-admin.fee-structure');
+    Route::resource('school-admin/event', EventController::class)->names('school-admin.event');
+    Route::resource('school-admin/holiday', HolidayController::class)->names('school-admin.holiday');
+
+    Route::get('school-admin/calendar', [CalendarController::class, 'index'])->name('school-admin.calendar.index');
+    Route::get('school-admin/calendar/events', [CalendarController::class, 'getEvents'])->name('school-admin.calendar.events');
+
+    Route::get('school-admin/attendance', [AttendanceController::class, 'index'])->name('school-admin.attendance.index');
+    Route::post('school-admin/attendance', [AttendanceController::class, 'store'])->name('school-admin.attendance.store');
+    Route::get('school-admin/attendance/show', [AttendanceController::class, 'show'])->name('school-admin.attendance.show');
+    Route::put('school-admin/attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
+    Route::delete('school-admin/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
 
 });

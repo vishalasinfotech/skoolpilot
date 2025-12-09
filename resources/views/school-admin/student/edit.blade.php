@@ -123,16 +123,16 @@
 
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
-                                        <label for="class" class="form-label">Class</label>
-                                        <x-input type="text" name="class" id="class" :value="old('class', $student->class)" placeholder="Enter class" />
-                                        @error('class')
+                                        <label for="class_id" class="form-label">Class</label>
+                                        <x-select name="class_id" id="class_id" :options="$classes" :value="old('class_id', $student->class_id)" placeholder="Select Class" />
+                                        @error('class_id')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="section" class="form-label">Section</label>
-                                        <x-input type="text" name="section" id="section" :value="old('section', $student->section)" placeholder="Enter section" />
-                                        @error('section')
+                                        <label for="section_id" class="form-label">Section</label>
+                                        <x-select name="section_id" id="section_id" :options="$sections" :value="old('section_id', $student->section_id)" placeholder="Select Section" />
+                                        @error('section_id')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
@@ -194,6 +194,57 @@
                                     </div>
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_type" class="form-label">Document Type</label>
+                                        <x-select name="doc_type" id="doc_type" :options="[
+                                            'aadhar' => 'Aadhar',
+                                            'pancard' => 'PAN Card',
+                                            'other' => 'Other',
+                                        ]" :value="old('doc_type', $student->doc_type)" placeholder="Select document type" />
+                                        @error('doc_type')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_image" class="form-label">Document Image</label>
+                                        <x-input type="file" name="doc_image" id="doc_image" accept="image/*" />
+                                        @if($student->doc_image)
+                                            <div class="mt-2">
+                                                <img src="{{ asset($student->doc_image) }}" alt="{{ $student->first_name . ' ' . $student->last_name }}" class="img-thumbnail rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                                            </div>
+                                        @endif
+                                        @error('doc_image')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="password" value="{{ old('password') }}" placeholder="Enter password (leave blank to keep current)" class="form-control @error('password') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="togglePassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" id="password_confirmation" value="{{ old('password_confirmation') }}" placeholder="Enter confirm password" class="form-control @error('password_confirmation') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="toggleConfirmPassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password_confirmation')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="form-check form-switch form-switch-md mb-3">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', $student->is_active) ? 'checked' : '' }}>
                                     <label class="form-check-label ms-2" for="is_active">Active Status</label>

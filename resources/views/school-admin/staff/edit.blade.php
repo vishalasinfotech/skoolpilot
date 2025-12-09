@@ -136,6 +136,9 @@
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label for="joining_date" class="form-label">Joining Date</label>
                                         <x-input type="date" name="joining_date" id="joining_date" :value="old('joining_date', $staff->joining_date?->format('Y-m-d'))" />
@@ -161,6 +164,62 @@
                                 </div>
 
                                 <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_type" class="form-label">Document Type</label>
+                                        <x-select
+                                            name="doc_type"
+                                            id="doc_type"
+                                            :options="[
+                                                'aadhar' => 'Aadhar',
+                                                'pancard' => 'PAN Card',
+                                                'other' => 'Other',
+                                            ]"
+                                            :value="old('doc_type', $staff->doc_type)"
+                                            placeholder="Select document type"
+                                        />
+                                        @error('doc_type')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="doc_image" class="form-label">Document Image</label>
+                                        <x-input type="file" name="doc_image" id="doc_image" accept="image/*" />
+                                        @if($staff->doc_image)
+                                            <div class="mt-2">
+                                                <img src="{{ asset($staff->doc_image) }}" alt="{{ $staff->first_name . ' ' . $staff->last_name }}" class="img-thumbnail rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                                            </div>
+                                        @endif
+                                        @error('doc_image')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="password" value="{{ old('password') }}" placeholder="Enter password (leave blank to keep current)" class="form-control @error('password') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="togglePassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" id="password_confirmation" value="{{ old('password_confirmation') }}" placeholder="Enter confirm password" class="form-control @error('password_confirmation') is-invalid @enderror" />
+                                            <button class="btn btn-outline-secondary toggle-password" type="button" id="toggleConfirmPassword">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        @error('password_confirmation')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
                                     <div class="col-md-12 mb-3">
                                         <label for="address" class="form-label">Address</label>
                                         <x-textarea name="address" id="address" rows="3" placeholder="Enter full address">{{ old('address', $staff->address) }}</x-textarea>

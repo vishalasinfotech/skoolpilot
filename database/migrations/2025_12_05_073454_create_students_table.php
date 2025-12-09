@@ -31,8 +31,12 @@ return new class extends Migration
             $table->string('parent_email')->nullable();
             $table->string('blood_group')->nullable();
             $table->string('profile_image')->nullable();
+            $table->string('doc_type')->nullable();
+            $table->string('doc_image')->nullable();
+            $table->string('password')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

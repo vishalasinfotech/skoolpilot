@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SchoolAdmin\Teacher\StoreTeacherRequest;
 use App\Http\Requests\SchoolAdmin\Teacher\UpdateTeacherRequest;
 use App\Models\School;
-use App\Models\Teacher;
+use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,19 +20,23 @@ class TeacherController extends Controller
 
     public function create()
     {
-        $schools = School::where('status', true)->pluck('name', 'id');
+        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.teacher.create', compact('schools'));
     }
 
-    public function show(Teacher $teacher)
+    public function show(User $teacher)
     {
+        abort_unless($teacher->isTeacher(), 404);
+
         return view('school-admin.teacher.show', compact('teacher'));
     }
 
-    public function edit(Teacher $teacher)
+    public function edit(User $teacher)
     {
-        $schools = School::where('status', true)->pluck('name', 'id');
+        abort_unless($teacher->isTeacher(), 404);
+
+        $schools = School::where('id', auth()->user()->school_id)->where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.teacher.edit', compact('teacher', 'schools'));
     }
@@ -47,17 +51,33 @@ class TeacherController extends Controller
                 'teachers/profiles'
             );
         }
+        if ($request->hasFile('doc_image')) {
+            $data['doc_image'] = $imageUploadService->uploadImage(
+                $request->file('doc_image'),
+                'teachers/docs'
+            );
+        }
 
+        unset($data['password_confirmation']);
         $data['is_active'] = $request->boolean('is_active', true);
+        $data['role'] = 'teacher';
+        $data['name'] = trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? ''));
 
-        Teacher::create($data);
+        // Set default password if not provided
+        if (empty($data['password'])) {
+            $data['password'] = $data['employee_id'] ?? 'password123';
+        }
+
+        User::create($data);
 
         return redirect()->route('school-admin.teacher.index')
             ->with('success', 'Teacher created successfully.');
     }
 
-    public function update(UpdateTeacherRequest $request, Teacher $teacher, ImageUploadService $imageUploadService): RedirectResponse
+    public function update(UpdateTeacherRequest $request, User $teacher, ImageUploadService $imageUploadService): RedirectResponse
     {
+        abort_unless($teacher->isTeacher(), 404);
+
         $data = $request->validated();
 
         if ($request->hasFile('profile_image')) {
@@ -68,17 +88,36 @@ class TeacherController extends Controller
             );
         }
 
+        if ($request->hasFile('doc_image')) {
+            $data['doc_image'] = $imageUploadService->uploadImage(
+                $request->file('doc_image'),
+                'teachers/docs',
+                $teacher->doc_image
+            );
+        }
+
+        unset($data['password_confirmation']);
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
         $data['is_active'] = $request->boolean('is_active', false);
+        $data['name'] = trim(($data['first_name'] ?? '').' '.($data['last_name'] ?? ''));
         $teacher->update($data);
 
         return redirect()->route('school-admin.teacher.index')
             ->with('success', 'Teacher updated successfully.');
     }
 
-    public function destroy(Teacher $teacher): RedirectResponse
+    public function destroy(User $teacher): RedirectResponse
     {
+        abort_unless($teacher->isTeacher(), 404);
+
         if ($teacher->profile_image && file_exists(public_path($teacher->profile_image))) {
             unlink(public_path($teacher->profile_image));
+        }
+
+        if ($teacher->doc_image && file_exists(public_path($teacher->doc_image))) {
+            unlink(public_path($teacher->doc_image));
         }
 
         $teacher->delete();
@@ -89,7 +128,7 @@ class TeacherController extends Controller
 
     public function bulkImport()
     {
-        $schools = School::where('status', true)->pluck('name', 'id');
+        $schools = School::where('id', auth()->user()->school_id)->where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.teacher.bulk-import', compact('schools'));
     }
@@ -111,33 +150,96 @@ class TeacherController extends Controller
                 return redirect()->back()->with('error', 'Excel import coming soon. Please use CSV for now.');
             }
 
-            $headers = array_shift($data);
+            if (empty($data)) {
+                return redirect()->back()->with('error', 'The CSV file is empty.');
+            }
+
+            $headers = array_map('trim', array_map('strtolower', array_shift($data)));
             $imported = 0;
             $errors = [];
 
             foreach ($data as $index => $row) {
-                if (count($row) < count($headers)) {
+                // Skip empty rows
+                if (empty(array_filter($row))) {
                     continue;
                 }
 
-                $rowData = array_combine($headers, $row);
+                if (count($row) < count($headers)) {
+                    $errors[] = 'Row '.($index + 2).': Insufficient columns.';
+
+                    continue;
+                }
+
+                $rowData = array_combine($headers, array_map('trim', $row));
+
+                // Normalize keys (handle variations)
+                $normalizeKey = function ($key, $variations) use ($rowData) {
+                    foreach ($variations as $variation) {
+                        if (isset($rowData[$variation])) {
+                            return $rowData[$variation];
+                        }
+                    }
+
+                    return null;
+                };
 
                 try {
-                    Teacher::create([
+                    $firstName = trim($normalizeKey('first_name', ['first_name', 'firstname', 'fname']) ?? '');
+                    $lastName = trim($normalizeKey('last_name', ['last_name', 'lastname', 'lname']) ?? '');
+                    $email = trim($normalizeKey('email', ['email', 'e-mail']) ?? '');
+                    $employeeId = trim($normalizeKey('employee_id', ['employee_id', 'employeeid', 'emp_id', 'emp id']) ?? '');
+
+                    // Validate required fields
+                    if (empty($firstName) || empty($lastName)) {
+                        $errors[] = 'Row '.($index + 2).': First name and last name are required.';
+
+                        continue;
+                    }
+
+                    if (empty($email)) {
+                        $errors[] = 'Row '.($index + 2).': Email is required.';
+
+                        continue;
+                    }
+
+                    if (empty($employeeId)) {
+                        $errors[] = 'Row '.($index + 2).': Employee ID is required.';
+
+                        continue;
+                    }
+
+                    // Check if email already exists for this role
+                    if (User::where('email', $email)->where('role', 'teacher')->exists()) {
+                        $errors[] = 'Row '.($index + 2).': Email already exists.';
+
+                        continue;
+                    }
+
+                    // Check if employee_id already exists for this role
+                    if (User::where('employee_id', $employeeId)->where('role', 'teacher')->exists()) {
+                        $errors[] = 'Row '.($index + 2).': Employee ID already exists.';
+
+                        continue;
+                    }
+
+                    User::create([
+                        'role' => 'teacher',
                         'school_id' => $request->school_id,
-                        'first_name' => $rowData['first_name'] ?? '',
-                        'last_name' => $rowData['last_name'] ?? '',
-                        'email' => $rowData['email'] ?? '',
-                        'phone' => $rowData['phone'] ?? null,
-                        'employee_id' => $rowData['employee_id'] ?? '',
-                        'date_of_birth' => ! empty($rowData['date_of_birth']) ? $rowData['date_of_birth'] : null,
-                        'gender' => $rowData['gender'] ?? null,
-                        'address' => $rowData['address'] ?? null,
-                        'qualification' => $rowData['qualification'] ?? null,
-                        'specialization' => $rowData['specialization'] ?? null,
-                        'joining_date' => ! empty($rowData['joining_date']) ? $rowData['joining_date'] : null,
-                        'salary' => ! empty($rowData['salary']) ? $rowData['salary'] : null,
-                        'is_active' => ($rowData['is_active'] ?? '1') == '1',
+                        'name' => trim($firstName.' '.$lastName),
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'email' => $email,
+                        'phone' => $normalizeKey('phone', ['phone', 'mobile', 'contact']) ?? null,
+                        'employee_id' => $employeeId,
+                        'date_of_birth' => ! empty($normalizeKey('date_of_birth', ['date_of_birth', 'dob', 'birth_date'])) ? $normalizeKey('date_of_birth', ['date_of_birth', 'dob', 'birth_date']) : null,
+                        'gender' => $normalizeKey('gender', ['gender', 'sex']) ?? null,
+                        'address' => $normalizeKey('address', ['address', 'addr']) ?? null,
+                        'qualification' => $normalizeKey('qualification', ['qualification', 'qual']) ?? null,
+                        'specialization' => $normalizeKey('specialization', ['specialization', 'speciality', 'subject']) ?? null,
+                        'joining_date' => ! empty($normalizeKey('joining_date', ['joining_date', 'join_date', 'date_of_joining'])) ? $normalizeKey('joining_date', ['joining_date', 'join_date', 'date_of_joining']) : null,
+                        'salary' => ! empty($normalizeKey('salary', ['salary', 'sal'])) ? $normalizeKey('salary', ['salary', 'sal']) : null,
+                        'password' => $normalizeKey('password', ['password', 'pwd']) ?? $employeeId,
+                        'is_active' => ($normalizeKey('is_active', ['is_active', 'active', 'status']) ?? '1') == '1',
                     ]);
                     $imported++;
                 } catch (\Exception $e) {

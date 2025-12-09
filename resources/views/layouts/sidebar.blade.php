@@ -38,7 +38,7 @@
           </li>
 
           <!-- Super Admin -->
-          <li class="menu-title">Super Admin</li>
+          <li class="menu-title"><span data-key="t-menu">Super Admin</span></li>
 
           <li class="nav-item" data-role="super_admin">
             <a class="nav-link menu-link" href="#sidebarSuperAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSuperAdmin">
@@ -73,7 +73,7 @@
           </li>
 
           <!-- School Admin -->
-          <li class="menu-title">School Admin</li>
+          <li class="menu-title"><span data-key="t-menu">School Admin</span></li>
 
           <li class="nav-item" data-role="school_admin">
             <a class="nav-link menu-link" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarUsers">
@@ -96,9 +96,10 @@
             </a>
             <div class="collapse menu-dropdown" id="sidebarAcademic">
               <ul class="nav nav-sm flex-column">
-                <li class="nav-item"><a href="#" class="nav-link">Classes & Sections</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Subjects</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Attendance</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.academic-class.index') }}" class="nav-link">Classes</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.section.index') }}" class="nav-link">Sections</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.subject.index') }}" class="nav-link">Subjects</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.attendance.index') }}" class="nav-link">Attendance</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Exams & Schedules</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Results</a></li>
               </ul>
@@ -111,9 +112,9 @@
             </a>
             <div class="collapse menu-dropdown" id="sidebarEvents">
               <ul class="nav nav-sm flex-column">
-                <li class="nav-item"><a href="#" class="nav-link">Events</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Holidays</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Calendar</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.event.index') }}" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.holiday.index') }}" class="nav-link">Holidays</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.calendar.index') }}" class="nav-link">Calendar</a></li>
               </ul>
             </div>
           </li>
@@ -124,7 +125,7 @@
             </a>
             <div class="collapse menu-dropdown" id="sidebarFees">
               <ul class="nav nav-sm flex-column">
-                <li class="nav-item"><a href="#" class="nav-link">Fee Structure</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.fee-structure.index') }}" class="nav-link">Fee Structure</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Payments & Receipts</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Accounts</a></li>
               </ul>
@@ -144,7 +145,7 @@
           </li>
 
           <!-- Teacher -->
-          <li class="menu-title">Teacher</li>
+          <li class="menu-title"><span data-key="t-menu">Teacher</span></li>
 
           <li class="nav-item" data-role="teacher">
             <a class="nav-link menu-link" href="#">
@@ -167,7 +168,7 @@
           </li>
 
           <!-- Student & Parent -->
-          <li class="menu-title">Student & Parent</li>
+          <li class="menu-title"><span data-key="t-menu">Student & Parent</span></li>
 
           <li class="nav-item" data-role="student">
             <a class="nav-link menu-link" href="#">
@@ -206,7 +207,7 @@
           </li>
 
           <!-- Staff -->
-          <li class="menu-title">Staff</li>
+          <li class="menu-title"><span data-key="t-menu">Staff</span></li>
 
           <li class="nav-item" data-role="staff">
             <a class="nav-link menu-link" href="#sidebarStaffModules" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarStaffModules">
@@ -222,7 +223,7 @@
           </li>
 
           <!-- Communication -->
-          <li class="menu-title">Communication</li>
+          <li class="menu-title"><span data-key="t-menu">Communication</span></li>
 
           <li class="nav-item">
             <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarNotifications">
@@ -244,7 +245,7 @@
           </li>
 
           <!-- Settings / Extras -->
-          <li class="menu-title text-uppercase">Extras</li>
+          <li class="menu-title text-uppercase"><span data-key="t-menu">Extras</span></li>
 
           <li class="nav-item">
             <a class="nav-link menu-link" href="#">

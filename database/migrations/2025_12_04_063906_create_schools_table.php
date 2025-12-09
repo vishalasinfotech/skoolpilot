@@ -20,9 +20,10 @@ return new class extends Migration
             $table->string('logo');
             $table->string('theme_color');
             $table->boolean('status')->default(true);
-            $table->bigInteger('subscription_plan_id')->unsigned();
+            $table->bigInteger('subscription_plan_id')->unsigned()->nullable();
             $table->timestamp('trial_ends_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
