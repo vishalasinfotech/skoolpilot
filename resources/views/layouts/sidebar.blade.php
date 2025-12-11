@@ -99,9 +99,11 @@
                 <li class="nav-item"><a href="{{ route('school-admin.academic-class.index') }}" class="nav-link">Classes</a></li>
                 <li class="nav-item"><a href="{{ route('school-admin.section.index') }}" class="nav-link">Sections</a></li>
                 <li class="nav-item"><a href="{{ route('school-admin.subject.index') }}" class="nav-link">Subjects</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.academic-session.index') }}" class="nav-link">Academic Sessions</a></li>
                 <li class="nav-item"><a href="{{ route('school-admin.attendance.index') }}" class="nav-link">Attendance</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Exams & Schedules</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Results</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}" class="nav-link">Exams</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}" class="nav-link">Exam Schedules</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.result.index') }}" class="nav-link">Results</a></li>
               </ul>
             </div>
           </li>
@@ -133,7 +135,7 @@
           </li>
 
           <li class="nav-item" data-role="school_admin">
-            <a class="nav-link menu-link" href="#">
+            <a class="nav-link menu-link" href="{{ route('school-admin.setting.index') }}">
               <i class="ri-paint-line"></i> <span>White-label Customization</span>
             </a>
           </li>

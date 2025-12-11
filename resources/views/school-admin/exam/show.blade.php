@@ -1,0 +1,102 @@
+@extends('layouts.master')
+@section('title', 'Exam Details')
+@section('main-container')
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Exam Details</h4>
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="{{ route('school-admin.exam.index') }}">Exams</a></li>
+                                <li class="breadcrumb-item active">Details</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5 class="card-title mb-0">Exam Information</h5>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('school-admin.exam.edit', $exam->id) }}" class="btn btn-primary btn-sm">
+                                    <i class="ri-pencil-line"></i> Edit
+                                </a>
+                                <a href="{{ route('school-admin.exam.index') }}" class="btn btn-secondary btn-sm">
+                                    <i class="ri-arrow-left-line"></i> Back
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Exam Name</label>
+                                    <p class="mb-0">{{ $exam->name }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Exam Type</label>
+                                    <p class="mb-0">
+                                        <span class="badge bg-info-subtle text-info">{{ ucfirst(str_replace('_', ' ', $exam->exam_type)) }}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">School</label>
+                                    <p class="mb-0">{{ $exam->school->name ?? 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Academic Session</label>
+                                    <p class="mb-0">{{ $exam->academicSession->name ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Start Date</label>
+                                    <p class="mb-0">{{ $exam->start_date->format('d M Y') }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">End Date</label>
+                                    <p class="mb-0">{{ $exam->end_date->format('d M Y') }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Status</label>
+                                    <p class="mb-0">
+                                        @if($exam->is_active)
+                                            <span class="badge bg-success-subtle text-success">Active</span>
+                                        @else
+                                            <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Created At</label>
+                                    <p class="mb-0">{{ $exam->created_at->format('d M Y, h:i A') }}</p>
+                                </div>
+                            </div>
+
+                            @if($exam->description)
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-semibold">Description</label>
+                                    <p class="mb-0">{{ $exam->description }}</p>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+

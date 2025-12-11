@@ -17,6 +17,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SubscriptionPlanSeeder::class,
+            AcademicSessionSeeder::class,
+            ExamSeeder::class,
+            ExamScheduleSeeder::class,
+            ResultSeeder::class,
         ]);
 
         User::create([
