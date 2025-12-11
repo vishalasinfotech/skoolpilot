@@ -20,12 +20,7 @@ class ResultController extends Controller
 {
     public function index()
     {
-        $results = Result::with(['student', 'exam', 'subject', 'academicClass', 'section', 'academicSession'])
-            ->where('school_id', auth()->user()->school_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('school-admin.result.index', compact('results'));
+        return view('school-admin.result.index');
     }
 
     public function create()

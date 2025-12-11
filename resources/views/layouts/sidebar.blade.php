@@ -163,7 +163,10 @@
               <ul class="nav nav-sm flex-column">
                 <li class="nav-item"><a href="#" class="nav-link">Attendance</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Assignments</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Exams</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}" class="nav-link">Exams</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}" class="nav-link">Exam Schedules</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.result.index') }}" class="nav-link">Results</a></li>
+
                 <li class="nav-item"><a href="#" class="nav-link">Apply for Leave</a></li>
               </ul>
             </div>
@@ -217,8 +220,8 @@
             </a>
             <div class="collapse menu-dropdown" id="sidebarStaffModules">
               <ul class="nav nav-sm flex-column">
-                <li class="nav-item"><a href="#" class="nav-link">Library</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Transportation</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.library.index') }}" class="nav-link">Library</a></li>
+                <li class="nav-item"><a href="{{ route('school-admin.transportation.index') }}" class="nav-link">Transportation</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Accounts</a></li>
               </ul>
             </div>

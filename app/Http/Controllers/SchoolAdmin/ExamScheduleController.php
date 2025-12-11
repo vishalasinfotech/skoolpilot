@@ -17,13 +17,7 @@ class ExamScheduleController extends Controller
 {
     public function index()
     {
-        $examSchedules = ExamSchedule::with(['exam', 'academicClass', 'section', 'subject'])
-            ->where('school_id', auth()->user()->school_id)
-            ->orderBy('exam_date', 'desc')
-            ->orderBy('start_time', 'asc')
-            ->get();
-
-        return view('school-admin.exam-schedule.index', compact('examSchedules'));
+        return view('school-admin.exam-schedule.index');
     }
 
     public function create()

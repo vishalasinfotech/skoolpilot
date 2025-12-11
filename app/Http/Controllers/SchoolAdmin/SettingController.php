@@ -8,30 +8,15 @@ use App\Models\Setting;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Jackiedo\DotenvEditor\DotenvEditor;
 
 class SettingController extends Controller
 {
     /**
      * Display white-label customization settings.
      */
-    public function index(DotenvEditor $dotenvEditor): View
+    public function index(): View
     {
         $schoolId = auth()->user()->school_id;
-
-        // Load email settings from .env
-        $dotenvEditor->load();
-
-        // Helper function to get env value
-        $getEnvValue = function ($key, $default = '') use ($dotenvEditor) {
-            try {
-                $value = $dotenvEditor->getValue($key);
-
-                return $value !== null ? $value : env($key, $default);
-            } catch (\Exception $e) {
-                return env($key, $default);
-            }
-        };
 
         // Default values
         $defaults = [
@@ -43,14 +28,14 @@ class SettingController extends Controller
             'school_tagline' => Setting::get('school_tagline', null, $schoolId),
             'footer_text' => Setting::get('footer_text', null, $schoolId),
             // Email settings from .env
-            'mail_mailer' => $getEnvValue('MAIL_MAILER', 'smtp'),
-            'mail_host' => $getEnvValue('MAIL_HOST', ''),
-            'mail_port' => $getEnvValue('MAIL_PORT', '587'),
-            'mail_username' => $getEnvValue('MAIL_USERNAME', ''),
-            'mail_password' => $getEnvValue('MAIL_PASSWORD', ''),
-            'mail_encryption' => $getEnvValue('MAIL_ENCRYPTION', 'tls'),
-            'mail_from_name' => $getEnvValue('MAIL_FROM_NAME', ''),
-            'mail_from_address' => $getEnvValue('MAIL_FROM_ADDRESS', ''),
+            'mail_mailer' => Setting::get('mail_mailer', 'smtp', $schoolId),
+            'mail_host' => Setting::get('mail_host', '', $schoolId),
+            'mail_port' => Setting::get('mail_port', '587', $schoolId),
+            'mail_username' => Setting::get('mail_username', '', $schoolId),
+            'mail_password' => Setting::get('mail_password', '', $schoolId),
+            'mail_encryption' => Setting::get('mail_encryption', 'tls', $schoolId),
+            'mail_from_name' => Setting::get('mail_from_name', '', $schoolId),
+            'mail_from_address' => Setting::get('mail_from_address', '', $schoolId),
             'support_email' => Setting::get('support_email', null, $schoolId),
             'support_phone' => Setting::get('support_phone', null, $schoolId),
             'address' => Setting::get('address', null, $schoolId),
@@ -67,7 +52,7 @@ class SettingController extends Controller
     /**
      * Update white-label customization settings.
      */
-    public function update(UpdateSettingRequest $request, ImageUploadService $imageUploadService, DotenvEditor $dotenvEditor): RedirectResponse
+    public function update(UpdateSettingRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
         $schoolId = auth()->user()->school_id;
         $data = $request->validated();
@@ -92,37 +77,20 @@ class SettingController extends Controller
             Setting::set('school_favicon', $faviconPath, $schoolId, 'file', 'branding');
         }
 
-        // Save email settings to .env file
-        $dotenvEditor->load();
-
-        // Email settings to save to .env
         $emailSettings = [
-            'MAIL_MAILER' => $data['mail_mailer'] ?? null,
-            'MAIL_HOST' => $data['mail_host'] ?? null,
-            'MAIL_PORT' => $data['mail_port'] ?? null,
-            'MAIL_USERNAME' => $data['mail_username'] ?? null,
-            'MAIL_ENCRYPTION' => $data['mail_encryption'] ?? null,
-            'MAIL_FROM_NAME' => $data['mail_from_name'] ?? null,
-            'MAIL_FROM_ADDRESS' => $data['mail_from_address'] ?? null,
+            'mail_mailer' => $data['mail_mailer'] ?? null,
+            'mail_host' => $data['mail_host'] ?? null,
+            'mail_port' => $data['mail_port'] ?? null,
+            'mail_username' => $data['mail_username'] ?? null,
+            'mail_encryption' => $data['mail_encryption'] ?? null,
+            'mail_from_name' => $data['mail_from_name'] ?? null,
+            'mail_from_address' => $data['mail_from_address'] ?? null,
         ];
 
-        // Only update password if provided (don't overwrite with empty)
-        if (! empty($data['mail_password'])) {
-            $emailSettings['MAIL_PASSWORD'] = $data['mail_password'];
-        }
-
         foreach ($emailSettings as $key => $value) {
-            if ($value !== null && $value !== '') {
-                $dotenvEditor->setKey($key, $value);
-            }
+            Setting::set($key, $value, $schoolId, 'string', 'email');
         }
 
-        $dotenvEditor->save();
-
-        // Clear config cache to reload .env values
-        \Artisan::call('config:clear');
-
-        // Save other settings to database
         $settingsToSave = [
             'primary_color' => ['type' => 'color', 'group' => 'branding'],
             'secondary_color' => ['type' => 'color', 'group' => 'branding'],

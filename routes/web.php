@@ -10,6 +10,7 @@ use App\Http\Controllers\SchoolAdmin\ExamController;
 use App\Http\Controllers\SchoolAdmin\ExamScheduleController;
 use App\Http\Controllers\SchoolAdmin\FeeStructureController;
 use App\Http\Controllers\SchoolAdmin\HolidayController;
+use App\Http\Controllers\SchoolAdmin\LibraryController;
 use App\Http\Controllers\SchoolAdmin\ResultController;
 use App\Http\Controllers\SchoolAdmin\SectionController;
 use App\Http\Controllers\SchoolAdmin\SettingController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\SchoolAdmin\StaffController;
 use App\Http\Controllers\SchoolAdmin\StudentController;
 use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
+use App\Http\Controllers\SchoolAdmin\TransportationController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
 use App\Http\Controllers\SuperAdmin\SubscriptionPlanController;
 use Illuminate\Support\Facades\Route;
@@ -78,5 +80,9 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('school-admin/attendance/show', [AttendanceController::class, 'show'])->name('school-admin.attendance.show');
     Route::put('school-admin/attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
     Route::delete('school-admin/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
+
+    // Library & Transportation Routes
+    Route::resource('school-admin/library', LibraryController::class)->names('school-admin.library');
+    Route::resource('school-admin/transportation', TransportationController::class)->names('school-admin.transportation');
 
 });

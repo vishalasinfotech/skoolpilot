@@ -14,12 +14,7 @@ class ExamController extends Controller
 {
     public function index()
     {
-        $exams = Exam::with(['school', 'academicSession'])
-            ->where('school_id', auth()->user()->school_id)
-            ->orderBy('start_date', 'desc')
-            ->get();
-
-        return view('school-admin.exam.index', compact('exams'));
+        return view('school-admin.exam.index');
     }
 
     public function create()

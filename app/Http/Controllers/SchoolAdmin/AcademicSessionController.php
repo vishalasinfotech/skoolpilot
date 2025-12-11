@@ -13,7 +13,7 @@ class AcademicSessionController extends Controller
 {
     public function index()
     {
-        $academicSessions = \App\Models\AcademicSession::with('school')
+        $academicSessions = AcademicSession::with('school')
             ->where('school_id', auth()->user()->school_id)
             ->orderBy('start_date', 'desc')
             ->get();
