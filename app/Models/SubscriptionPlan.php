@@ -37,4 +37,9 @@ class SubscriptionPlan extends Model
     {
         return $this->hasMany(School::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

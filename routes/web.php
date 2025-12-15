@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SchoolAdmin\AcademicClassController;
 use App\Http\Controllers\SchoolAdmin\AcademicSessionController;
 use App\Http\Controllers\SchoolAdmin\AttendanceController;
@@ -8,17 +10,18 @@ use App\Http\Controllers\SchoolAdmin\CalendarController;
 use App\Http\Controllers\SchoolAdmin\EventController;
 use App\Http\Controllers\SchoolAdmin\ExamController;
 use App\Http\Controllers\SchoolAdmin\ExamScheduleController;
+use App\Http\Controllers\SchoolAdmin\FeeCollectionController;
 use App\Http\Controllers\SchoolAdmin\FeeStructureController;
 use App\Http\Controllers\SchoolAdmin\HolidayController;
 use App\Http\Controllers\SchoolAdmin\LibraryController;
 use App\Http\Controllers\SchoolAdmin\ResultController;
 use App\Http\Controllers\SchoolAdmin\SectionController;
-use App\Http\Controllers\SchoolAdmin\SettingController;
 use App\Http\Controllers\SchoolAdmin\StaffController;
 use App\Http\Controllers\SchoolAdmin\StudentController;
 use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
 use App\Http\Controllers\SchoolAdmin\TransportationController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
 use App\Http\Controllers\SuperAdmin\SubscriptionPlanController;
 use Illuminate\Support\Facades\Route;
@@ -37,12 +40,28 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth', 'prevent-back-history')->group(function () {
 
     // Dashboard Routes
-    Route::get('/dashboard', function () {
-        return view('index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('subscription-plan/plans', [SubscriptionPlanController::class, 'plans'])->name('subscription-plan.plans');
+
+    // Payment Routes
+    Route::get('payment/checkout/{plan}', [PaymentController::class, 'checkout'])->name('payment.checkout');
+    Route::post('payment/create-order', [PaymentController::class, 'createOrder'])->name('payment.create-order');
+    Route::post('payment/success', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('payment/failed', [PaymentController::class, 'failed'])->name('payment.failed');
+    Route::get('payment/success-page', [PaymentController::class, 'successPage'])->name('payment.success-page');
+    Route::get('payment/failed-page', [PaymentController::class, 'failedPage'])->name('payment.failed-page');
+    Route::get('payment/transaction-history', [PaymentController::class, 'transactionHistory'])->name('payment.transaction-history');
+    Route::get('payment/transaction/{transaction}', [PaymentController::class, 'show'])->name('payment.transaction.show');
 
     Route::resource('super-admin/school', SchoolController::class)->names('super-admin.school');
     Route::resource('super-admin/subscription-plan', SubscriptionPlanController::class)->names('super-admin.subscription-plan');
+
+    // Super Admin Settings Routes
+    Route::get('super-admin/setting/general', [SettingController::class, 'general'])->name('super-admin.setting.general');
+    Route::put('super-admin/setting/general', [SettingController::class, 'updateGeneral'])->name('super-admin.setting.update-general');
+    Route::get('super-admin/setting/payment', [SettingController::class, 'payment'])->name('super-admin.setting.payment');
+    Route::put('super-admin/setting/payment', [SettingController::class, 'updatePayment'])->name('super-admin.setting.update-payment');
 
     Route::resource('school-admin/teacher', TeacherController::class)->names('school-admin.teacher');
     Route::get('school-admin/teacher-bulk-import', [TeacherController::class, 'bulkImport'])->name('school-admin.teacher.bulk-import');
@@ -61,6 +80,7 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::resource('school-admin/academic-session', AcademicSessionController::class)->names('school-admin.academic-session');
     Route::resource('school-admin/subject', SubjectController::class)->names('school-admin.subject');
     Route::resource('school-admin/fee-structure', FeeStructureController::class)->names('school-admin.fee-structure');
+    Route::resource('school-admin/fee-collection', FeeCollectionController::class)->names('school-admin.fee-collection');
     Route::resource('school-admin/event', EventController::class)->names('school-admin.event');
     Route::resource('school-admin/holiday', HolidayController::class)->names('school-admin.holiday');
 

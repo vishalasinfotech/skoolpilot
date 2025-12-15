@@ -69,4 +69,11 @@ class SubscriptionPlanController extends Controller
         return redirect()->route('super-admin.subscription-plan.index')
             ->with('success', 'Subscription plan deleted successfully.');
     }
+
+    public function plans()
+    {
+        $subscriptionPlans = SubscriptionPlan::where('is_active', true)->paginate(10);
+
+        return view('super-admin.subscription-plan.plans', compact('subscriptionPlans'));
+    }
 }

@@ -117,6 +117,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the fee transactions for this student.
+     */
+    public function feeTransactions(): HasMany
+    {
+        return $this->hasMany(StudentFeeTransaction::class, 'student_id');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot(): void

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FeeStructure extends Model
@@ -47,5 +48,13 @@ class FeeStructure extends Model
     public function academicClass(): BelongsTo
     {
         return $this->belongsTo(AcademicClass::class, 'class_id');
+    }
+
+    /**
+     * Get the fee transactions for this fee structure.
+     */
+    public function feeTransactions(): HasMany
+    {
+        return $this->hasMany(StudentFeeTransaction::class);
     }
 }

@@ -34,4 +34,9 @@ class School extends Model
     {
         return $this->belongsTo(SubscriptionPlan::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
