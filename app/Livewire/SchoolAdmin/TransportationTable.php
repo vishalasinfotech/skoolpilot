@@ -11,8 +11,7 @@ class TransportationTable extends DataTable
     protected function getQuery()
     {
         return Transportation::query()
-            ->with('school')
-            // ->where('school_id', auth()->user()->school_id)
+            ->where('school_id', auth()->user()->school_id)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('vehicle_number', 'like', '%'.$this->search.'%')

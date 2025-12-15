@@ -72,13 +72,22 @@
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-bar-chart-line"></i> <span>Revenue & Reports</span>
+                    <a class="nav-link menu-link" href="#sidebarReports" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarReports">
+                        <i class="ri-bar-chart-line"></i> <span>Reports</span>
                     </a>
+                    <div class="collapse menu-dropdown" id="sidebarReports">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.revenue') }}" class="nav-link">Revenue Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.schools') }}" class="nav-link">Schools Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.transactions') }}" class="nav-link">Transactions Report</a></li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
-                    <a class="nav-link menu-link" href="#">
+                    <a class="nav-link menu-link" href="{{ route('super-admin.feedback.index') }}">
                         <i class="ri-chat-3-line"></i> <span>Feedback</span>
                     </a>
                 </li>
@@ -161,8 +170,22 @@
                                     class="nav-link">Fee Structure</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.fee-collection.index') }}"
                                     class="nav-link">Fee Collection</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Accounts</a></li>
 
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item" data-role="school_admin">
+                    <a class="nav-link menu-link" href="#sidebarLibrary" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarLibrary">
+                        <i class="ri-book-open-line"></i> <span>Library</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarLibrary">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{ route('school-admin.library.index') }}"
+                                    class="nav-link">All Books</a></li>
+                            <li class="nav-item"><a href="{{ route('school-admin.library.issued-books') }}"
+                                    class="nav-link">Issued Books</a></li>
                         </ul>
                     </div>
                 </li>
@@ -173,10 +196,42 @@
                     </a>
                 </li>
 
+
+                <li class="nav-item" data-role="school_admin">
+                    <a class="nav-link menu-link" href="{{ route('school-admin.transportation.index') }}">
+                        <i class="ri-bus-2-line"></i> <span>Transportation</span>
+                    </a>
+                </li>
+
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="{{ route('subscription-plan.plans') }}">
                         <i class="ri-price-tag-2-line"></i> <span>Current Plan</span>
                     </a>
+                </li>
+
+                <li class="nav-item" data-role="school_admin">
+                    <a class="nav-link menu-link" href="{{ route('school-admin.feedback.index') }}">
+                        <i class="ri-feedback-line"></i> <span>Feedback</span>
+                    </a>
+                </li>
+
+                <li class="nav-item" data-role="school_admin">
+                    <a class="nav-link menu-link" href="#sidebarSchoolReports" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarSchoolReports">
+                        <i class="ri-file-chart-line"></i> <span>Reports</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarSchoolReports">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.students') }}" class="nav-link">Students Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.teachers') }}" class="nav-link">Teachers Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.staff') }}" class="nav-link">Staff Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.attendance') }}" class="nav-link">Attendance Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.fees') }}" class="nav-link">Fees Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.exam-results') }}" class="nav-link">Exam & Results Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.library') }}" class="nav-link">Library Report</a></li>
+                        </ul>
+                    </div>
                 </li>
 
                 <!-- Teacher -->
@@ -205,6 +260,21 @@
                                     class="nav-link">Results</a></li>
 
                             <li class="nav-item"><a href="#" class="nav-link">Apply for Leave</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item" data-role="teacher">
+                    <a class="nav-link menu-link" href="#sidebarTeacherReports" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarTeacherReports">
+                        <i class="ri-file-chart-line"></i> <span>Reports</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarTeacherReports">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.class-students') }}" class="nav-link">Class Students</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.attendance') }}" class="nav-link">Attendance Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.results') }}" class="nav-link">Results Report</a></li>
                         </ul>
                     </div>
                 </li>
@@ -248,24 +318,7 @@
                     </a>
                 </li>
 
-                <!-- Staff -->
-                <li class="menu-title"><span data-key="t-menu">Staff</span></li>
 
-                <li class="nav-item" data-role="staff">
-                    <a class="nav-link menu-link" href="#sidebarStaffModules" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarStaffModules">
-                        <i class="ri-briefcase-4-line"></i> <span>Staff Modules</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebarStaffModules">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{ route('school-admin.library.index') }}"
-                                    class="nav-link">Library</a></li>
-                            <li class="nav-item"><a href="{{ route('school-admin.transportation.index') }}"
-                                    class="nav-link">Transportation</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Accounts</a></li>
-                        </ul>
-                    </div>
-                </li>
 
                 <!-- Communication -->
                 <li class="menu-title"><span data-key="t-menu">Communication</span></li>
@@ -284,11 +337,6 @@
                     </div>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-file-list-3-line"></i> <span>Reports</span>
-                    </a>
-                </li>
             </ul>
         </div>
         <!-- Sidebar -->

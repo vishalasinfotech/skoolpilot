@@ -125,6 +125,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the book issues for this user.
+     */
+    public function bookIssues(): HasMany
+    {
+        return $this->hasMany(BookIssue::class);
+    }
+
+    /**
+     * Get the active (issued) book issues for this user.
+     */
+    public function activeBookIssues(): HasMany
+    {
+        return $this->hasMany(BookIssue::class)->where('status', 'issued');
+    }
+
+    /**
+     * Get the feedbacks created by this user.
+     */
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class, 'created_by');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot(): void

@@ -71,7 +71,7 @@
                                 <div class="card bg-light mb-4">
                                     <div class="card-body">
                                         <h6 class="card-title mb-3">Required CSV Format</h6>
-                                        <div class="table-responsive">
+                                        <div class="">
                                             <table class="table table-sm table-bordered mb-0">
                                                 <thead class="table-light">
                                                     <tr>

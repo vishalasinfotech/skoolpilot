@@ -39,4 +39,9 @@ class School extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

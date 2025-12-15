@@ -11,7 +11,7 @@ class HolidayTable extends DataTable
     protected function getQuery()
     {
         return Holiday::query()
-            ->with('school')
+            ->where('school_id', auth()->user()->school_id)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%'.$this->search.'%')

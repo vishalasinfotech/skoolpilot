@@ -14,6 +14,25 @@ class SubscriptionPlanSeeder extends Seeder
     {
         $plans = [
             [
+                'name' => 'Free Plan',
+                'description' => 'Start using basic features at no cost. Perfect for individuals or small schools just getting started.',
+                'type' => 'free',
+                'tier' => 'basic',
+                'plan_status' => 'free',
+                'price' => 0.00,
+                'offer_price' => null,
+                'features' => [
+                    'Up to 50 students',
+                    'Basic attendance tracking',
+                    'Limited support (Email only)',
+                    'Basic reports',
+                    'Parent portal access',
+                    '5GB storage',
+                ],
+                'trial_days' => 0,
+                'is_active' => true,
+            ],
+            [
                 'name' => 'Monthly Plan',
                 'description' => 'Access all standard features with a monthly payment. Ideal for flexible budgeting.',
                 'type' => 'monthly',

@@ -11,7 +11,7 @@ class EventTable extends DataTable
     protected function getQuery()
     {
         return Event::query()
-            ->with('school')
+            ->where('school_id', auth()->user()->school_id)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('title', 'like', '%'.$this->search.'%')

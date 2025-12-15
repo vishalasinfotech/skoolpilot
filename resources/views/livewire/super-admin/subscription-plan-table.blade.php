@@ -95,7 +95,7 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge 
+                                <span class="badge
                                     @if($plan->tier === 'basic') bg-secondary-subtle text-secondary
                                     @elseif($plan->tier === 'standard') bg-primary-subtle text-primary
                                     @else bg-warning-subtle text-warning
@@ -116,7 +116,7 @@
                                 @endif
                             </td>
                             <td>
-                                <span class="badge 
+                                <span class="badge
                                     @if($plan->plan_status === 'free') bg-success-subtle text-success
                                     @else bg-primary-subtle text-primary
                                     @endif

@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\SchoolAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SchoolAdmin\Library\IssueBookRequest;
+use App\Http\Requests\SchoolAdmin\Library\ReturnBookRequest;
 use App\Http\Requests\SchoolAdmin\Library\StoreLibraryRequest;
 use App\Http\Requests\SchoolAdmin\Library\UpdateLibraryRequest;
+use App\Models\BookIssue;
 use App\Models\Library;
 use App\Models\School;
+use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -107,5 +111,95 @@ class LibraryController extends Controller
 
         return redirect()->route('school-admin.library.index')
             ->with('success', 'Book deleted successfully.');
+    }
+
+    /**
+     * Show the form for issuing a book.
+     */
+    public function issue(): View
+    {
+        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+        $books = Library::where('deleted_at', null)
+            ->where('is_active', true)
+            ->where('available_copies', '>', 0)
+            ->with('school')
+            ->get()
+            ->mapWithKeys(function ($book) {
+                return [$book->id => "{$book->book_title} - {$book->author} (Available: {$book->available_copies})"];
+            });
+        $users = User::where('deleted_at', null)
+            ->where('is_active', true)
+            ->whereIn('role', ['student', 'staff', 'teacher'])
+            ->get()
+            ->mapWithKeys(function ($user) {
+                $role = ucfirst($user->role);
+                $identifier = $user->admission_number ?? $user->employee_id ?? $user->email;
+
+                return [$user->id => "{$user->full_name} ({$role} - {$identifier})"];
+            });
+
+        return view('school-admin.library.issue', compact('schools', 'books', 'users'));
+    }
+
+    /**
+     * Store a newly issued book.
+     */
+    public function issueBook(IssueBookRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+        $library = Library::findOrFail($data['library_id']);
+
+        // Check if book is available
+        if ($library->available_copies <= 0) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'This book is not available. All copies are currently issued.');
+        }
+
+        // Get school_id from library
+        $data['school_id'] = $library->school_id;
+
+        // Determine status based on due date
+        $data['status'] = strtotime($data['due_date']) < strtotime('today') ? 'overdue' : 'issued';
+
+        // Create book issue
+        BookIssue::create($data);
+
+        // Decrease available copies
+        $library->decrement('available_copies');
+
+        return redirect()->route('school-admin.library.issued-books')
+            ->with('success', 'Book issued successfully.');
+    }
+
+    /**
+     * Display a listing of issued books.
+     */
+    public function issuedBooks(): View
+    {
+        return view('school-admin.library.issued-books');
+    }
+
+    /**
+     * Return an issued book.
+     */
+    public function returnBook(ReturnBookRequest $request, BookIssue $bookIssue): RedirectResponse
+    {
+        if ($bookIssue->status === 'returned') {
+            return redirect()->back()
+                ->with('error', 'This book has already been returned.');
+        }
+
+        $data = $request->validated();
+        $data['status'] = 'returned';
+
+        $bookIssue->update($data);
+
+        // Increase available copies
+        $library = $bookIssue->library;
+        $library->increment('available_copies');
+
+        return redirect()->route('school-admin.library.issued-books')
+            ->with('success', 'Book returned successfully.');
     }
 }

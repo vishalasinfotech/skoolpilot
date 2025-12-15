@@ -12,7 +12,7 @@ class StudentTable extends DataTable
     {
         return User::query()
             ->students()
-            ->with('school')
+            ->where('school_id', auth()->user()->school_id)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('first_name', 'like', '%'.$this->search.'%')
