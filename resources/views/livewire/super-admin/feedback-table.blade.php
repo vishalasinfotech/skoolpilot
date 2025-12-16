@@ -5,7 +5,7 @@
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_length">
                     <label class="d-inline-flex align-items-center">
-                        Show
+                        {{ __('common.show') }}
                         <select wire:model.live="perPage" class="form-select form-select-sm mx-2" style="width: auto;">
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -13,15 +13,15 @@
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
-                        entries
+                        {{ __('common.entries') }}
                     </label>
                 </div>
             </div>
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_filter text-md-end">
                     <label class="d-inline-flex align-items-center">
-                        Search:
-                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="Search..." style="width: 200px;">
+                        {{ __('common.search') }}:
+                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="{{ __('common.search_placeholder') }}" style="width: 200px;">
                     </label>
                 </div>
             </div>
@@ -30,9 +30,9 @@
         <!-- Loading Indicator -->
         <div wire:loading.delay class="text-center py-3">
             <div class="spinner-border text-primary spinner-border-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">{{ __('common.loading') }}</span>
             </div>
-            <span class="ms-2">Loading...</span>
+            <span class="ms-2">{{ __('common.loading') }}</span>
         </div>
 
         <!-- Table -->
@@ -42,27 +42,27 @@
                     <tr>
                         <th style="width: 80px;">#</th>
                         <th wire:click="sortBy('subject')" style="cursor: pointer;">
-                            Subject
+                            {{ __('common.subject') }}
                             @if($sortField === 'subject')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
-                        <th>Type</th>
-                        <th>Created By</th>
-                        <th>School</th>
+                        <th>{{ __('common.type') }}</th>
+                        <th>{{ __('common.created_by') }}</th>
+                        <th>{{ __('common.all_schools') }}</th>
                         <th wire:click="sortBy('status')" style="cursor: pointer;">
-                            Status
+                            {{ __('common.status') }}
                             @if($sortField === 'status')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
                         <th wire:click="sortBy('created_at')" style="cursor: pointer;">
-                            Created At
+                            {{ __('common.created_at') }}
                             @if($sortField === 'created_at')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
-                        <th style="width: 80px;">Action</th>
+                        <th style="width: 80px;">{{ __('common.action') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,19 +79,19 @@
                                 </span>
                             </td>
                             <td>
-                                {{ $feedback->createdBy->full_name ?? $feedback->createdBy->name ?? 'N/A' }}
-                                <br><small class="text-muted">{{ $feedback->createdBy->email ?? 'N/A' }}</small>
+                                {{ $feedback->createdBy->full_name ?? $feedback->createdBy->name ?? __('common.n_a') }}
+                                <br><small class="text-muted">{{ $feedback->createdBy->email ?? __('common.n_a') }}</small>
                             </td>
-                            <td>{{ $feedback->school->name ?? 'N/A' }}</td>
+                            <td>{{ $feedback->school->name ?? __('common.n_a') }}</td>
                             <td>
                                 @if($feedback->status === 'pending')
-                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                    <span class="badge bg-warning-subtle text-warning">{{ __('common.pending') }}</span>
                                 @elseif($feedback->status === 'in_progress')
-                                    <span class="badge bg-primary-subtle text-primary">In Progress</span>
+                                    <span class="badge bg-primary-subtle text-primary">{{ __('common.in_progress') }}</span>
                                 @elseif($feedback->status === 'resolved')
-                                    <span class="badge bg-success-subtle text-success">Resolved</span>
+                                    <span class="badge bg-success-subtle text-success">{{ __('common.resolved') }}</span>
                                 @else
-                                    <span class="badge bg-secondary-subtle text-secondary">Closed</span>
+                                    <span class="badge bg-secondary-subtle text-secondary">{{ __('common.closed') }}</span>
                                 @endif
                             </td>
                             <td>{{ $feedback->created_at->format('M d, Y') }}</td>
@@ -103,7 +103,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a class="dropdown-item" href="{{ route('super-admin.feedback.show', $feedback->id) }}">
-                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> {{ __('common.view') }}
                                             </a>
                                         </li>
                                     </ul>
@@ -115,9 +115,9 @@
                             <td colspan="8" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="ri-search-line fs-2"></i>
-                                    <p class="mt-2 mb-0">No feedback found</p>
+                                    <p class="mt-2 mb-0">{{ __('common.no_feedback_found') }}</p>
                                     @if($search)
-                                        <small>Try adjusting your search</small>
+                                        <small>{{ __('common.try_adjusting_search') }}</small>
                                     @endif
                                 </div>
                             </td>
@@ -132,7 +132,7 @@
             <div class="row mt-3 align-items-center">
                 <div class="col-sm-12 col-md-5">
                     <div class="dataTables_info" role="status" aria-live="polite">
-                        Showing {{ $feedbacks->firstItem() ?? 0 }} to {{ $feedbacks->lastItem() ?? 0 }} of {{ $feedbacks->total() }} entries
+                        {{ __('common.showing') }} {{ $feedbacks->firstItem() ?? 0 }} {{ __('common.to') }} {{ $feedbacks->lastItem() ?? 0 }} {{ __('common.of') }} {{ $feedbacks->total() }} {{ __('common.entries') }}
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-7">

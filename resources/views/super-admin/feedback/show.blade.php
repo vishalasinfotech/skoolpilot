@@ -1,16 +1,16 @@
 @extends('layouts.master')
-@section('title', 'Feedback Details')
+@section('title', __('common.feedback_details'))
 @section('main-container')
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Feedback Details</h4>
+                        <h4 class="mb-sm-0">{{ __('common.feedback_details') }}</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('super-admin.feedback.index') }}">Feedback</a></li>
-                                <li class="breadcrumb-item active">Feedback Details</li>
+                                <li class="breadcrumb-item"><a href="{{ route('super-admin.feedback.index') }}">{{ __('common.feedback') }}</a></li>
+                                <li class="breadcrumb-item active">{{ __('common.feedback_details') }}</li>
                             </ol>
                         </div>
                     </div>
@@ -21,9 +21,9 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center justify-content-between">
-                            <h5 class="card-title mb-0">Feedback Details</h5>
+                            <h5 class="card-title mb-0">{{ __('common.feedback_details') }}</h5>
                             <a href="{{ route('super-admin.feedback.index') }}" class="btn btn-secondary btn-sm">
-                                <i class="ri-arrow-left-line"></i> Back
+                                <i class="ri-arrow-left-line"></i> {{ __('common.back') }}
                             </a>
                         </div>
                         <div class="card-body">
@@ -31,14 +31,14 @@
                             
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <h6 class="text-muted mb-3">Feedback Information</h6>
+                                    <h6 class="text-muted mb-3">{{ __('common.feedback_information') }}</h6>
                                     <table class="table table-borderless">
                                         <tr>
-                                            <td width="40%"><strong>Subject:</strong></td>
+                                            <td width="40%"><strong>{{ __('common.subject') }}:</strong></td>
                                             <td>{{ $feedback->subject }}</td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Type:</strong></td>
+                                            <td><strong>{{ __('common.type') }}:</strong></td>
                                             <td>
                                                 <span class="badge bg-info-subtle text-info">
                                                     {{ ucfirst($feedback->type) }}
@@ -46,36 +46,36 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Status:</strong></td>
+                                            <td><strong>{{ __('common.status') }}:</strong></td>
                                             <td>
                                                 @if($feedback->status === 'pending')
-                                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                                    <span class="badge bg-warning-subtle text-warning">{{ __('common.pending') }}</span>
                                                 @elseif($feedback->status === 'in_progress')
-                                                    <span class="badge bg-primary-subtle text-primary">In Progress</span>
+                                                    <span class="badge bg-primary-subtle text-primary">{{ __('common.in_progress') }}</span>
                                                 @elseif($feedback->status === 'resolved')
-                                                    <span class="badge bg-success-subtle text-success">Resolved</span>
+                                                    <span class="badge bg-success-subtle text-success">{{ __('common.resolved') }}</span>
                                                 @else
-                                                    <span class="badge bg-secondary-subtle text-secondary">Closed</span>
+                                                    <span class="badge bg-secondary-subtle text-secondary">{{ __('common.closed') }}</span>
                                                 @endif
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Created By:</strong></td>
+                                            <td><strong>{{ __('common.created_by') }}:</strong></td>
                                             <td>{{ $feedback->createdBy->full_name ?? $feedback->createdBy->name ?? 'N/A' }} ({{ $feedback->createdBy->email ?? 'N/A' }})</td>
                                         </tr>
                                         @if($feedback->school)
                                         <tr>
-                                            <td><strong>School:</strong></td>
+                                            <td><strong>{{ __('common.all_schools') }}:</strong></td>
                                             <td>{{ $feedback->school->name }}</td>
                                         </tr>
                                         @endif
                                         <tr>
-                                            <td><strong>Created At:</strong></td>
+                                            <td><strong>{{ __('common.created_at') }}:</strong></td>
                                             <td>{{ $feedback->created_at->format('M d, Y h:i A') }}</td>
                                         </tr>
                                         @if($feedback->responded_at)
                                         <tr>
-                                            <td><strong>Responded At:</strong></td>
+                                            <td><strong>{{ __('common.responded_at') }}:</strong></td>
                                             <td>{{ $feedback->responded_at->format('M d, Y h:i A') }}</td>
                                         </tr>
                                         @endif
@@ -85,7 +85,7 @@
 
                             <div class="row mb-4">
                                 <div class="col-md-12">
-                                    <h6 class="text-muted mb-3">Message</h6>
+                                    <h6 class="text-muted mb-3">{{ __('common.message') }}</h6>
                                     <div class="p-3 bg-light rounded">
                                         {{ $feedback->message }}
                                     </div>
@@ -95,7 +95,7 @@
                             @if($feedback->admin_response)
                             <div class="row mb-4">
                                 <div class="col-md-12">
-                                    <h6 class="text-muted mb-3">Admin Response</h6>
+                                    <h6 class="text-muted mb-3">{{ __('common.admin_response') }}</h6>
                                     <div class="p-3 bg-light rounded">
                                         {{ $feedback->admin_response }}
                                     </div>
@@ -109,8 +109,8 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                                        <x-select name="status" id="status" :options="['pending' => 'Pending', 'in_progress' => 'In Progress', 'resolved' => 'Resolved', 'closed' => 'Closed']" :value="old('status', $feedback->status)" required />
+                                        <label for="status" class="form-label">{{ __('common.status') }} <span class="text-danger">*</span></label>
+                                        <x-select name="status" id="status" :options="['pending' => __('common.pending'), 'in_progress' => __('common.in_progress'), 'resolved' => __('common.resolved'), 'closed' => __('common.closed')]" :value="old('status', $feedback->status)" required />
                                         @error('status')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
@@ -119,8 +119,8 @@
 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="admin_response" class="form-label">Admin Response</label>
-                                        <x-textarea name="admin_response" id="admin_response" rows="5" placeholder="Enter your response to this feedback">{{ old('admin_response', $feedback->admin_response) }}</x-textarea>
+                                        <label for="admin_response" class="form-label">{{ __('common.admin_response') }}</label>
+                                        <x-textarea name="admin_response" id="admin_response" rows="5" placeholder="{{ __('common.enter_your_response') }}">{{ old('admin_response', $feedback->admin_response) }}</x-textarea>
                                         @error('admin_response')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
@@ -128,8 +128,8 @@
                                 </div>
 
                                 <div class="d-flex justify-content-start gap-2">
-                                    <button type="submit" class="btn btn-primary">Update Feedback</button>
-                                    <a href="{{ route('super-admin.feedback.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">{{ __('common.update_feedback') }}</button>
+                                    <a href="{{ route('super-admin.feedback.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
                                 </div>
                             </form>
                         </div>

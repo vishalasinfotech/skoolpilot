@@ -5,7 +5,7 @@
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_length">
                     <label class="d-inline-flex align-items-center">
-                        Show
+                        {{ __('common.show') }}
                         <select wire:model.live="perPage" class="form-select form-select-sm mx-2" style="width: auto;">
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -13,15 +13,15 @@
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
-                        entries
+                        {{ __('common.entries') }}
                     </label>
                 </div>
             </div>
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_filter text-md-end">
                     <label class="d-inline-flex align-items-center">
-                        Search:
-                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="Search..." style="width: 200px;">
+                        {{ __('common.search') }}:
+                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="{{ __('common.search_placeholder') }}" style="width: 200px;">
                     </label>
                 </div>
             </div>
@@ -30,9 +30,9 @@
         <!-- Loading Indicator -->
         <div wire:loading.delay class="text-center py-3">
             <div class="spinner-border text-primary spinner-border-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">{{ __('common.loading') }}</span>
             </div>
-            <span class="ms-2">Loading...</span>
+            <span class="ms-2">{{ __('common.loading') }}</span>
         </div>
 
         <!-- Table -->
@@ -45,17 +45,17 @@
                         </th>
                         <th style="width: 80px;">#</th>
                         <th wire:click="sortBy('first_name')" style="cursor: pointer;">
-                            Teacher Name
+                            {{ __('common.teacher_name') }}
                             @if($sortField === 'first_name')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
-                        <th>Employee ID</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Specialization</th>
-                        <th style="width: 100px;">Status</th>
-                        <th style="width: 80px;">Action</th>
+                        <th>{{ __('common.employee_id') }}</th>
+                        <th>{{ __('common.email') }}</th>
+                        <th>{{ __('common.phone') }}</th>
+                        <th>{{ __('common.specialization') }}</th>
+                        <th style="width: 100px;">{{ __('common.status') }}</th>
+                        <th style="width: 80px;">{{ __('common.action') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,13 +88,13 @@
                             </td>
                             <td><span class="badge bg-primary-subtle text-primary">{{ $teacher->employee_id }}</span></td>
                             <td>{{ $teacher->email }}</td>
-                            <td>{{ $teacher->phone ?? 'N/A' }}</td>
-                            <td>{{ $teacher->specialization ?? 'N/A' }}</td>
+                            <td>{{ $teacher->phone ?? __('common.n_a') }}</td>
+                            <td>{{ $teacher->specialization ?? __('common.n_a') }}</td>
                             <td>
                                 @if($teacher->is_active)
-                                    <span class="badge bg-success-subtle text-success">Active</span>
+                                    <span class="badge bg-success-subtle text-success">{{ __('common.active') }}</span>
                                 @else
-                                    <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                                    <span class="badge bg-danger-subtle text-danger">{{ __('common.inactive') }}</span>
                                 @endif
                             </td>
                             <td>
@@ -105,18 +105,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a class="dropdown-item" href="{{ route('school-admin.teacher.show', $teacher->id) }}">
-                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> {{ __('common.view') }}
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('school-admin.teacher.edit', $teacher->id) }}">
-                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> {{ __('common.edit') }}
                                             </a>
                                         </li>
                                         <li class="dropdown-divider"></li>
                                         <li>
                                             <button class="dropdown-item text-danger" wire:click="openDeleteModal({{ $teacher->id }}, '{{ $teacher->full_name }}')">
-                                                <i class="ri-delete-bin-fill align-bottom me-2"></i> Delete
+                                                <i class="ri-delete-bin-fill align-bottom me-2"></i> {{ __('common.delete') }}
                                             </button>
                                         </li>
                                     </ul>
@@ -128,9 +128,9 @@
                             <td colspan="9" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="ri-search-line fs-2"></i>
-                                    <p class="mt-2 mb-0">No teachers found</p>
+                                    <p class="mt-2 mb-0">{{ __('common.no_teachers_found') }}</p>
                                     @if($search)
-                                        <small>Try adjusting your search</small>
+                                        <small>{{ __('common.try_adjusting_search') }}</small>
                                     @endif
                                 </div>
                             </td>
@@ -145,7 +145,7 @@
             <div class="row mt-3 align-items-center">
                 <div class="col-sm-12 col-md-5">
                     <div class="dataTables_info" role="status" aria-live="polite">
-                        Showing {{ $teachers->firstItem() ?? 0 }} to {{ $teachers->lastItem() ?? 0 }} of {{ $teachers->total() }} entries
+                        {{ __('common.showing') }} {{ $teachers->firstItem() ?? 0 }} {{ __('common.to') }} {{ $teachers->lastItem() ?? 0 }} {{ __('common.of') }} {{ $teachers->total() }} {{ __('common.entries') }}
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-7">

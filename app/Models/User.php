@@ -149,6 +149,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the complaints about this student.
+     */
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Feedback::class, 'student_id')->where('type', 'complaint');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot(): void

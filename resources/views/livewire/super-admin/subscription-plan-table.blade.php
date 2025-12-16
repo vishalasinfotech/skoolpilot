@@ -5,7 +5,7 @@
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_length">
                     <label class="d-inline-flex align-items-center">
-                        Show
+                        {{ __('common.show') }}
                         <select wire:model.live="perPage" class="form-select form-select-sm mx-2" style="width: auto;">
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -13,15 +13,15 @@
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
-                        entries
+                        {{ __('common.entries') }}
                     </label>
                 </div>
             </div>
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_filter text-md-end">
                     <label class="d-inline-flex align-items-center">
-                        Search:
-                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="Search..." style="width: 200px;">
+                        {{ __('common.search') }}:
+                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="{{ __('common.search_placeholder') }}" style="width: 200px;">
                     </label>
                 </div>
             </div>
@@ -30,9 +30,9 @@
         <!-- Loading Indicator -->
         <div wire:loading.delay class="text-center py-3">
             <div class="spinner-border text-primary spinner-border-sm" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">{{ __('common.loading') }}</span>
             </div>
-            <span class="ms-2">Loading...</span>
+            <span class="ms-2">{{ __('common.loading') }}</span>
         </div>
 
         <!-- Table -->
@@ -45,33 +45,33 @@
                         </th>
                         <th style="width: 80px;">#</th>
                         <th wire:click="sortBy('name')" style="cursor: pointer;">
-                            Plan Name
+                            {{ __('common.plan_name') }}
                             @if($sortField === 'name')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
                         <th wire:click="sortBy('type')" style="cursor: pointer;">
-                            Type
+                            {{ __('common.plan_type') }}
                             @if($sortField === 'type')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
                         <th wire:click="sortBy('tier')" style="cursor: pointer;">
-                            Tier
+                            {{ __('common.tier') }}
                             @if($sortField === 'tier')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
                         <th wire:click="sortBy('price')" style="cursor: pointer;">
-                            Price
+                            {{ __('common.price') }}
                             @if($sortField === 'price')
                                 <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
                             @endif
                         </th>
-                        <th style="width: 100px;">Plan Type</th>
-                        <th style="width: 100px;">Trial Days</th>
-                        <th style="width: 100px;">Status</th>
-                        <th style="width: 80px;">Action</th>
+                        <th style="width: 100px;">{{ __('common.plan_status') }}</th>
+                        <th style="width: 100px;">{{ __('common.trial_days') }}</th>
+                        <th style="width: 100px;">{{ __('common.status') }}</th>
+                        <th style="width: 80px;">{{ __('common.action') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,13 +85,18 @@
                                 <div class="d-flex flex-column">
                                     <span class="fw-medium">{{ $plan->name }}</span>
                                     @if($plan->features && count($plan->features) > 0)
-                                        <small class="text-muted">{{ count($plan->features) }} features</small>
+                                        <small class="text-muted">{{ count($plan->features) }} {{ __('common.features_count') }}</small>
                                     @endif
                                 </div>
                             </td>
                             <td>
                                 <span class="badge bg-info-subtle text-info">
-                                    {{ ucfirst($plan->type) }}
+                                    @if($plan->type === 'monthly') {{ __('common.monthly') }}
+                                    @elseif($plan->type === 'quarterly') {{ __('common.quarterly') }}
+                                    @elseif($plan->type === 'yearly') {{ __('common.yearly') }}
+                                    @elseif($plan->type === 'lifetime') {{ __('common.lifetime') }}
+                                    @else {{ ucfirst($plan->type) }}
+                                    @endif
                                 </span>
                             </td>
                             <td>
@@ -101,7 +106,11 @@
                                     @else bg-warning-subtle text-warning
                                     @endif
                                 ">
-                                    {{ ucfirst($plan->tier) }}
+                                    @if($plan->tier === 'basic') {{ __('common.basic') }}
+                                    @elseif($plan->tier === 'standard') {{ __('common.standard') }}
+                                    @elseif($plan->tier === 'premium') {{ __('common.premium') }}
+                                    @else {{ ucfirst($plan->tier) }}
+                                    @endif
                                 </span>
                             </td>
                             <td>
@@ -109,7 +118,7 @@
                                     <div>
                                         <span class="text-decoration-line-through text-muted">${{ number_format($plan->price, 2) }}</span>
                                         <span class="fw-bold text-success ms-1">${{ number_format($plan->offer_price, 2) }}</span>
-                                        <span class="badge bg-danger-subtle text-danger ms-1">OFFER</span>
+                                        <span class="badge bg-danger-subtle text-danger ms-1">{{ __('common.offer') }}</span>
                                     </div>
                                 @else
                                     <span class="fw-medium">${{ number_format($plan->price, 2) }}</span>
@@ -121,17 +130,20 @@
                                     @else bg-primary-subtle text-primary
                                     @endif
                                 ">
-                                    {{ ucfirst($plan->plan_status) }}
+                                    @if($plan->plan_status === 'free') {{ __('common.free') }}
+                                    @elseif($plan->plan_status === 'paid') {{ __('common.paid') }}
+                                    @else {{ ucfirst($plan->plan_status) }}
+                                    @endif
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark">{{ $plan->trial_days }} days</span>
+                                <span class="badge bg-light text-dark">{{ $plan->trial_days }} {{ __('common.days') }}</span>
                             </td>
                             <td>
                                 @if($plan->is_active)
-                                    <span class="badge bg-success-subtle text-success">Active</span>
+                                    <span class="badge bg-success-subtle text-success">{{ __('common.active') }}</span>
                                 @else
-                                    <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                                    <span class="badge bg-danger-subtle text-danger">{{ __('common.inactive') }}</span>
                                 @endif
                             </td>
                             <td>
@@ -142,18 +154,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a class="dropdown-item" href="{{ route('super-admin.subscription-plan.show', $plan->id) }}">
-                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> {{ __('common.view') }}
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('super-admin.subscription-plan.edit', $plan->id) }}">
-                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> {{ __('common.edit') }}
                                             </a>
                                         </li>
                                         <li class="dropdown-divider"></li>
                                         <li>
                                             <button class="dropdown-item text-danger" wire:click="openDeleteModal({{ $plan->id }}, '{{ $plan->name }}')">
-                                                <i class="ri-delete-bin-fill align-bottom me-2"></i> Delete
+                                                <i class="ri-delete-bin-fill align-bottom me-2"></i> {{ __('common.delete') }}
                                             </button>
                                         </li>
                                     </ul>
@@ -165,9 +177,9 @@
                             <td colspan="10" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="ri-search-line fs-2"></i>
-                                    <p class="mt-2 mb-0">No subscription plans found</p>
+                                    <p class="mt-2 mb-0">{{ __('common.no_subscription_plans_found') }}</p>
                                     @if($search)
-                                        <small>Try adjusting your search</small>
+                                        <small>{{ __('common.try_adjusting_search') }}</small>
                                     @endif
                                 </div>
                             </td>
@@ -182,7 +194,7 @@
             <div class="row mt-3 align-items-center">
                 <div class="col-sm-12 col-md-5">
                     <div class="dataTables_info" role="status" aria-live="polite">
-                        Showing {{ $subscriptionPlans->firstItem() ?? 0 }} to {{ $subscriptionPlans->lastItem() ?? 0 }} of {{ $subscriptionPlans->total() }} entries
+                        {{ __('common.showing') }} {{ $subscriptionPlans->firstItem() ?? 0 }} {{ __('common.to') }} {{ $subscriptionPlans->lastItem() ?? 0 }} {{ __('common.of') }} {{ $subscriptionPlans->total() }} {{ __('common.entries') }}
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-7">

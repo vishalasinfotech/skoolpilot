@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class StudentController extends Controller
 {
@@ -293,5 +294,28 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Import failed: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Display parent's children (students linked to parent).
+     */
+    public function myChildren(): View
+    {
+        $parent = auth()->user();
+        $schoolId = $parent->school_id;
+
+        // Get parent's children (students linked to parent by phone or email)
+        $children = User::where('school_id', $schoolId)
+            ->where('role', 'student')
+            ->where(function ($query) use ($parent) {
+                $query->where('parent_phone', $parent->phone)
+                    ->orWhere('parent_email', $parent->email);
+            })
+            ->where('is_active', true)
+            ->with(['academicClass', 'section'])
+            ->orderBy('first_name')
+            ->get();
+
+        return view('parent.my-children', compact('children'));
     }
 }

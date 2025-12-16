@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Add Subscription Plan')
+@section('title', __('common.add_subscription_plan'))
 @section('main-container')
     <div class="page-content">
         <div class="container-fluid">
@@ -8,12 +8,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Add Subscription Plan</h4>
+                        <h4 class="mb-sm-0">{{ __('common.add_subscription_plan') }}</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Subscription Plans</a></li>
-                                <li class="breadcrumb-item active">Add Plan</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{{ __('common.subscriptions_plans') }}</a></li>
+                                <li class="breadcrumb-item active">{{ __('common.add_subscription_plan') }}</li>
                             </ol>
                         </div>
                     </div>
@@ -26,9 +26,9 @@
                 <div class="col-lg-12 col-md-10 mx-auto">
                     <div class="card">
                         <div class="card-header d-flex align-items-center justify-content-between">
-                            <h5 class="card-title mb-0">Create Subscription Plan</h5>
+                            <h5 class="card-title mb-0">{{ __('common.create_subscription_plan') }}</h5>
                             <a href="{{ route('super-admin.subscription-plan.index') }}" class="btn btn-secondary btn-sm">
-                                <i class="ri-arrow-left-line"></i> Back
+                                <i class="ri-arrow-left-line"></i> {{ __('common.back') }}
                             </a>
                         </div>
                         <div class="card-body">
@@ -39,8 +39,8 @@
 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="name" class="form-label">Plan Name <span class="text-danger">*</span></label>
-                                        <x-input type="text" name="name" id="name" :value="old('name')" required autofocus placeholder="Enter plan name" />
+                                        <label for="name" class="form-label">{{ __('common.plan_name') }} <span class="text-danger">*</span></label>
+                                        <x-input type="text" name="name" id="name" :value="old('name')" required autofocus placeholder="{{ __('common.enter_plan_name') }}" />
                                         @error('name')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
@@ -49,69 +49,69 @@
 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="description" class="form-label">Description/Helping Message</label>
-                                        <x-textarea name="description" id="description" rows="3" placeholder="Enter a helpful description for this plan">{{ old('description') }}</x-textarea>
+                                        <label for="description" class="form-label">{{ __('common.description_helping_message') }}</label>
+                                        <x-textarea name="description" id="description" rows="3" placeholder="{{ __('common.enter_helpful_description') }}">{{ old('description') }}</x-textarea>
                                         @error('description')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
-                                        <small class="text-muted">This message will help users understand what this plan offers.</small>
+                                        <small class="text-muted">{{ __('common.description_help_text') }}</small>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="price" class="form-label">Regular Price <span class="text-danger">*</span></label>
+                                        <label for="price" class="form-label">{{ __('common.regular_price') }} <span class="text-danger">*</span></label>
                                         <x-input type="number" name="price" id="price" :value="old('price')" required placeholder="0.00" step="0.01" min="0" />
                                         @error('price')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="offer_price" class="form-label">Offer Price (Optional)</label>
+                                        <label for="offer_price" class="form-label">{{ __('common.offer_price_optional') }}</label>
                                         <x-input type="number" name="offer_price" id="offer_price" :value="old('offer_price')" placeholder="0.00" step="0.01" min="0" />
                                         @error('offer_price')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
-                                        <small class="text-muted">Leave empty if no discount applies. Must be less than regular price.</small>
+                                        <small class="text-muted">{{ __('common.offer_price_help_text') }}</small>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
-                                        <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                                        <label for="type" class="form-label">{{ __('common.plan_type') }} <span class="text-danger">*</span></label>
                                         <x-select name="type" id="type" :options="[
-                                            'monthly' => 'Monthly',
-                                            'quarterly' => 'Quarterly',
-                                            'yearly' => 'Yearly',
-                                            'lifetime' => 'Lifetime',
-                                        ]" :value="old('type')" required placeholder="Select Type" />
+                                            'monthly' => __('common.monthly'),
+                                            'quarterly' => __('common.quarterly'),
+                                            'yearly' => __('common.yearly'),
+                                            'lifetime' => __('common.lifetime'),
+                                        ]" :value="old('type')" required placeholder="{{ __('common.select_type') }}" />
                                         @error('type')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="tier" class="form-label">Tier <span class="text-danger">*</span></label>
+                                        <label for="tier" class="form-label">{{ __('common.tier') }} <span class="text-danger">*</span></label>
                                         <x-select name="tier" id="tier" :options="[
-                                            'basic' => 'Basic',
-                                            'standard' => 'Standard',
-                                            'premium' => 'Premium',
-                                        ]" :value="old('tier')" required placeholder="Select Tier" />
+                                            'basic' => __('common.basic'),
+                                            'standard' => __('common.standard'),
+                                            'premium' => __('common.premium'),
+                                        ]" :value="old('tier')" required placeholder="{{ __('common.select_tier') }}" />
                                         @error('tier')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="plan_status" class="form-label">Plan Status <span class="text-danger">*</span></label>
+                                        <label for="plan_status" class="form-label">{{ __('common.plan_status') }} <span class="text-danger">*</span></label>
                                         <x-select name="plan_status" id="plan_status" :options="[
-                                            'free' => 'Free',
-                                            'paid' => 'Paid',
-                                        ]" :value="old('plan_status', 'paid')" required placeholder="Select Status" />
+                                            'free' => __('common.free'),
+                                            'paid' => __('common.paid'),
+                                        ]" :value="old('plan_status', 'paid')" required placeholder="{{ __('common.select_status') }}" />
                                         @error('plan_status')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="trial_days" class="form-label">Trial Days <span class="text-danger">*</span></label>
+                                        <label for="trial_days" class="form-label">{{ __('common.trial_days') }} <span class="text-danger">*</span></label>
                                         <x-input type="number" name="trial_days" id="trial_days" :value="old('trial_days', 15)" required min="0" max="365" />
                                         @error('trial_days')
                                             <small class="text-danger d-block">{{ $message }}</small>
@@ -121,33 +121,33 @@
 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="features" class="form-label">Features</label>
+                                        <label for="features" class="form-label">{{ __('common.features') }}</label>
                                         <div id="features-container">
                                             <div class="input-group mb-2">
-                                                <x-input type="text" name="features[]" placeholder="Enter feature" class="form-control" />
+                                                <x-input type="text" name="features[]" placeholder="{{ __('common.enter_feature') }}" class="form-control" />
                                                 <button type="button" class="btn btn-outline-primary" onclick="addFeatureField()">
-                                                    <i class="ri-add-line"></i> Add Feature
+                                                    <i class="ri-add-line"></i> {{ __('common.add_feature') }}
                                                 </button>
                                             </div>
                                         </div>
                                         @error('features')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
-                                        <small class="text-muted">Add features one by one. Leave empty if not applicable.</small>
+                                        <small class="text-muted">{{ __('common.features_help_text') }}</small>
                                     </div>
                                 </div>
 
                                 <div class="form-check form-switch form-switch-md mb-3">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
-                                    <label class="form-check-label ms-2" for="is_active">Active Status</label>
+                                    <label class="form-check-label ms-2" for="is_active">{{ __('common.active_status') }}</label>
                                 </div>
                                 @error('is_active')
                                     <small class="text-danger d-block">{{ $message }}</small>
                                 @enderror
 
                                 <div class="d-flex justify-content-start gap-2">
-                                    <button type="submit" class="btn btn-primary">Create Plan</button>
-                                    <a href="{{ route('super-admin.subscription-plan.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">{{ __('common.create_subscription_plan') }}</button>
+                                    <a href="{{ route('super-admin.subscription-plan.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
                                 </div>
                             </form>
                         </div>
@@ -168,9 +168,9 @@
             const newField = document.createElement('div');
             newField.className = 'input-group mb-2';
             newField.innerHTML = `
-                <input type="text" name="features[]" placeholder="Enter feature" class="form-control" />
+                <input type="text" name="features[]" placeholder="{{ __('common.enter_feature') }}" class="form-control" />
                 <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">
-                    <i class="ri-subtract-line"></i> Remove
+                    <i class="ri-subtract-line"></i> {{ __('common.remove') }}
                 </button>
             `;
             container.appendChild(newField);

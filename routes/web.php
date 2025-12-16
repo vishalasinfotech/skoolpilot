@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchoolAdmin\AcademicClassController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\SchoolAdmin\FeedbackController as SchoolAdminFeedbackCo
 use App\Http\Controllers\SchoolAdmin\FeeStructureController;
 use App\Http\Controllers\SchoolAdmin\HolidayController;
 use App\Http\Controllers\SchoolAdmin\LibraryController;
+use App\Http\Controllers\SchoolAdmin\NotificationController;
 use App\Http\Controllers\SchoolAdmin\ResultController;
 use App\Http\Controllers\SchoolAdmin\SectionController;
 use App\Http\Controllers\SchoolAdmin\StaffController;
@@ -32,6 +35,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Language Switching Route (available to all users)
+Route::post('/language/switch', [LanguageController::class, 'switch'])->name('language.switch');
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'loginView'])->name('login');
@@ -65,6 +71,11 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::put('super-admin/setting/general', [SettingController::class, 'updateGeneral'])->name('super-admin.setting.update-general');
     Route::get('super-admin/setting/payment', [SettingController::class, 'payment'])->name('super-admin.setting.payment');
     Route::put('super-admin/setting/payment', [SettingController::class, 'updatePayment'])->name('super-admin.setting.update-payment');
+
+    // Language Management Routes (Super Admin Only)
+    Route::resource('super-admin/language', LanguageController::class)->names('super-admin.language');
+    Route::post('super-admin/language/{language}/toggle-status', [LanguageController::class, 'toggleStatus'])->name('super-admin.language.toggle-status');
+    Route::post('super-admin/language/{language}/set-default', [LanguageController::class, 'setAsDefault'])->name('super-admin.language.set-default');
 
     Route::resource('school-admin/teacher', TeacherController::class)->names('school-admin.teacher');
     Route::get('school-admin/teacher-bulk-import', [TeacherController::class, 'bulkImport'])->name('school-admin.teacher.bulk-import');
@@ -112,6 +123,9 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('school-admin/feedback/create', [SchoolAdminFeedbackController::class, 'create'])->name('school-admin.feedback.create');
     Route::post('school-admin/feedback', [SchoolAdminFeedbackController::class, 'store'])->name('school-admin.feedback.store');
 
+    // Notification Routes
+    Route::get('school-admin/notification', [NotificationController::class, 'index'])->name('school-admin.notification.index');
+
     // Library & Transportation Routes
     // Custom library routes must be defined BEFORE resource route to avoid route conflicts
     Route::get('school-admin/library/issue', [LibraryController::class, 'issue'])->name('school-admin.library.issue');
@@ -142,5 +156,18 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('reports/teacher/class-students', [ReportController::class, 'classStudents'])->name('reports.teacher.class-students');
     Route::get('reports/teacher/attendance', [ReportController::class, 'teacherAttendance'])->name('reports.teacher.attendance');
     Route::get('reports/teacher/results', [ReportController::class, 'teacherResults'])->name('reports.teacher.results');
+
+    // Complaint Routes
+    Route::get('teacher/complaint', [ComplaintController::class, 'teacherIndex'])->name('teacher.complaint.index');
+    Route::get('parent/complaint', [ComplaintController::class, 'parentIndex'])->name('parent.complaint.index');
+
+    // Student Routes
+    Route::get('student/exam-schedule-results', [ExamScheduleController::class, 'studentIndex'])->name('student.exam-schedule-results');
+    Route::get('student/fee', [FeeCollectionController::class, 'studentIndex'])->name('student.fee');
+    Route::get('student/reports', [ReportController::class, 'studentReports'])->name('student.reports');
+
+    // Parent Routes
+    Route::get('parent/my-children', [StudentController::class, 'myChildren'])->name('parent.my-children');
+    Route::get('parent/student-reports', [ReportController::class, 'parentStudentReports'])->name('parent.student-reports');
 
 });

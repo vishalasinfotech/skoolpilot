@@ -13,6 +13,7 @@ class Feedback extends Model
 
     protected $fillable = [
         'created_by',
+        'student_id',
         'school_id',
         'subject',
         'message',
@@ -37,5 +38,10 @@ class Feedback extends Model
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'student_id');
     }
 }

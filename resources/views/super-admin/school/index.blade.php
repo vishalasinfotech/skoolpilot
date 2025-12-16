@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'School Management')
+@section('title', __('common.school_management'))
 @section('main-container')
 @include('layouts.badge')
 
@@ -9,12 +9,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">School Management</h4>
+                        <h4 class="mb-sm-0">{{ __('common.school_management') }}</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">School Management</a></li>
-                                <li class="breadcrumb-item active">All Schools</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{{ __('common.school_management') }}</a></li>
+                                <li class="breadcrumb-item active">{{ __('common.all_schools') }}</li>
                             </ol>
                         </div>
 
@@ -28,9 +28,9 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">All Schools</h5>
+                            <h5 class="card-title mb-0">{{ __('common.all_schools') }}</h5>
                             <a href="{{ route('super-admin.school.create') }}" class="btn btn-primary">
-                                <i class="ri-add-line align-middle me-1"></i> Add School
+                                <i class="ri-add-line align-middle me-1"></i> {{ __('common.add_school') }}
                             </a>
                         </div>
 
@@ -52,14 +52,14 @@
                     <lord-icon src="https://cdn.lordicon.com/hrqwmuhr.json" trigger="loop"
                         colors="primary:#121331,secondary:#08a88a" style="width:120px;height:120px"></lord-icon>
                     <div class="mt-4">
-                        <h4 class="mb-3">Delete School</h4>
+                        <h4 class="mb-3">{{ __('common.delete_school') }}</h4>
                         <p class="text-muted mb-4">
-                            Are you sure you want to delete <strong id="deleteSchoolName"></strong>?
-                            This action cannot be undone.
+                            {{ __('common.delete_school_confirm') }} <strong id="deleteSchoolName"></strong>?<br>
+                            {{ __('common.action_cannot_undone') }}
                         </p>
                         <div class="hstack gap-2 justify-content-center">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete School</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{{ __('common.delete_school') }}</button>
                         </div>
                     </div>
                 </div>

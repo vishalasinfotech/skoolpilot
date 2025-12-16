@@ -52,7 +52,7 @@
                 <!-- App Search-->
                 <form class="app-search d-none d-md-block">
                     <div class="position-relative">
-                        <input type="text" class="form-control" placeholder="Search..." autocomplete="off"
+                        <input type="text" class="form-control" placeholder="{{ __('common.search_placeholder') }}" autocomplete="off"
                             id="search-options" value="">
                         <span class="mdi mdi-magnify search-widget-icon"></span>
                         <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
@@ -157,7 +157,7 @@
                         <form class="p-3">
                             <div class="form-group m-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search ..."
+                                    <input type="text" class="form-control" placeholder="{{ __('common.search_placeholder') }}"
                                         aria-label="Recipient's username">
                                     <button class="btn btn-primary" type="submit"><i
                                             class="mdi mdi-magnify"></i></button>
@@ -493,6 +493,42 @@
                     </div>
                 </div>
 
+                <!-- Language Switcher -->
+                <div class="dropdown ms-sm-3 header-item">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+                        id="page-header-language-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" title="{{ __('common.select_language') }}">
+                        <i class="ri-global-line fs-22"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="page-header-language-dropdown">
+                        <h6 class="dropdown-header">{{ __('common.language') }}</h6>
+                        <form action="{{ route('language.switch') }}" method="POST" id="language-switch-form">
+                            @csrf
+                            <input type="hidden" name="locale" id="selected-locale" value="{{ app()->getLocale() }}">
+                            @php
+                                $activeLanguages = \App\Models\Language::active()->orderBy('sort_order')->orderBy('name')->get();
+                                $currentLocale = app()->getLocale();
+                            @endphp
+                            @forelse($activeLanguages as $language)
+                                <a class="dropdown-item language-item {{ $currentLocale === $language->code ? 'active' : '' }}" 
+                                   href="#" data-locale="{{ $language->code }}">
+                                    <i class="ri-checkbox-blank-circle-line me-2"></i>
+                                    <span>{{ $language->native_name ?? $language->name }}</span>
+                                    @if($currentLocale === $language->code)
+                                        <i class="ri-check-line float-end"></i>
+                                    @endif
+                                </a>
+                            @empty
+                                <a class="dropdown-item language-item active" href="#" data-locale="en">
+                                    <i class="ri-checkbox-blank-circle-line me-2"></i>
+                                    <span>English</span>
+                                    <i class="ri-check-line float-end"></i>
+                                </a>
+                            @endforelse
+                        </form>
+                    </div>
+                </div>
+
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -507,13 +543,13 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Welcome {{ Auth::user()->name }}!</h6>
+                        <h6 class="dropdown-header">{{ __('common.welcome') }} {{ Auth::user()->name }}!</h6>
                         <a class="dropdown-item" href="pages-profile.html"><i
                                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle">Profile</span></a>
+                                class="align-middle">{{ __('common.profile') }}</span></a>
                         <a class="dropdown-item" href="{{ route('logout') }}"><i
                                 class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle" data-key="t-logout">Logout</span></a>
+                                class="align-middle">{{ __('common.logout') }}</span></a>
                     </div>
                 </div>
             </div>
@@ -548,3 +584,21 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<script>
+    // Language Switcher
+    document.addEventListener('DOMContentLoaded', function() {
+        const languageItems = document.querySelectorAll('.language-item');
+        const languageForm = document.getElementById('language-switch-form');
+        const selectedLocale = document.getElementById('selected-locale');
+        
+        languageItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const locale = this.getAttribute('data-locale');
+                selectedLocale.value = locale;
+                languageForm.submit();
+            });
+        });
+    });
+</script>

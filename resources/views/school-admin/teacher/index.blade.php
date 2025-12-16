@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Teacher Management')
+@section('title', __('common.teacher_management'))
 @section('main-container')
 
     <div class="page-content">
@@ -8,12 +8,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Teacher Management</h4>
+                        <h4 class="mb-sm-0">{{ __('common.teacher_management') }}</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Teachers</a></li>
-                                <li class="breadcrumb-item active">All Teachers</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">{{ __('common.teachers') }}</a></li>
+                                <li class="breadcrumb-item active">{{ __('common.all_teachers') }}</li>
                             </ol>
                         </div>
                     </div>
@@ -26,13 +26,13 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">All Teachers</h5>
+                            <h5 class="card-title mb-0">{{ __('common.all_teachers') }}</h5>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('school-admin.teacher.bulk-import') }}" class="btn btn-success">
-                                    <i class="ri-upload-line align-middle me-1"></i> Bulk Import
+                                    <i class="ri-upload-line align-middle me-1"></i> {{ __('common.bulk_import') }}
                                 </a>
                                 <a href="{{ route('school-admin.teacher.create') }}" class="btn btn-primary">
-                                    <i class="ri-add-line align-middle me-1"></i> Add Teacher
+                                    <i class="ri-add-line align-middle me-1"></i> {{ __('common.add_teacher') }}
                                 </a>
                             </div>
                         </div>
@@ -54,14 +54,14 @@
                                colors="primary:#121331,secondary:#08a88a"
                                style="width:120px;height:120px"></lord-icon>
                     <div class="mt-4">
-                        <h4 class="mb-3">Delete Teacher</h4>
+                        <h4 class="mb-3">{{ __('common.delete_teacher') }}</h4>
                         <p class="text-muted mb-4">
-                            Are you sure you want to delete <strong id="deleteTeacherName"></strong>?
-                            This action cannot be undone.
+                            {{ __('common.are_you_sure_delete') }} <strong id="deleteTeacherName"></strong>?<br>
+                            {{ __('common.action_cannot_undone') }}
                         </p>
                         <div class="hstack gap-2 justify-content-center">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Teacher</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{{ __('common.delete_teacher') }}</button>
                         </div>
                     </div>
                 </div>

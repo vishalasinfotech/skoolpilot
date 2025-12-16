@@ -8,10 +8,12 @@ use App\Http\Requests\SchoolAdmin\ExamSchedule\UpdateExamScheduleRequest;
 use App\Models\AcademicClass;
 use App\Models\Exam;
 use App\Models\ExamSchedule;
+use App\Models\Result;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ExamScheduleController extends Controller
 {
@@ -101,5 +103,35 @@ class ExamScheduleController extends Controller
 
         return redirect()->route('school-admin.exam-schedule.index')
             ->with('success', 'Exam schedule deleted successfully.');
+    }
+
+    /**
+     * Display exam schedules and results for logged-in student.
+     */
+    public function studentIndex(): View
+    {
+        $student = auth()->user();
+        $schoolId = $student->school_id;
+        $classId = $student->class_id;
+        $sectionId = $student->section_id;
+
+        // Get exam schedules for the student's class and section
+        $examSchedules = ExamSchedule::where('school_id', $schoolId)
+            ->where('academic_class_id', $classId)
+            ->when($sectionId, function ($query) use ($sectionId) {
+                return $query->where('section_id', $sectionId);
+            })
+            ->with(['exam', 'subject', 'academicClass', 'section'])
+            ->orderBy('exam_date', 'asc')
+            ->get();
+
+        // Get results for the student
+        $results = Result::where('school_id', $schoolId)
+            ->where('student_id', $student->id)
+            ->with(['exam', 'subject', 'academicClass', 'academicSession'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('student.exam-schedule-results', compact('examSchedules', 'results'));
     }
 }

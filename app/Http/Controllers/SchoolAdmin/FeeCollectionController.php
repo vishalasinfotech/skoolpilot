@@ -12,6 +12,7 @@ use App\Models\StudentFeeTransaction;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class FeeCollectionController extends Controller
 {
@@ -228,5 +229,28 @@ class FeeCollectionController extends Controller
         }
 
         return "{$prefix}-{$year}-{$schoolCode}-{$newNumber}";
+    }
+
+    /**
+     * Display fees for logged-in student.
+     */
+    public function studentIndex(): View
+    {
+        $student = auth()->user();
+        $schoolId = $student->school_id;
+
+        // Get fee transactions for the student
+        $feeTransactions = StudentFeeTransaction::where('school_id', $schoolId)
+            ->where('student_id', $student->id)
+            ->with(['feeStructure', 'academicSession', 'collectedBy'])
+            ->orderBy('transaction_date', 'desc')
+            ->get();
+
+        // Calculate totals
+        $totalPaid = $feeTransactions->where('status', 'completed')->sum('amount');
+        $totalPending = $feeTransactions->where('status', 'pending')->sum('amount');
+        $totalDue = $feeTransactions->where('status', 'due')->sum('amount');
+
+        return view('student.fee', compact('feeTransactions', 'totalPaid', 'totalPending', 'totalDue'));
     }
 }

@@ -21,31 +21,30 @@
             <div id="two-column-menu"></div>
 
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="menu-title"><span data-key="t-menu">{{ __('common.menu') }}</span></li>
 
                 <!-- Dashboards -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('dashboard') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">{{ __('common.dashboards') }}</span>
                     </a>
                 </li>
 
                 <!-- Super Admin -->
-                <li class="menu-title"><span data-key="t-menu">Super Admin</span></li>
+                <li class="menu-title"><span data-key="t-menu">{{ __('common.super_admin') }}</span></li>
 
                 <li class="nav-item" data-role="super_admin">
                     <a class="nav-link menu-link" href="#sidebarSuperAdmin" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarSuperAdmin">
-                        <i class="ri-building-line"></i> <span>School Management</span>
+                        <i class="ri-building-line"></i> <span>{{ __('common.school_management') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarSuperAdmin">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{ route('super-admin.school.index') }}" class="nav-link">All
-                                    Schools</a></li>
+                            <li class="nav-item"><a href="{{ route('super-admin.school.index') }}" class="nav-link">{{ __('common.all_schools') }}</a></li>
                             <li class="nav-item"><a href="{{ route('super-admin.subscription-plan.index') }}"
-                                    class="nav-link">Subscriptions & Plans</a></li>
+                                    class="nav-link">{{ __('common.subscriptions_plans') }}</a></li>
                             <li class="nav-item"><a href="{{ route('payment.transaction-history') }}"
-                                    class="nav-link">Transaction History</a></li>
+                                    class="nav-link">{{ __('common.transaction_history') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -53,64 +52,70 @@
                 <li class="nav-item" data-role="super_admin">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarSettings">
-                        <i class="ri-settings-3-line"></i> <span>Settings</span>
+                        <i class="ri-settings-3-line"></i> <span>{{ __('common.settings') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('super-admin.setting.general') }}"
-                                    class="nav-link">Email Configuration</a></li>
+                                    class="nav-link">{{ __('common.email_configuration') }}</a></li>
                             <li class="nav-item"><a href="{{ route('super-admin.setting.payment') }}"
-                                    class="nav-link">Payment Gateway</a></li>
+                                    class="nav-link">{{ __('common.payment_gateway') }}</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
                     <a class="nav-link menu-link" href="#">
-                        <i class="ri-shield-user-line"></i> <span>Permission Management</span>
+                        <i class="ri-shield-user-line"></i> <span>{{ __('common.permission_management') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
                     <a class="nav-link menu-link" href="#sidebarReports" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarReports">
-                        <i class="ri-bar-chart-line"></i> <span>Reports</span>
+                        <i class="ri-bar-chart-line"></i> <span>{{ __('common.reports') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarReports">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.super-admin.revenue') }}" class="nav-link">Revenue Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.super-admin.schools') }}" class="nav-link">Schools Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.super-admin.transactions') }}" class="nav-link">Transactions Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">{{ __('common.all_reports') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.revenue') }}" class="nav-link">{{ __('common.revenue_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.schools') }}" class="nav-link">{{ __('common.schools_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.super-admin.transactions') }}" class="nav-link">{{ __('common.transactions_report') }}</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
                     <a class="nav-link menu-link" href="{{ route('super-admin.feedback.index') }}">
-                        <i class="ri-chat-3-line"></i> <span>Feedback</span>
+                        <i class="ri-chat-3-line"></i> <span>{{ __('common.feedback') }}</span>
+                    </a>
+                </li>
+
+                <li class="nav-item" data-role="super_admin">
+                    <a class="nav-link menu-link" href="{{ route('super-admin.language.index') }}">
+                        <i class="ri-global-line"></i> <span>{{ __('common.language_management') }}</span>
                     </a>
                 </li>
 
                 <!-- School Admin -->
-                <li class="menu-title"><span data-key="t-menu">School Admin</span></li>
+                <li class="menu-title"><span data-key="t-menu">{{ __('common.school_admin') }}</span></li>
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarUsers" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarUsers">
-                        <i class="ri-group-line"></i> <span>Users & Staff</span>
+                        <i class="ri-group-line"></i> <span>{{ __('common.users_staff') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarUsers">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('school-admin.teacher.index') }}"
-                                    class="nav-link">Teachers</a></li>
+                                    class="nav-link">{{ __('common.teachers') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.student.index') }}"
-                                    class="nav-link">Students</a></li>
+                                    class="nav-link">{{ __('common.students') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.staff.index') }}"
-                                    class="nav-link">Staff</a></li>
+                                    class="nav-link">{{ __('common.staff') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.teacher.bulk-import') }}"
-                                    class="nav-link">Bulk Upload (Excel)</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Promotions</a></li>
+                                    class="nav-link">{{ __('common.bulk_upload_excel') }}</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.promotions') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -118,26 +123,26 @@
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarAcademic" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAcademic">
-                        <i class="ri-book-open-line"></i> <span>Academic</span>
+                        <i class="ri-book-open-line"></i> <span>{{ __('common.academic') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAcademic">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('school-admin.academic-class.index') }}"
-                                    class="nav-link">Classes</a></li>
+                                    class="nav-link">{{ __('common.classes') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.section.index') }}"
-                                    class="nav-link">Sections</a></li>
+                                    class="nav-link">{{ __('common.sections') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.subject.index') }}"
-                                    class="nav-link">Subjects</a></li>
+                                    class="nav-link">{{ __('common.subjects') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.academic-session.index') }}"
-                                    class="nav-link">Academic Sessions</a></li>
+                                    class="nav-link">{{ __('common.academic_sessions') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.attendance.index') }}"
-                                    class="nav-link">Attendance</a></li>
+                                    class="nav-link">{{ __('common.attendance') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}"
-                                    class="nav-link">Exams</a></li>
+                                    class="nav-link">{{ __('common.exams') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}"
-                                    class="nav-link">Exam Schedules</a></li>
+                                    class="nav-link">{{ __('common.exam_schedules') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.result.index') }}"
-                                    class="nav-link">Results</a></li>
+                                    class="nav-link">{{ __('common.results') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -145,16 +150,16 @@
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarEvents" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarEvents">
-                        <i class="ri-calendar-event-line"></i> <span>Events & Calendar</span>
+                        <i class="ri-calendar-event-line"></i> <span>{{ __('common.events_calendar') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarEvents">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('school-admin.event.index') }}"
-                                    class="nav-link">Events</a></li>
+                                    class="nav-link">{{ __('common.events') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.holiday.index') }}"
-                                    class="nav-link">Holidays</a></li>
+                                    class="nav-link">{{ __('common.holidays') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.calendar.index') }}"
-                                    class="nav-link">Calendar</a></li>
+                                    class="nav-link">{{ __('common.calendar') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -162,14 +167,14 @@
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarFees" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarFees">
-                        <i class="ri-money-dollar-circle-line"></i> <span>Fees & Finance</span>
+                        <i class="ri-money-dollar-circle-line"></i> <span>{{ __('common.fees_finance') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarFees">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('school-admin.fee-structure.index') }}"
-                                    class="nav-link">Fee Structure</a></li>
+                                    class="nav-link">{{ __('common.fee_structure') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.fee-collection.index') }}"
-                                    class="nav-link">Fee Collection</a></li>
+                                    class="nav-link">{{ __('common.fee_collection') }}</a></li>
 
                         </ul>
                     </div>
@@ -178,88 +183,94 @@
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarLibrary" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarLibrary">
-                        <i class="ri-book-open-line"></i> <span>Library</span>
+                        <i class="ri-book-open-line"></i> <span>{{ __('common.library') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarLibrary">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('school-admin.library.index') }}"
-                                    class="nav-link">All Books</a></li>
+                                    class="nav-link">{{ __('common.all_books') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.library.issued-books') }}"
-                                    class="nav-link">Issued Books</a></li>
+                                    class="nav-link">{{ __('common.issued_books') }}</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="{{ route('school-admin.setting.index') }}">
-                        <i class="ri-paint-line"></i> <span>White-label Customization</span>
+                        <i class="ri-paint-line"></i> <span>{{ __('common.white_label_customization') }}</span>
                     </a>
                 </li>
 
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="{{ route('school-admin.transportation.index') }}">
-                        <i class="ri-bus-2-line"></i> <span>Transportation</span>
+                        <i class="ri-bus-2-line"></i> <span>{{ __('common.transportation') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="{{ route('subscription-plan.plans') }}">
-                        <i class="ri-price-tag-2-line"></i> <span>Current Plan</span>
+                        <i class="ri-price-tag-2-line"></i> <span>{{ __('common.current_plan') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="{{ route('school-admin.feedback.index') }}">
-                        <i class="ri-feedback-line"></i> <span>Feedback</span>
+                        <i class="ri-feedback-line"></i> <span>{{ __('common.feedback') }}</span>
+                    </a>
+                </li>
+
+                <li class="nav-item" data-role="school_admin">
+                    <a class="nav-link menu-link" href="{{ route('school-admin.notification.index') }}">
+                        <i class="ri-notification-line"></i> <span>{{ __('common.send_notification') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="school_admin">
                     <a class="nav-link menu-link" href="#sidebarSchoolReports" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarSchoolReports">
-                        <i class="ri-file-chart-line"></i> <span>Reports</span>
+                        <i class="ri-file-chart-line"></i> <span>{{ __('common.reports') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarSchoolReports">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.students') }}" class="nav-link">Students Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.teachers') }}" class="nav-link">Teachers Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.staff') }}" class="nav-link">Staff Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.attendance') }}" class="nav-link">Attendance Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.fees') }}" class="nav-link">Fees Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.exam-results') }}" class="nav-link">Exam & Results Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.school-admin.library') }}" class="nav-link">Library Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">{{ __('common.all_reports') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.students') }}" class="nav-link">{{ __('common.students_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.teachers') }}" class="nav-link">{{ __('common.teachers_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.staff') }}" class="nav-link">{{ __('common.staff_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.attendance') }}" class="nav-link">{{ __('common.attendance_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.fees') }}" class="nav-link">{{ __('common.fees_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.exam-results') }}" class="nav-link">{{ __('common.exam_results_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.school-admin.library') }}" class="nav-link">{{ __('common.library_report') }}</a></li>
                         </ul>
                     </div>
                 </li>
 
                 <!-- Teacher -->
-                <li class="menu-title"><span data-key="t-menu">Teacher</span></li>
+                <li class="menu-title"><span data-key="t-menu">{{ __('common.teacher') }}</span></li>
 
                 <li class="nav-item" data-role="teacher">
                     <a class="nav-link menu-link" href="#">
-                        <i class="ri-user-3-line"></i> <span>Profile</span>
+                        <i class="ri-user-3-line"></i> <span>{{ __('common.profile') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="teacher">
                     <a class="nav-link menu-link" href="#sidebarClassroom" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarClassroom">
-                        <i class="ri-contacts-line"></i> <span>Classroom</span>
+                        <i class="ri-contacts-line"></i> <span>{{ __('common.classroom') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarClassroom">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link">Attendance</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Assignments</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.attendance') }}</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.assignments') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}"
-                                    class="nav-link">Exams</a></li>
+                                    class="nav-link">{{ __('common.exams') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}"
-                                    class="nav-link">Exam Schedules</a></li>
+                                    class="nav-link">{{ __('common.exam_schedules') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.result.index') }}"
-                                    class="nav-link">Results</a></li>
+                                    class="nav-link">{{ __('common.results') }}</a></li>
 
-                            <li class="nav-item"><a href="#" class="nav-link">Apply for Leave</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.apply_for_leave') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -267,76 +278,61 @@
                 <li class="nav-item" data-role="teacher">
                     <a class="nav-link menu-link" href="#sidebarTeacherReports" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarTeacherReports">
-                        <i class="ri-file-chart-line"></i> <span>Reports</span>
+                        <i class="ri-file-chart-line"></i> <span>{{ __('common.reports') }}</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarTeacherReports">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">All Reports</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.teacher.class-students') }}" class="nav-link">Class Students</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.teacher.attendance') }}" class="nav-link">Attendance Report</a></li>
-                            <li class="nav-item"><a href="{{ route('reports.teacher.results') }}" class="nav-link">Results Report</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.index') }}" class="nav-link">{{ __('common.all_reports') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.class-students') }}" class="nav-link">{{ __('common.class_students') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.attendance') }}" class="nav-link">{{ __('common.attendance_report') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('reports.teacher.results') }}" class="nav-link">{{ __('common.results') }} {{ __('common.reports') }}</a></li>
                         </ul>
                     </div>
+                </li>
+
+                <li class="nav-item" data-role="teacher">
+                    <a class="nav-link menu-link" href="{{ route('teacher.complaint.index') }}">
+                        <i class="ri-feedback-line"></i> <span>{{ __('common.add_student_complaint') }}</span>
+                    </a>
                 </li>
 
                 <!-- Student & Parent -->
-                <li class="menu-title"><span data-key="t-menu">Student & Parent</span></li>
-
+                <li class="menu-title"><span data-key="t-menu">{{ __('common.student_parent') }}</span></li>
                 <li class="nav-item" data-role="student">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-school-line"></i> <span>My Dashboard</span>
-                    </a>
-                </li>
-
-                <li class="nav-item" data-role="student">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-wallet-3-line"></i> <span>Fees</span>
+                    <a class="nav-link menu-link" href="{{ route('student.fee') }}">
+                        <i class="ri-wallet-3-line"></i> <span>{{ __('common.fees') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="student">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-file-list-3-line"></i> <span>Exam Schedule & Results</span>
+                    <a class="nav-link menu-link" href="{{ route('student.exam-schedule-results') }}">
+                        <i class="ri-file-list-3-line"></i> <span>{{ __('common.exam_schedule_results') }}</span>
+                    </a>
+                </li>
+
+                <li class="nav-item" data-role="student">
+                    <a class="nav-link menu-link" href="{{ route('student.reports') }}">
+                        <i class="ri-file-chart-line"></i> <span>{{ __('common.student_reports') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="parent">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-parent-line"></i> <span>My Children</span>
+                    <a class="nav-link menu-link" href="{{ route('parent.my-children') }}">
+                        <i class="ri-parent-line"></i> <span>{{ __('common.my_children') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="parent">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-file-chart-line"></i> <span>Student Reports</span>
+                    <a class="nav-link menu-link" href="{{ route('parent.student-reports') }}">
+                        <i class="ri-file-chart-line"></i> <span>{{ __('common.student_reports') }}</span>
                     </a>
                 </li>
 
                 <li class="nav-item" data-role="parent">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-feedback-line"></i> <span>Register Complaint</span>
+                    <a class="nav-link menu-link" href="{{ route('parent.complaint.index') }}">
+                        <i class="ri-feedback-line"></i> <span>{{ __('common.view_student_complaints') }}</span>
                     </a>
                 </li>
-
-
-
-                <!-- Communication -->
-                <li class="menu-title"><span data-key="t-menu">Communication</span></li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="sidebarNotifications">
-                        <i class="ri-notification-3-line"></i> <span>Notifications</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebarNotifications">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link">Create Notification</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Notification History</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">Templates</a></li>
-                        </ul>
-                    </div>
-                </li>
-
             </ul>
         </div>
         <!-- Sidebar -->

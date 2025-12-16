@@ -11,7 +11,6 @@ use App\Models\Result;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\StudentFeeTransaction;
-use App\Models\Subject;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -597,6 +596,129 @@ class ReportController extends Controller
             'academicSessions',
             'examId',
             'classId',
+            'academicSessionId'
+        ));
+    }
+
+    // ==================== STUDENT REPORTS ====================
+
+    /**
+     * Student Reports - For logged-in student
+     */
+    public function studentReports(Request $request): View
+    {
+        $student = auth()->user();
+        $schoolId = $student->school_id;
+        $academicSessionId = $request->get('academic_session_id');
+
+        // Get results for the student
+        $results = Result::query()
+            ->where('school_id', $schoolId)
+            ->where('student_id', $student->id)
+            ->with(['exam', 'subject', 'academicClass', 'academicSession']);
+
+        if ($academicSessionId) {
+            $results->where('academic_session_id', $academicSessionId);
+        }
+
+        $results = $results->orderBy('created_at', 'desc')->get();
+
+        // Get attendance for the student
+        $attendances = Attendance::query()
+            ->where('school_id', $schoolId)
+            ->where('user_id', $student->id)
+            ->orderBy('date', 'desc')
+            ->limit(30)
+            ->get();
+
+        $attendanceStats = [
+            'total' => $attendances->count(),
+            'present' => $attendances->where('status', 'present')->count(),
+            'absent' => $attendances->where('status', 'absent')->count(),
+            'late' => $attendances->where('status', 'late')->count(),
+        ];
+
+        $academicSessions = AcademicSession::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->orderBy('start_date', 'desc')
+            ->pluck('name', 'id');
+
+        return view('student.reports', compact(
+            'results',
+            'attendances',
+            'attendanceStats',
+            'academicSessions',
+            'academicSessionId'
+        ));
+    }
+
+    // ==================== PARENT REPORTS ====================
+
+    /**
+     * Parent Student Reports - For parent's children
+     */
+    public function parentStudentReports(Request $request): View
+    {
+        $parent = auth()->user();
+        $schoolId = $parent->school_id;
+        $studentId = $request->get('student_id');
+        $academicSessionId = $request->get('academic_session_id');
+
+        // Get parent's children (students linked to parent)
+        $children = User::where('school_id', $schoolId)
+            ->where('role', 'student')
+            ->where(function ($query) use ($parent) {
+                $query->where('parent_phone', $parent->phone)
+                    ->orWhere('parent_email', $parent->email);
+            })
+            ->where('is_active', true)
+            ->orderBy('first_name')
+            ->get();
+
+        $results = collect();
+        $attendances = collect();
+
+        if ($studentId && $children->contains('id', $studentId)) {
+            // Get results for selected child
+            $resultsQuery = Result::query()
+                ->where('school_id', $schoolId)
+                ->where('student_id', $studentId)
+                ->with(['exam', 'subject', 'academicClass', 'academicSession']);
+
+            if ($academicSessionId) {
+                $resultsQuery->where('academic_session_id', $academicSessionId);
+            }
+
+            $results = $resultsQuery->orderBy('created_at', 'desc')->get();
+
+            // Get attendance for selected child
+            $attendances = Attendance::query()
+                ->where('school_id', $schoolId)
+                ->where('user_id', $studentId)
+                ->orderBy('date', 'desc')
+                ->limit(30)
+                ->get();
+        }
+
+        $attendanceStats = [
+            'total' => $attendances->count(),
+            'present' => $attendances->where('status', 'present')->count(),
+            'absent' => $attendances->where('status', 'absent')->count(),
+            'late' => $attendances->where('status', 'late')->count(),
+        ];
+
+        $academicSessions = AcademicSession::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->orderBy('start_date', 'desc')
+            ->pluck('name', 'id');
+
+        return view('parent.student-reports', compact(
+            'children',
+            'results',
+            'attendances',
+            'attendanceStats',
+            'academicSessions',
+            'studentId',
             'academicSessionId'
         ));
     }
