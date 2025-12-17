@@ -17,7 +17,7 @@ class StoreExamScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'exam_id' => ['required', 'exists:exams,id'],
             'academic_class_id' => ['required', 'exists:academic_classes,id'],
             'section_id' => ['nullable', 'exists:sections,id'],

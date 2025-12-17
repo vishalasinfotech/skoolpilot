@@ -33,13 +33,6 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id', auth()->user()->school_id)" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
                                         <label for="academic_session_id" class="form-label">Academic Session <span class="text-danger">*</span></label>
                                         <x-select name="academic_session_id" id="academic_session_id" :options="$academicSessions" :value="old('academic_session_id')" required placeholder="Select Academic Session" />
                                         @error('academic_session_id')

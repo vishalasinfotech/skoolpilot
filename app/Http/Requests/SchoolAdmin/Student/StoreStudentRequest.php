@@ -15,7 +15,7 @@ class StoreStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'student')],

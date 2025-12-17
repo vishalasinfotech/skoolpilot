@@ -17,7 +17,7 @@ class UpdateExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'academic_session_id' => ['required', 'exists:academic_sessions,id'],
             'name' => ['required', 'string', 'max:255'],
             'exam_type' => ['required', 'in:regular,mid_term,final,unit_test,quiz'],

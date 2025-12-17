@@ -69,7 +69,7 @@ class ResultController extends Controller
     public function store(StoreResultRequest $request): RedirectResponse
     {
         $data = $request->validated();
-
+        $data['school_id'] = auth()->user()->school_id;
         // Calculate percentage if not provided
         if (empty($data['percentage']) && $data['total_marks'] > 0) {
             $data['percentage'] = ($data['obtained_marks'] / $data['total_marks']) * 100;

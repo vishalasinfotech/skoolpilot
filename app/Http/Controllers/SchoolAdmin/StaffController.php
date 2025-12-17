@@ -44,7 +44,7 @@ class StaffController extends Controller
     public function store(StoreStaffRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
         $data = $request->validated();
-
+        $data['school_id'] = auth()->user()->school_id;
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),

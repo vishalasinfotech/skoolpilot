@@ -26,10 +26,7 @@
         <div class="vertical-overlay"></div>
         <div class="main-content">
             @yield('main-container')
-
             @include('layouts.footer')
-
-            
         </div>
     </div>
     @include('layouts.script')

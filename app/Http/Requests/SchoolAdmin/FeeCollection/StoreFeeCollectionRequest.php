@@ -14,7 +14,7 @@ class StoreFeeCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'student_id' => ['required', 'exists:users,id'],
             'fee_structure_id' => ['nullable', 'exists:fee_structures,id'],
             'academic_session_id' => ['nullable', 'exists:academic_sessions,id'],

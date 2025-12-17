@@ -42,7 +42,7 @@ class LibraryController extends Controller
     {
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
-
+        $data['school_id'] = auth()->user()->school_id;
         if ($request->hasFile('book_image')) {
             $data['book_image'] = $imageUploadService->uploadImage(
                 $request->file('book_image'),

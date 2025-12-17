@@ -44,6 +44,7 @@ class TeacherController extends Controller
     public function store(StoreTeacherRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
         $data = $request->validated();
+        $data['school_id'] = auth()->user()->school_id;
 
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(

@@ -22,7 +22,7 @@ class UpdateLibraryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'book_title' => ['required', 'string', 'max:255'],
             'isbn' => ['nullable', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],

@@ -22,16 +22,12 @@ class FeedbackController extends Controller
 
     public function store(StoreFeedbackRequest $request): RedirectResponse
     {
-        $user = auth()->user();
+        $data = $request->validated();
+        $data['created_by'] = auth()->id();
+        $data['school_id'] = auth()->user()->school_id;
 
-        Feedback::create([
-            'created_by' => $user->id,
-            'school_id' => $user->school_id,
-            'subject' => $request->validated()['subject'],
-            'message' => $request->validated()['message'],
-            'type' => $request->validated()['type'] ?? 'general',
-            'status' => 'pending',
-        ]);
+        $data['status'] = 'pending';
+        Feedback::create($data);
 
         return redirect()->route('school-admin.feedback.index')
             ->with('success', 'Feedback submitted successfully.');

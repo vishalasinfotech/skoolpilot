@@ -27,7 +27,7 @@ class UpdateTeacherRequest extends FormRequest
         $teacherId = $teacher instanceof User ? $teacher->id : $teacher;
 
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'teacher')->ignore($teacherId)],

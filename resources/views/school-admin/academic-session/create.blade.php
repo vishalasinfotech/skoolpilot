@@ -33,13 +33,6 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id', auth()->user()->school_id)" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Session Name <span class="text-danger">*</span></label>
                                         <x-input type="text" name="name" id="name" :value="old('name')" required autofocus placeholder="e.g., 2024-2025, 2025-2026" />
                                         @error('name')

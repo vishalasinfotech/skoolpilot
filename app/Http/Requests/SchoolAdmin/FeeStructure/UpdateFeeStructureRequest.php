@@ -22,7 +22,7 @@ class UpdateFeeStructureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'class_id' => ['nullable', 'exists:academic_classes,id'],
             'fee_type' => ['required', 'string', 'max:100'],
             'fee_name' => ['required', 'string', 'max:255'],

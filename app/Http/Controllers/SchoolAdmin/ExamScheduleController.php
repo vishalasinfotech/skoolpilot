@@ -49,6 +49,7 @@ class ExamScheduleController extends Controller
     public function store(StoreExamScheduleRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $data['school_id'] = auth()->user()->school_id;
 
         ExamSchedule::create($data);
 

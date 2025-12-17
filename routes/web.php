@@ -51,6 +51,11 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     // Dashboard Routes
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Profile Routes
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/change-password', [AuthController::class, 'changePassword'])->name('profile.change-password');
+
     Route::get('subscription-plan/plans', [SubscriptionPlanController::class, 'plans'])->name('subscription-plan.plans');
 
     // Payment Routes

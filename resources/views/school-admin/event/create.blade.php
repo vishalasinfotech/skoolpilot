@@ -35,16 +35,6 @@
 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id')" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12 mb-3">
                                         <label for="title" class="form-label">Event Title <span class="text-danger">*</span></label>
                                         <x-input type="text" name="title" id="title" :value="old('title')" required autofocus placeholder="Enter event title" />
                                         @error('title')

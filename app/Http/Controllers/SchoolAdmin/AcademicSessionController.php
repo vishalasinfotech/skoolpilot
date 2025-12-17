@@ -33,7 +33,7 @@ class AcademicSessionController extends Controller
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['is_current'] = $request->boolean('is_current', false);
-
+        $data['school_id'] = auth()->user()->school_id;
         // If setting as current, unset other current sessions for this school
         if ($data['is_current']) {
             AcademicSession::where('school_id', $data['school_id'])

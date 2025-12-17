@@ -12,7 +12,7 @@ return [
     'subscriptions_plans' => 'सदस्यता और योजनाएं',
     'transaction_history' => 'लेनदेन इतिहास',
     'settings' => 'सेटिंग्स',
-    'email_configuration' => 'ईमेल कॉन्फ़िगरेशन',
+    'configuration' => 'कॉन्फ़िगरेशन',
     'payment_gateway' => 'भुगतान गेटवे',
     'permission_management' => 'अनुमति प्रबंधन',
     'reports' => 'रिपोर्ट्स',

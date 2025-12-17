@@ -39,6 +39,7 @@ class AcademicClassController extends Controller
     {
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
+        $data['school_id'] = auth()->user()->school_id;
 
         AcademicClass::create($data);
 

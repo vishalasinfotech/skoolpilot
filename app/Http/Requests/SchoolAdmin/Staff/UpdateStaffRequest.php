@@ -19,7 +19,7 @@ class UpdateStaffRequest extends FormRequest
         $staffId = $staff instanceof User ? $staff->id : $staff;
 
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'staff')->ignore($staffId)],

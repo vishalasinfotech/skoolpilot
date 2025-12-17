@@ -62,7 +62,7 @@ class FeeCollectionController extends Controller
             $data = $request->validated();
             $data['collected_by'] = auth()->id();
             $data['status'] = $request->input('status', 'completed');
-
+            $data['school_id'] = auth()->user()->school_id;
             // Generate transaction number
             if (empty($data['transaction_number'])) {
                 $data['transaction_number'] = $this->generateTransactionNumber($data['school_id']);

@@ -12,7 +12,7 @@ return [
     'subscriptions_plans' => 'Subscriptions & Plans',
     'transaction_history' => 'Transaction History',
     'settings' => 'Settings',
-    'email_configuration' => 'Email Configuration',
+    'configuration' => 'Configuration',
     'payment_gateway' => 'Payment Gateway',
     'permission_management' => 'Permission Management',
     'reports' => 'Reports',

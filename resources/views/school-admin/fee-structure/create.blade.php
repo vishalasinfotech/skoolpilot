@@ -32,13 +32,7 @@
                                 @csrf
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id', auth()->user()->school_id)" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label for="class_id" class="form-label">Class</label>
                                         <x-select name="class_id" id="class_id" :options="$classes" :value="old('class_id')" placeholder="Select Class (Leave empty for all classes)" />

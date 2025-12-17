@@ -14,7 +14,7 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'start_date' => ['required', 'date'],
@@ -29,7 +29,7 @@ class StoreEventRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'school_id.required' => 'The school field is required.',
+            // 'school_id.required' => 'The school field is required.',
             'title.required' => 'The event title field is required.',
             'start_date.required' => 'The start date field is required.',
             'end_date.after_or_equal' => 'The end date must be after or equal to the start date.',

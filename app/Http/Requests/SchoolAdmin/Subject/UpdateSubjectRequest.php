@@ -14,7 +14,7 @@ class UpdateSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string', 'max:500'],
@@ -25,7 +25,7 @@ class UpdateSubjectRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'school_id.required' => 'The school field is required.',
+            // 'school_id.required' => 'The school field is required.',
             'name.required' => 'The subject name field is required.',
         ];
     }

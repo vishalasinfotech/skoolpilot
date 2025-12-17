@@ -14,7 +14,7 @@ class StoreSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'short_code' => ['nullable', 'string', 'max:10'],
@@ -25,7 +25,7 @@ class StoreSectionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'school_id.required' => 'The school field is required.',
+            //  'school_id.required' => 'The school field is required.',
             'name.required' => 'The section name field is required.',
         ];
     }

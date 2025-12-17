@@ -39,7 +39,7 @@ class HolidayController extends Controller
     {
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
-
+        $data['school_id'] = auth()->user()->school_id;
         Holiday::create($data);
 
         return redirect()->route('school-admin.holiday.index')

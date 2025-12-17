@@ -34,13 +34,6 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id', $feeCollection->school_id)" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
                                         <label for="student_id" class="form-label">Student <span class="text-danger">*</span></label>
                                         <x-select name="student_id" id="student_id" :options="$students" :value="old('student_id', $feeCollection->student_id)" required placeholder="Select Student" />
                                         @error('student_id')
@@ -193,7 +186,7 @@
 
             function togglePaymentFields() {
                 const method = paymentMethod.value;
-                
+
                 if (method === 'cheque') {
                     chequeFields.style.display = 'block';
                     bankFields.style.display = 'none';
@@ -216,7 +209,7 @@
             }
 
             paymentMethod.addEventListener('change', togglePaymentFields);
-            
+
             // Initialize on page load
             togglePaymentFields();
         });

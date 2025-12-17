@@ -15,7 +15,7 @@ class StoreStaffRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'staff')],
@@ -39,7 +39,7 @@ class StoreStaffRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'The first name field is required.',
+            // 'first_name.required' => 'The first name field is required.',
             'last_name.required' => 'The last name field is required.',
             'email.required' => 'The email field is required.',
             'email.unique' => 'This email is already registered.',

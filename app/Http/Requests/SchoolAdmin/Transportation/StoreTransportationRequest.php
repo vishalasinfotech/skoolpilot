@@ -22,7 +22,7 @@ class StoreTransportationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'vehicle_number' => ['required', 'string', 'max:255'],
             'vehicle_type' => ['required', 'string', 'in:bus,van,car,auto,other'],
             'driver_name' => ['required', 'string', 'max:255'],

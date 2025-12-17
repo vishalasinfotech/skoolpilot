@@ -17,7 +17,7 @@ class UpdateResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'academic_session_id' => ['required', 'exists:academic_sessions,id'],
             'exam_id' => ['required', 'exists:exams,id'],
             'exam_schedule_id' => ['required', 'exists:exam_schedules,id'],

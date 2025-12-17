@@ -14,7 +14,7 @@ class UpdateAcademicClassRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'school_id' => ['required', 'exists:schools,id'],
+            // 'school_id' => ['required', 'exists:schools,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['nullable', 'boolean'],
@@ -24,7 +24,7 @@ class UpdateAcademicClassRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'school_id.required' => 'The school field is required.',
+            // 'school_id.required' => 'The school field is required.',
             'name.required' => 'The class name field is required.',
         ];
     }

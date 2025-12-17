@@ -510,7 +510,7 @@
                                 $currentLocale = app()->getLocale();
                             @endphp
                             @forelse($activeLanguages as $language)
-                                <a class="dropdown-item language-item {{ $currentLocale === $language->code ? 'active' : '' }}" 
+                                <a class="dropdown-item language-item {{ $currentLocale === $language->code ? 'active' : '' }}"
                                    href="#" data-locale="{{ $language->code }}">
                                     <i class="ri-checkbox-blank-circle-line me-2"></i>
                                     <span>{{ $language->native_name ?? $language->name }}</span>
@@ -544,7 +544,7 @@
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
                         <h6 class="dropdown-header">{{ __('common.welcome') }} {{ Auth::user()->name }}!</h6>
-                        <a class="dropdown-item" href="pages-profile.html"><i
+                        <a class="dropdown-item" href="{{ route('profile') }}"><i
                                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
                                 class="align-middle">{{ __('common.profile') }}</span></a>
                         <a class="dropdown-item" href="{{ route('logout') }}"><i
@@ -591,7 +591,7 @@
         const languageItems = document.querySelectorAll('.language-item');
         const languageForm = document.getElementById('language-switch-form');
         const selectedLocale = document.getElementById('selected-locale');
-        
+
         languageItems.forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();

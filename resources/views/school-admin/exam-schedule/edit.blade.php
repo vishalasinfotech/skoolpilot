@@ -33,13 +33,7 @@
                                 @method('PUT')
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="school_id" class="form-label">School <span class="text-danger">*</span></label>
-                                        <x-select name="school_id" id="school_id" :options="$schools" :value="old('school_id', $examSchedule->school_id)" required placeholder="Select School" />
-                                        @error('school_id')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label for="exam_id" class="form-label">Exam <span class="text-danger">*</span></label>
                                         <x-select name="exam_id" id="exam_id" :options="$exams" :value="old('exam_id', $examSchedule->exam_id)" required placeholder="Select Exam" />

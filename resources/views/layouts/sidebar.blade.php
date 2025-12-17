@@ -57,7 +57,7 @@
                     <div class="collapse menu-dropdown" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item"><a href="{{ route('super-admin.setting.general') }}"
-                                    class="nav-link">{{ __('common.email_configuration') }}</a></li>
+                                    class="nav-link">{{ __('common.configuration') }}</a></li>
                             <li class="nav-item"><a href="{{ route('super-admin.setting.payment') }}"
                                     class="nav-link">{{ __('common.payment_gateway') }}</a></li>
                         </ul>
