@@ -16,7 +16,7 @@ class SubscriptionPlanSeeder extends Seeder
             [
                 'name' => 'Free Plan',
                 'description' => 'Start using basic features at no cost. Perfect for individuals or small schools just getting started.',
-                'type' => 'free',
+                'type' => 'monthly',
                 'tier' => 'basic',
                 'plan_status' => 'free',
                 'price' => 0.00,

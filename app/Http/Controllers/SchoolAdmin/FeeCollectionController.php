@@ -57,45 +57,35 @@ class FeeCollectionController extends Controller
      */
     public function store(StoreFeeCollectionRequest $request): RedirectResponse
     {
-        DB::beginTransaction();
-        try {
-            $data = $request->validated();
-            $data['collected_by'] = auth()->id();
-            $data['status'] = $request->input('status', 'completed');
-            $data['school_id'] = auth()->user()->school_id;
-            // Generate transaction number
-            if (empty($data['transaction_number'])) {
-                $data['transaction_number'] = $this->generateTransactionNumber($data['school_id']);
-            }
+        $data = $request->validated();
+        $data['collected_by'] = auth()->id();
+        $data['status'] = $request->input('status', 'completed');
+        $data['school_id'] = auth()->user()->school_id;
 
-            // Generate receipt number if not provided
-            if (empty($data['receipt_number'])) {
-                $data['receipt_number'] = $this->generateReceiptNumber($data['school_id']);
-            }
-
-            // Clear cheque/bank fields if not applicable
-            if ($data['payment_method'] !== 'cheque') {
-                $data['cheque_number'] = null;
-                $data['cheque_date'] = null;
-            }
-            if ($data['payment_method'] !== 'bank') {
-                $data['bank_name'] = null;
-                $data['bank_reference'] = null;
-            }
-
-            StudentFeeTransaction::create($data);
-
-            DB::commit();
-
-            return redirect()->route('school-admin.fee-collection.index')
-                ->with('success', 'Fee collected successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Failed to collect fee: '.$e->getMessage());
+        // Generate transaction number
+        if (empty($data['transaction_number'])) {
+            $data['transaction_number'] = $this->generateTransactionNumber($data['school_id']);
         }
+
+        // Generate receipt number if not provided
+        if (empty($data['receipt_number'])) {
+            $data['receipt_number'] = $this->generateReceiptNumber($data['school_id']);
+        }
+
+        // Clear cheque/online fields if not applicable
+        if ($data['payment_method'] !== 'cheque') {
+            $data['cheque_number'] = null;
+            $data['cheque_date'] = null;
+        }
+        if ($data['payment_method'] !== 'online') {
+            $data['upi_name'] = null;
+            $data['upi_id'] = null;
+        }
+
+        StudentFeeTransaction::create($data);
+
+        return redirect()->route('school-admin.fee-collection.index')
+            ->with('success', 'Fee collected successfully.');
     }
 
     /**
@@ -146,14 +136,14 @@ class FeeCollectionController extends Controller
             $data = $request->validated();
             $data['status'] = $request->input('status', $feeCollection->status);
 
-            // Clear cheque/bank fields if not applicable
+            // Clear cheque/online fields if not applicable
             if ($data['payment_method'] !== 'cheque') {
                 $data['cheque_number'] = null;
                 $data['cheque_date'] = null;
             }
-            if ($data['payment_method'] !== 'bank') {
-                $data['bank_name'] = null;
-                $data['bank_reference'] = null;
+            if ($data['payment_method'] !== 'online') {
+                $data['upi_name'] = null;
+                $data['upi_id'] = null;
             }
 
             $feeCollection->update($data);

@@ -291,6 +291,60 @@
                         </div>
                     </div>
 
+                    <!-- Subscription Plan Settings -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="ri-subscription-line me-2"></i>Subscription Plan Settings
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-check form-switch form-switch-md">
+                                            <input class="form-check-input" type="checkbox" id="subscription_auto_renewal" name="subscription_auto_renewal" value="1" {{ old('subscription_auto_renewal', $defaults['subscription_auto_renewal'] ?? false) ? 'checked' : '' }}>
+                                            <label class="form-check-label ms-2" for="subscription_auto_renewal">Enable Auto Renewal</label>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            <i class="ri-information-line"></i> When enabled, your subscription will automatically renew before expiration. You can disable this at any time.
+                                        </small>
+                                        @error('subscription_auto_renewal')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee ID Settings -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="ri-user-id-line me-2"></i>Employee ID Settings
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-check form-switch form-switch-md">
+                                            <input class="form-check-input" type="checkbox" id="auto_generate_employee_id" name="auto_generate_employee_id" value="1" {{ old('auto_generate_employee_id', $defaults['auto_generate_employee_id'] ?? false) ? 'checked' : '' }}>
+                                            <label class="form-check-label ms-2" for="auto_generate_employee_id">Auto Generate Employee ID</label>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            <i class="ri-information-line"></i> When enabled, employee IDs will be automatically generated for new teachers and staff members. If disabled, you'll need to manually enter employee IDs.
+                                        </small>
+                                        @error('auto_generate_employee_id')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="col-lg-12 mt-4">
                         <div class="card">
@@ -333,3 +387,4 @@
         });
     </script>
 @endsection
+

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SubscriptionPlanSeeder::class,
-            AcademicSessionSeeder::class,
+            LanguageSeeder::class,
         ]);
 
         // Super Admin

@@ -82,7 +82,7 @@
                                         <select name="payment_method" id="payment_method" class="form-select" required>
                                             <option value="">Select Payment Method</option>
                                             <option value="cash" {{ old('payment_method', $feeCollection->payment_method) === 'cash' ? 'selected' : '' }}>Cash</option>
-                                            <option value="bank" {{ old('payment_method', $feeCollection->payment_method) === 'bank' ? 'selected' : '' }}>Bank Transfer</option>
+                                            <option value="online" {{ old('payment_method', $feeCollection->payment_method === 'bank' || $feeCollection->payment_method === 'online' ? 'online' : $feeCollection->payment_method) === 'online' ? 'selected' : '' }}>Online</option>
                                             <option value="cheque" {{ old('payment_method', $feeCollection->payment_method) === 'cheque' ? 'selected' : '' }}>Cheque</option>
                                         </select>
                                         @error('payment_method')
@@ -118,20 +118,20 @@
                                     </div>
                                 </div>
 
-                                <!-- Bank Fields -->
-                                <div id="bank_fields" style="display: none;">
+                                <!-- Online Fields -->
+                                <div id="online_fields" style="display: none;">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
-                                            <x-input type="text" name="bank_name" id="bank_name" :value="old('bank_name', $feeCollection->bank_name)" placeholder="Enter bank name" />
-                                            @error('bank_name')
+                                            <label for="upi_name" class="form-label">UPI Name <span class="text-danger">*</span></label>
+                                            <x-input type="text" name="upi_name" id="upi_name" :value="old('upi_name', $feeCollection->upi_name)" placeholder="Enter UPI name" />
+                                            @error('upi_name')
                                                 <small class="text-danger d-block">{{ $message }}</small>
                                             @enderror
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="bank_reference" class="form-label">Bank Reference/Transaction ID</label>
-                                            <x-input type="text" name="bank_reference" id="bank_reference" :value="old('bank_reference', $feeCollection->bank_reference)" placeholder="Enter bank reference or transaction ID" />
-                                            @error('bank_reference')
+                                            <label for="upi_id" class="form-label">UPI ID <span class="text-danger">*</span></label>
+                                            <x-input type="text" name="upi_id" id="upi_id" :value="old('upi_id', $feeCollection->upi_id)" placeholder="Enter UPI ID" />
+                                            @error('upi_id')
                                                 <small class="text-danger d-block">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -179,32 +179,36 @@
         document.addEventListener('DOMContentLoaded', function() {
             const paymentMethod = document.getElementById('payment_method');
             const chequeFields = document.getElementById('cheque_fields');
-            const bankFields = document.getElementById('bank_fields');
+            const onlineFields = document.getElementById('online_fields');
             const chequeNumber = document.getElementById('cheque_number');
             const chequeDate = document.getElementById('cheque_date');
-            const bankName = document.getElementById('bank_name');
+            const upiName = document.getElementById('upi_name');
+            const upiId = document.getElementById('upi_id');
 
             function togglePaymentFields() {
                 const method = paymentMethod.value;
 
                 if (method === 'cheque') {
                     chequeFields.style.display = 'block';
-                    bankFields.style.display = 'none';
+                    onlineFields.style.display = 'none';
                     chequeNumber.required = true;
                     chequeDate.required = true;
-                    bankName.required = false;
-                } else if (method === 'bank') {
+                    upiName.required = false;
+                    upiId.required = false;
+                } else if (method === 'online') {
                     chequeFields.style.display = 'none';
-                    bankFields.style.display = 'block';
+                    onlineFields.style.display = 'block';
                     chequeNumber.required = false;
                     chequeDate.required = false;
-                    bankName.required = true;
+                    upiName.required = true;
+                    upiId.required = true;
                 } else {
                     chequeFields.style.display = 'none';
-                    bankFields.style.display = 'none';
+                    onlineFields.style.display = 'none';
                     chequeNumber.required = false;
                     chequeDate.required = false;
-                    bankName.required = false;
+                    upiName.required = false;
+                    upiId.required = false;
                 }
             }
 

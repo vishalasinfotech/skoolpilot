@@ -50,55 +50,6 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Upcoming Exams</p>
-                    </div>
-                </div>
-                <div class="d-flex align-items-end justify-content-between mt-4">
-                    <div>
-                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                            <span class="counter-value" data-target="{{ $data['upcoming_exams']->count() ?? 0 }}">{{ $data['upcoming_exams']->count() ?? 0 }}</span>
-                        </h4>
-                        <a href="{{ route('school-admin.exam-schedule.index') }}" class="text-decoration-underline">View schedules</a>
-                    </div>
-                    <div class="avatar-sm flex-shrink-0">
-                        <span class="avatar-title bg-info-subtle rounded fs-3">
-                            <i class="ri-file-list-3-line text-info"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6">
-        <div class="card card-animate">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Recent Attendance</p>
-                    </div>
-                </div>
-                <div class="d-flex align-items-end justify-content-between mt-4">
-                    <div>
-                        <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                            <span class="counter-value" data-target="{{ $data['recent_attendance']->count() ?? 0 }}">{{ $data['recent_attendance']->count() ?? 0 }}</span>
-                        </h4>
-                        <a href="{{ route('school-admin.attendance.index') }}" class="text-decoration-underline">View all</a>
-                    </div>
-                    <div class="avatar-sm flex-shrink-0">
-                        <span class="avatar-title bg-warning-subtle rounded fs-3">
-                            <i class="ri-time-line text-warning"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 {{-- Upcoming Exams Schedule --}}

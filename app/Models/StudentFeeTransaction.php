@@ -24,6 +24,8 @@ class StudentFeeTransaction extends Model
         'cheque_date',
         'bank_name',
         'bank_reference',
+        'upi_name',
+        'upi_id',
         'remarks',
         'receipt_number',
         'status',

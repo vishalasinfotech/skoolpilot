@@ -59,11 +59,6 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-warning mt-3">
-                                <i class="ri-alert-line me-2"></i>
-                                <strong>Security:</strong> These credentials are stored in your .env file. Make sure to keep your .env file secure and never commit it to version control.
-                            </div>
-
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="ri-save-line me-2"></i>Save Payment Gateway Configuration

@@ -45,6 +45,8 @@ class UpdateSettingRequest extends FormRequest
             'twitter_url' => ['nullable', 'url', 'max:255'],
             'instagram_url' => ['nullable', 'url', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
+            'subscription_auto_renewal' => ['nullable', 'boolean'],
+            'auto_generate_employee_id' => ['nullable', 'boolean'],
         ];
     }
 }

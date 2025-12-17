@@ -53,6 +53,8 @@ class SettingController extends Controller
             'twitter_url' => Setting::get('twitter_url', null, $schoolId),
             'instagram_url' => Setting::get('instagram_url', null, $schoolId),
             'linkedin_url' => Setting::get('linkedin_url', null, $schoolId),
+            'subscription_auto_renewal' => filter_var(Setting::get('subscription_auto_renewal', false, $schoolId), FILTER_VALIDATE_BOOLEAN),
+            'auto_generate_employee_id' => filter_var(Setting::get('auto_generate_employee_id', false, $schoolId), FILTER_VALIDATE_BOOLEAN),
         ];
 
         return view('setting.index', compact('defaults'));
@@ -114,10 +116,16 @@ class SettingController extends Controller
             'twitter_url' => ['type' => 'string', 'group' => 'social'],
             'instagram_url' => ['type' => 'string', 'group' => 'social'],
             'linkedin_url' => ['type' => 'string', 'group' => 'social'],
+            'subscription_auto_renewal' => ['type' => 'boolean', 'group' => 'subscription'],
+            'auto_generate_employee_id' => ['type' => 'boolean', 'group' => 'employee'],
         ];
 
         foreach ($settingsToSave as $key => $config) {
-            if (isset($data[$key])) {
+            if ($config['type'] === 'boolean') {
+                // For boolean checkboxes, check if the key exists in the request
+                $value = isset($data[$key]) && $data[$key] == '1';
+                Setting::set($key, $value, $schoolId, $config['type'], $config['group']);
+            } elseif (isset($data[$key])) {
                 Setting::set($key, $data[$key], $schoolId, $config['type'], $config['group']);
             }
         }
