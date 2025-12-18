@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolAdmin\AcademicClassController;
 use App\Http\Controllers\SchoolAdmin\AcademicSessionController;
 use App\Http\Controllers\SchoolAdmin\AttendanceController;
@@ -88,6 +89,12 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::resource('super-admin/language', LanguageController::class)->names('super-admin.language');
     Route::post('super-admin/language/{language}/toggle-status', [LanguageController::class, 'toggleStatus'])->name('super-admin.language.toggle-status');
     Route::post('super-admin/language/{language}/set-default', [LanguageController::class, 'setAsDefault'])->name('super-admin.language.set-default');
+
+    // Permission Management Routes (Super Admin only)
+    Route::resource('roles', RoleController::class)
+        ->except(['show'])
+        ->names('roles')
+        ->middleware('role:super_admin');
 
     Route::middleware('active-subscription')
         ->prefix('school-admin')

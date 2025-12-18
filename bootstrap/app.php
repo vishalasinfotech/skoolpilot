@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureSchoolHasActiveSubscription;
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'active-subscription' => EnsureSchoolHasActiveSubscription::class,
             'prevent-back-history' => PreventBackHistory::class,
+            'role' => EnsureUserHasRole::class,
         ]);
 
         // Apply SetLocale middleware to all web routes

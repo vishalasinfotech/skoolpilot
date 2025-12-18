@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SubscriptionPlanSeeder::class,
             LanguageSeeder::class,
+            PermissionSeeder::class,
         ]);
 
         // Super Admin

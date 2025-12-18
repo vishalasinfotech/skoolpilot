@@ -65,7 +65,7 @@
                 </li>
 
                 <li class="nav-item" data-role="super_admin">
-                    <a class="nav-link menu-link" href="#">
+                    <a class="nav-link menu-link" href="{{ route('roles.index') }}">
                         <i class="ri-shield-user-line"></i> <span>{{ __('common.permission_management') }}</span>
                     </a>
                 </li>
