@@ -86,11 +86,6 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('school-admin.event.show', $event->id) }}">
-                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                                            </a>
-                                        </li>
-                                        <li>
                                             <a class="dropdown-item" href="{{ route('school-admin.event.edit', $event->id) }}">
                                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                             </a>

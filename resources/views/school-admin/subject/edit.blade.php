@@ -34,7 +34,7 @@
                                 @csrf
                                 @method('PUT')
 
-                                
+
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -56,7 +56,7 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="description" class="form-label">Description</label>
-                                        <x-textarea name="description" id="description" value="{{ old('description', $subject->description) }}" rows="3" placeholder="Enter subject description">{{ old('description', $subject->description) }}</x-textarea>
+                                        <x-textarea name="description" id="description" :value="old('description', $subject->description)" rows="3" placeholder="Enter subject description">{{ old('description', $subject->description) }}</x-textarea>
                                         @error('description')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror

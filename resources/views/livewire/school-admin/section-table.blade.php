@@ -81,11 +81,7 @@
                                         <i class="ri-more-fill"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('school-admin.section.show', $section->id) }}">
-                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                                            </a>
-                                        </li>
+
                                         <li>
                                             <a class="dropdown-item" href="{{ route('school-admin.section.edit', $section->id) }}">
                                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit

@@ -1,4 +1,61 @@
 {{-- School Admin Widgets --}}
+@if(isset($data['subscription']))
+@php
+    $subscription = $data['subscription'];
+    $expiresAt = $subscription['expires_at'] ?? null;
+    $status = $subscription['status'] ?? 'none';
+    $planName = $subscription['plan_name'] ?? null;
+    $remainingDays = $subscription['remaining_days'] ?? null;
+@endphp
+
+<div class="row mb-3">
+    <div class="col-12">
+        @if($status === 'active')
+            <div class="alert alert-info d-flex align-items-center justify-content-between mb-0">
+                <div>
+                    <strong>Plan:</strong> {{ $planName ?? 'N/A' }}
+                    <span class="ms-3"><strong>Expiry:</strong>
+                        {{ $expiresAt ? $expiresAt->format('d M Y, h:i A') : 'No expiry' }}
+                    </span>
+                </div>
+                @if($expiresAt && $remainingDays !== null)
+                    @php
+                        $remainingWholeDays = is_numeric($remainingDays) ? (int) ceil($remainingDays) : $remainingDays;
+                    @endphp
+                    <span class="badge bg-success-subtle text-success">
+                        {{ $remainingWholeDays }}
+                        <span class="ms-1">day{{ $remainingWholeDays == 1 ? '' : 's' }}</span>
+                    </span>
+                @else
+                    <span class="badge bg-success-subtle text-success">Active</span>
+                @endif
+            </div>
+        @elseif($status === 'expired')
+            <div class="alert alert-danger d-flex align-items-center justify-content-between mb-0">
+                <div>
+                    <strong>Plan:</strong> {{ $planName ?? 'N/A' }}
+                    <span class="ms-3"><strong>Expired:</strong>
+                        {{ $expiresAt ? $expiresAt->format('d M Y, h:i A') : 'N/A' }}
+                    </span>
+                </div>
+                <a href="{{ route('subscription-plan.plans') }}" class="btn btn-sm btn-danger">
+                    Renew Plan
+                </a>
+            </div>
+        @else
+            <div class="alert alert-warning d-flex align-items-center justify-content-between mb-0">
+                <div>
+                    <strong>No active subscription.</strong> Please choose a plan to continue.
+                </div>
+                <a href="{{ route('subscription-plan.plans') }}" class="btn btn-sm btn-warning">
+                    View Plans
+                </a>
+            </div>
+        @endif
+    </div>
+</div>
+@endif
+
 <div class="row">
     <div class="col-xl-3 col-md-6">
         <div class="card card-animate">

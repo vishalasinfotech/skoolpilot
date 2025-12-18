@@ -23,6 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'role',
         'school_id',
+        'academic_session_id',
         'name',
         'first_name',
         'last_name',
@@ -90,6 +91,11 @@ class User extends Authenticatable
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function academicSession(): BelongsTo
+    {
+        return $this->belongsTo(AcademicSession::class);
     }
 
     /**

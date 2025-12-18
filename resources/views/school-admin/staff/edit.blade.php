@@ -214,7 +214,7 @@
                                 </div>
                                     <div class="col-md-12 mb-3">
                                         <label for="address" class="form-label">Address</label>
-                                        <x-textarea name="address" id="address" rows="3" placeholder="Enter full address">{{ old('address', $staff->address) }}</x-textarea>
+                                        <x-textarea name="address" id="address" :value="old('address', $staff->address)" rows="3" placeholder="Enter full address">{{ old('address', $staff->address) }}</x-textarea>
                                         @error('address')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror

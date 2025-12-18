@@ -38,7 +38,7 @@
                     {{-- Role-based Widgets --}}
                     @if($role === 'super_admin')
                         @include('dashboard.partials.widgets.super-admin')
-                    @elseif($role === 'school-admin')
+                    @elseif($role === 'school_admin' || $role === 'school-admin')
                         @include('dashboard.partials.widgets.school-admin')
                     @elseif($role === 'teacher')
                         @include('dashboard.partials.widgets.teacher')

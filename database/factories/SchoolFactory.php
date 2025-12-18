@@ -24,7 +24,7 @@ class SchoolFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'address' => fake()->address(),
-            'logo' => null,
+            'logo' => 'assets/images/logo-sm.png',
             'theme_color' => fake()->hexColor(),
             'status' => true,
             'subscription_plan_id' => null,

@@ -113,9 +113,7 @@
                                     class="nav-link">{{ __('common.students') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.staff.index') }}"
                                     class="nav-link">{{ __('common.staff') }}</a></li>
-                            <li class="nav-item"><a href="{{ route('school-admin.teacher.bulk-import') }}"
-                                    class="nav-link">{{ __('common.bulk_upload_excel') }}</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.promotions') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('school-admin.promotions.index') }}" class="nav-link">{{ __('common.promotions') }}</a></li>
                         </ul>
                     </div>
                 </li>

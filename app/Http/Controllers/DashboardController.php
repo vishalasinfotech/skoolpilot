@@ -10,6 +10,7 @@ use App\Models\Library;
 use App\Models\Result;
 use App\Models\School;
 use App\Models\Subject;
+use App\Models\Transaction;
 use App\Models\Transportation;
 use App\Models\User;
 use Illuminate\View\View;
@@ -21,6 +22,7 @@ class DashboardController extends Controller
         $user = auth()->user();
         $role = $user->role;
         $schoolId = $user->school_id;
+        $isSchoolAdmin = in_array($role, ['school_admin', 'school-admin'], true);
 
         $data = [];
 
@@ -35,8 +37,34 @@ class DashboardController extends Controller
         }
 
         // School Admin Dashboard Data
-        if ($role === 'school_admin' && $schoolId) {
+        if ($isSchoolAdmin && $schoolId) {
             $today = date('Y-m-d');
+            $latestSubscriptionTransaction = Transaction::query()
+                ->with('subscriptionPlan')
+                ->where('school_id', $schoolId)
+                ->where('status', 'completed')
+                ->orderByDesc('paid_at')
+                ->orderByDesc('id')
+                ->first();
+
+            $subscriptionExpiresAt = $latestSubscriptionTransaction?->expires_at;
+            $subscriptionPlanName = $latestSubscriptionTransaction?->subscriptionPlan?->name;
+
+            if (! $subscriptionPlanName) {
+                $school = School::query()
+                    ->with('subscriptionPlan')
+                    ->find($schoolId);
+
+                $subscriptionPlanName = $school?->subscriptionPlan?->name;
+            }
+
+            $subscriptionStatus = 'none';
+            if ($latestSubscriptionTransaction) {
+                $subscriptionStatus = ($subscriptionExpiresAt !== null && $subscriptionExpiresAt->isPast())
+                    ? 'expired'
+                    : 'active';
+            }
+
             $data = [
                 'total_students' => User::where('school_id', $schoolId)->students()->where('is_active', true)->count(),
                 'total_teachers' => User::where('school_id', $schoolId)->teachers()->where('is_active', true)->count(),
@@ -58,6 +86,12 @@ class DashboardController extends Controller
                 'total_books' => Library::where('school_id', $schoolId)->count(),
                 'available_books' => Library::where('school_id', $schoolId)->sum('available_copies'),
                 'total_vehicles' => Transportation::where('school_id', $schoolId)->where('is_active', true)->count(),
+                'subscription' => [
+                    'plan_name' => $subscriptionPlanName,
+                    'expires_at' => $subscriptionExpiresAt,
+                    'status' => $subscriptionStatus,
+                    'remaining_days' => $subscriptionExpiresAt ? now()->diffInDays($subscriptionExpiresAt, false) : null,
+                ],
             ];
         }
 

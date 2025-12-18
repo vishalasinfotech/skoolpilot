@@ -23,10 +23,7 @@ class SectionController extends Controller
         return view('school-admin.section.create', compact('schools'));
     }
 
-    public function show(Section $section)
-    {
-        return view('school-admin.section.show', compact('section'));
-    }
+    public function show(Section $section) {}
 
     public function edit(Section $section)
     {

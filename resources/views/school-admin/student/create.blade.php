@@ -33,7 +33,7 @@
                             <form action="{{ route('school-admin.student.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
 
-                                
+
 
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
@@ -61,6 +61,13 @@
 
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
+                                        <label for="academic_session_id" class="form-label">Academic Session (Year)</label>
+                                        <x-select name="academic_session_id" id="academic_session_id" :options="$sessions" :value="old('academic_session_id', $currentSessionId)" placeholder="Select Academic Session" />
+                                        @error('academic_session_id')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4 mb-3">
                                         <label for="class_id" class="form-label">Class</label>
                                         <x-select name="class_id" id="class_id" :options="$classes" :value="old('class_id')" placeholder="Select Class" />
                                         @error('class_id')
@@ -74,6 +81,9 @@
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label for="roll_number" class="form-label">Roll Number</label>
                                         <x-input type="text" name="roll_number" id="roll_number" :value="old('roll_number')" placeholder="Enter roll number" />
@@ -85,8 +95,8 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <x-input type="email" name="email" id="email" :value="old('email')" placeholder="Enter email address" />
+                                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <x-input type="email" name="email" id="email" :value="old('email')" required placeholder="Enter email address" />
                                         @error('email')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror

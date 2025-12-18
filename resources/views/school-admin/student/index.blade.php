@@ -27,6 +27,9 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">{{ __('common.all_students') }}</h5>
                             <div class="d-flex gap-2">
+                                <a href="{{ route('school-admin.promotions.index') }}" class="btn btn-info">
+                                    <i class="ri-arrow-up-circle-line align-middle me-1"></i> {{ __('common.promotions') }}
+                                </a>
                                 <a href="{{ route('school-admin.student.bulk-import') }}" class="btn btn-success">
                                     <i class="ri-upload-line align-middle me-1"></i> {{ __('common.bulk_import') }}
                                 </a>

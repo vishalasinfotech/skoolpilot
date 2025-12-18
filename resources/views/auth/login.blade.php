@@ -122,6 +122,10 @@
                                 <a href="{{ route('register') }}"
                                     class="fw-semibold text-primary text-decoration-underline"> Signup </a>
                             </p>
+                            <p class="mb-0 mt-2">
+                                <a href="{{ route('school.register') }}"
+                                    class="fw-semibold text-primary text-decoration-underline">Register School</a>
+                            </p>
                         </div>
 
                     </div>

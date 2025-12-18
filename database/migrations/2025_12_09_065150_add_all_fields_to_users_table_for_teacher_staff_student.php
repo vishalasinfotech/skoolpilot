@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             // Role field - static roles: teacher, staff, student
             $table->string('role')->nullable()->after('email');
+            $table->foreignId('school_id')->nullable()->after('role')->constrained('schools')->nullOnDelete();
             $table->string('first_name')->nullable()->after('role');
             $table->string('last_name')->nullable()->after('first_name');
             $table->string('phone')->nullable()->after('last_name');

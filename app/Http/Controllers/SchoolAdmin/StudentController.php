@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SchoolAdmin\Student\StoreStudentRequest;
 use App\Http\Requests\SchoolAdmin\Student\UpdateStudentRequest;
 use App\Models\AcademicClass;
+use App\Models\AcademicSession;
 use App\Models\School;
 use App\Models\Section;
 use App\Models\User;
@@ -23,11 +24,24 @@ class StudentController extends Controller
 
     public function create()
     {
+        $schoolId = auth()->user()->school_id;
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
-        $classes = AcademicClass::where('deleted_at', null)->where('is_active', true)->pluck('name', 'id');
-        $sections = Section::where('deleted_at', null)->where('is_active', true)->pluck('name', 'id');
+        $sessions = AcademicSession::query()
+            ->where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->orderByDesc('start_date')
+            ->pluck('name', 'id');
 
-        return view('school-admin.student.create', compact('schools', 'classes', 'sections'));
+        $currentSessionId = AcademicSession::query()
+            ->where('school_id', $schoolId)
+            ->where('is_current', true)
+            ->where('is_active', true)
+            ->value('id');
+
+        $classes = AcademicClass::where('deleted_at', null)->where('school_id', $schoolId)->where('is_active', true)->pluck('name', 'id');
+        $sections = Section::where('deleted_at', null)->where('school_id', $schoolId)->where('is_active', true)->pluck('name', 'id');
+
+        return view('school-admin.student.create', compact('schools', 'sessions', 'currentSessionId', 'classes', 'sections'));
     }
 
     public function show(User $student)
@@ -42,16 +56,32 @@ class StudentController extends Controller
         abort_unless($student->isStudent(), 404);
 
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+        $sessions = AcademicSession::query()
+            ->where('school_id', $student->school_id)
+            ->where('is_active', true)
+            ->orderByDesc('start_date')
+            ->pluck('name', 'id');
         $classes = AcademicClass::where('deleted_at', null)->where('school_id', $student->school_id)->where('is_active', true)->pluck('name', 'id');
         $sections = Section::where('deleted_at', null)->where('school_id', $student->school_id)->where('is_active', true)->pluck('name', 'id');
 
-        return view('school-admin.student.edit', compact('student', 'schools', 'classes', 'sections'));
+        return view('school-admin.student.edit', compact('student', 'schools', 'sessions', 'classes', 'sections'));
     }
 
     public function store(StoreStudentRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
         $data = $request->validated();
         $data['school_id'] = auth()->user()->school_id;
+        if (empty($data['academic_session_id'])) {
+            $academicSessionId = AcademicSession::query()
+                ->where('school_id', $data['school_id'])
+                ->where('is_current', true)
+                ->where('is_active', true)
+                ->value('id');
+
+            if ($academicSessionId) {
+                $data['academic_session_id'] = $academicSessionId;
+            }
+        }
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
@@ -164,6 +194,12 @@ class StudentController extends Controller
             $imported = 0;
             $errors = [];
 
+            $currentSessionId = AcademicSession::query()
+                ->where('school_id', $request->school_id)
+                ->where('is_current', true)
+                ->where('is_active', true)
+                ->value('id');
+
             foreach ($data as $index => $row) {
                 // Skip empty rows
                 if (empty(array_filter($row))) {
@@ -192,11 +228,24 @@ class StudentController extends Controller
                 try {
                     $firstName = trim($normalizeKey('first_name', ['first_name', 'firstname', 'fname']) ?? '');
                     $lastName = trim($normalizeKey('last_name', ['last_name', 'lastname', 'lname']) ?? '');
+                    $email = trim($normalizeKey('email', ['email', 'e-mail']) ?? '');
                     $admissionNumber = trim($normalizeKey('admission_number', ['admission_number', 'admission_no', 'adm_no', 'admission no']) ?? '');
 
                     // Validate required fields
                     if (empty($firstName) || empty($lastName)) {
                         $errors[] = 'Row '.($index + 2).': First name and last name are required.';
+
+                        continue;
+                    }
+
+                    if (empty($email)) {
+                        $errors[] = 'Row '.($index + 2).': Email is required.';
+
+                        continue;
+                    }
+
+                    if (User::where('email', $email)->exists()) {
+                        $errors[] = 'Row '.($index + 2).': Email already exists.';
 
                         continue;
                     }
@@ -253,10 +302,11 @@ class StudentController extends Controller
                     User::create([
                         'role' => 'student',
                         'school_id' => $request->school_id,
+                        'academic_session_id' => $currentSessionId,
                         'name' => trim($firstName.' '.$lastName),
                         'first_name' => $firstName,
                         'last_name' => $lastName,
-                        'email' => $normalizeKey('email', ['email', 'e-mail']) ?? null,
+                        'email' => $email,
                         'phone' => $normalizeKey('phone', ['phone', 'mobile', 'contact']) ?? null,
                         'parent_phone' => $normalizeKey('parent_phone', ['parent_phone', 'parent phone', 'guardian_phone', 'guardian phone']) ?? null,
                         'admission_number' => $admissionNumber,

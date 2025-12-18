@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureSchoolHasActiveSubscription;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
+            'active-subscription' => EnsureSchoolHasActiveSubscription::class,
             'prevent-back-history' => PreventBackHistory::class,
         ]);
 

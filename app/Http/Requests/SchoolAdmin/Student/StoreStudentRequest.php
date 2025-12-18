@@ -14,11 +14,13 @@ class StoreStudentRequest extends FormRequest
 
     public function rules(): array
     {
+        $schoolId = $this->user()?->school_id;
+
         return [
             // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'student')],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'student')],
             'phone' => ['nullable', 'string', 'max:20'],
             'parent_phone' => ['nullable', 'string', 'max:20'],
             'admission_number' => ['required', 'string', 'max:50', Rule::unique('users', 'admission_number')->where('role', 'student')],
@@ -27,6 +29,11 @@ class StoreStudentRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:500'],
             'class' => ['nullable', 'string', 'max:50'],
             'section' => ['nullable', 'string', 'max:50'],
+            'academic_session_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('academic_sessions', 'id')->where(fn ($query) => $query->where('school_id', $schoolId)),
+            ],
             'class_id' => ['nullable', 'exists:academic_classes,id'],
             'section_id' => ['nullable', 'exists:sections,id'],
             'roll_number' => ['nullable', 'string', 'max:50'],
@@ -47,6 +54,7 @@ class StoreStudentRequest extends FormRequest
         return [
             'first_name.required' => 'The first name field is required.',
             'last_name.required' => 'The last name field is required.',
+            'email.required' => 'The email field is required.',
             'email.unique' => 'This email is already registered.',
             'admission_number.required' => 'The admission number field is required.',
             'admission_number.unique' => 'This admission number is already in use.',

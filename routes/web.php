@@ -19,6 +19,7 @@ use App\Http\Controllers\SchoolAdmin\FeeStructureController;
 use App\Http\Controllers\SchoolAdmin\HolidayController;
 use App\Http\Controllers\SchoolAdmin\LibraryController;
 use App\Http\Controllers\SchoolAdmin\NotificationController;
+use App\Http\Controllers\SchoolAdmin\PromotionController;
 use App\Http\Controllers\SchoolAdmin\ResultController;
 use App\Http\Controllers\SchoolAdmin\SectionController;
 use App\Http\Controllers\SchoolAdmin\StaffController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\SchoolAdmin\StudentController;
 use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
 use App\Http\Controllers\SchoolAdmin\TransportationController;
+use App\Http\Controllers\SchoolController as PublicSchoolController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SuperAdmin\FeedbackController as SuperAdminFeedbackController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
@@ -45,6 +47,11 @@ Route::get('/register', [AuthController::class, 'registerView'])->name('register
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/school/register', [PublicSchoolController::class, 'create'])->name('school.register');
+    Route::post('/school/register', [PublicSchoolController::class, 'store'])->name('school.register.store');
+});
 
 Route::middleware('auth', 'prevent-back-history')->group(function () {
 
@@ -82,63 +89,72 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::post('super-admin/language/{language}/toggle-status', [LanguageController::class, 'toggleStatus'])->name('super-admin.language.toggle-status');
     Route::post('super-admin/language/{language}/set-default', [LanguageController::class, 'setAsDefault'])->name('super-admin.language.set-default');
 
-    Route::resource('school-admin/teacher', TeacherController::class)->names('school-admin.teacher');
-    Route::get('school-admin/teacher-bulk-import', [TeacherController::class, 'bulkImport'])->name('school-admin.teacher.bulk-import');
-    Route::post('school-admin/teacher-bulk-import', [TeacherController::class, 'processBulkImport'])->name('school-admin.teacher.process-bulk-import');
+    Route::middleware('active-subscription')
+        ->prefix('school-admin')
+        ->group(function () {
+            Route::resource('teacher', TeacherController::class)->names('school-admin.teacher');
+            Route::get('teacher-bulk-import', [TeacherController::class, 'bulkImport'])->name('school-admin.teacher.bulk-import');
+            Route::post('teacher-bulk-import', [TeacherController::class, 'processBulkImport'])->name('school-admin.teacher.process-bulk-import');
 
-    Route::resource('school-admin/student', StudentController::class)->names('school-admin.student');
-    Route::get('school-admin/student-bulk-import', [StudentController::class, 'bulkImport'])->name('school-admin.student.bulk-import');
-    Route::post('school-admin/student-bulk-import', [StudentController::class, 'processBulkImport'])->name('school-admin.student.process-bulk-import');
+            Route::resource('student', StudentController::class)->names('school-admin.student');
+            Route::get('student-bulk-import', [StudentController::class, 'bulkImport'])->name('school-admin.student.bulk-import');
+            Route::post('student-bulk-import', [StudentController::class, 'processBulkImport'])->name('school-admin.student.process-bulk-import');
 
-    Route::resource('school-admin/staff', StaffController::class)->names('school-admin.staff');
-    Route::get('school-admin/staff-bulk-import', [StaffController::class, 'bulkImport'])->name('school-admin.staff.bulk-import');
-    Route::post('school-admin/staff-bulk-import', [StaffController::class, 'processBulkImport'])->name('school-admin.staff.process-bulk-import');
+            Route::get('promotions', [PromotionController::class, 'index'])->name('school-admin.promotions.index');
+            Route::post('promotions', [PromotionController::class, 'store'])->name('school-admin.promotions.store');
 
-    Route::resource('school-admin/section', SectionController::class)->names('school-admin.section');
-    Route::resource('school-admin/academic-class', AcademicClassController::class)->names('school-admin.academic-class');
-    Route::resource('school-admin/academic-session', AcademicSessionController::class)->names('school-admin.academic-session');
-    Route::resource('school-admin/subject', SubjectController::class)->names('school-admin.subject');
-    Route::resource('school-admin/fee-structure', FeeStructureController::class)->names('school-admin.fee-structure');
-    Route::resource('school-admin/fee-collection', FeeCollectionController::class)->names('school-admin.fee-collection');
-    Route::resource('school-admin/event', EventController::class)->names('school-admin.event');
-    Route::resource('school-admin/holiday', HolidayController::class)->names('school-admin.holiday');
+            Route::resource('staff', StaffController::class)->names('school-admin.staff');
+            Route::get('staff-bulk-import', [StaffController::class, 'bulkImport'])->name('school-admin.staff.bulk-import');
+            Route::post('staff-bulk-import', [StaffController::class, 'processBulkImport'])->name('school-admin.staff.process-bulk-import');
 
-    // Exams & Results Routes
-    Route::resource('school-admin/exam', ExamController::class)->names('school-admin.exam');
-    Route::resource('school-admin/exam-schedule', ExamScheduleController::class)->names('school-admin.exam-schedule');
-    Route::resource('school-admin/result', ResultController::class)->names('school-admin.result');
+            Route::resource('section', SectionController::class)->names('school-admin.section');
+            Route::resource('academic-class', AcademicClassController::class)->names('school-admin.academic-class');
+            Route::resource('academic-session', AcademicSessionController::class)->names('school-admin.academic-session');
+            Route::resource('subject', SubjectController::class)->names('school-admin.subject');
+            Route::resource('fee-structure', FeeStructureController::class)->names('school-admin.fee-structure');
+            Route::resource('fee-collection', FeeCollectionController::class)->names('school-admin.fee-collection');
+            Route::resource('event', EventController::class)->names('school-admin.event');
+            Route::resource('holiday', HolidayController::class)->names('school-admin.holiday');
 
-    Route::get('school-admin/calendar', [CalendarController::class, 'index'])->name('school-admin.calendar.index');
-    Route::get('school-admin/calendar/events', [CalendarController::class, 'getEvents'])->name('school-admin.calendar.events');
+            // Exams & Results Routes
+            Route::resource('exam', ExamController::class)->names('school-admin.exam');
+            Route::resource('exam-schedule', ExamScheduleController::class)->names('school-admin.exam-schedule');
+            Route::resource('result', ResultController::class)->names('school-admin.result');
 
-    Route::get('school-admin/setting', [SettingController::class, 'index'])->name('school-admin.setting.index');
-    Route::put('school-admin/setting', [SettingController::class, 'update'])->name('school-admin.setting.update');
+            Route::get('calendar', [CalendarController::class, 'index'])->name('school-admin.calendar.index');
+            Route::get('calendar/events', [CalendarController::class, 'getEvents'])->name('school-admin.calendar.events');
 
-    Route::get('school-admin/attendance', [AttendanceController::class, 'index'])->name('school-admin.attendance.index');
-    Route::post('school-admin/attendance', [AttendanceController::class, 'store'])->name('school-admin.attendance.store');
-    Route::get('school-admin/attendance/show', [AttendanceController::class, 'show'])->name('school-admin.attendance.show');
-    Route::put('school-admin/attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
-    Route::delete('school-admin/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
+            Route::get('setting', [SettingController::class, 'index'])->name('school-admin.setting.index');
+            Route::put('setting', [SettingController::class, 'update'])->name('school-admin.setting.update');
+
+            Route::get('attendance', [AttendanceController::class, 'index'])->name('school-admin.attendance.index');
+            Route::post('attendance', [AttendanceController::class, 'store'])->name('school-admin.attendance.store');
+            Route::get('attendance/show', [AttendanceController::class, 'show'])->name('school-admin.attendance.show');
+            Route::put('attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
+            Route::delete('attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
+
+            // Feedback Routes (School Admin)
+            Route::get('feedback', [SchoolAdminFeedbackController::class, 'index'])->name('school-admin.feedback.index');
+            Route::get('feedback/create', [SchoolAdminFeedbackController::class, 'create'])->name('school-admin.feedback.create');
+            Route::post('feedback', [SchoolAdminFeedbackController::class, 'store'])->name('school-admin.feedback.store');
+
+            // Notification Routes
+            Route::get('notification', [NotificationController::class, 'index'])->name('school-admin.notification.index');
+
+            // Library & Transportation Routes
+            // Custom library routes must be defined BEFORE resource route to avoid route conflicts
+            Route::get('library/issue', [LibraryController::class, 'issue'])->name('school-admin.library.issue');
+            Route::post('library/issue', [LibraryController::class, 'issueBook'])->name('school-admin.library.issue-book');
+            Route::get('library/issued-books', [LibraryController::class, 'issuedBooks'])->name('school-admin.library.issued-books');
+            Route::post('library/return/{bookIssue}', [LibraryController::class, 'returnBook'])->name('school-admin.library.return-book');
+            Route::resource('library', LibraryController::class)->names('school-admin.library');
+            Route::resource('transportation', TransportationController::class)->names('school-admin.transportation');
+        });
 
     // Feedback Routes
     Route::get('super-admin/feedback', [SuperAdminFeedbackController::class, 'index'])->name('super-admin.feedback.index');
     Route::get('super-admin/feedback/{feedback}', [SuperAdminFeedbackController::class, 'show'])->name('super-admin.feedback.show');
     Route::put('super-admin/feedback/{feedback}', [SuperAdminFeedbackController::class, 'update'])->name('super-admin.feedback.update');
-    Route::get('school-admin/feedback', [SchoolAdminFeedbackController::class, 'index'])->name('school-admin.feedback.index');
-    Route::get('school-admin/feedback/create', [SchoolAdminFeedbackController::class, 'create'])->name('school-admin.feedback.create');
-    Route::post('school-admin/feedback', [SchoolAdminFeedbackController::class, 'store'])->name('school-admin.feedback.store');
-
-    // Notification Routes
-    Route::get('school-admin/notification', [NotificationController::class, 'index'])->name('school-admin.notification.index');
-
-    // Library & Transportation Routes
-    // Custom library routes must be defined BEFORE resource route to avoid route conflicts
-    Route::get('school-admin/library/issue', [LibraryController::class, 'issue'])->name('school-admin.library.issue');
-    Route::post('school-admin/library/issue', [LibraryController::class, 'issueBook'])->name('school-admin.library.issue-book');
-    Route::get('school-admin/library/issued-books', [LibraryController::class, 'issuedBooks'])->name('school-admin.library.issued-books');
-    Route::post('school-admin/library/return/{bookIssue}', [LibraryController::class, 'returnBook'])->name('school-admin.library.return-book');
-    Route::resource('school-admin/library', LibraryController::class)->names('school-admin.library');
-    Route::resource('school-admin/transportation', TransportationController::class)->names('school-admin.transportation');
 
     // Reports Routes
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
@@ -149,13 +165,17 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('reports/super-admin/transactions', [ReportController::class, 'transactions'])->name('reports.super-admin.transactions');
 
     // School Admin Reports
-    Route::get('reports/school-admin/students', [ReportController::class, 'students'])->name('reports.school-admin.students');
-    Route::get('reports/school-admin/teachers', [ReportController::class, 'teachers'])->name('reports.school-admin.teachers');
-    Route::get('reports/school-admin/staff', [ReportController::class, 'staff'])->name('reports.school-admin.staff');
-    Route::get('reports/school-admin/attendance', [ReportController::class, 'attendance'])->name('reports.school-admin.attendance');
-    Route::get('reports/school-admin/fees', [ReportController::class, 'fees'])->name('reports.school-admin.fees');
-    Route::get('reports/school-admin/exam-results', [ReportController::class, 'examResults'])->name('reports.school-admin.exam-results');
-    Route::get('reports/school-admin/library', [ReportController::class, 'library'])->name('reports.school-admin.library');
+    Route::middleware('active-subscription')
+        ->prefix('reports/school-admin')
+        ->group(function () {
+            Route::get('students', [ReportController::class, 'students'])->name('reports.school-admin.students');
+            Route::get('teachers', [ReportController::class, 'teachers'])->name('reports.school-admin.teachers');
+            Route::get('staff', [ReportController::class, 'staff'])->name('reports.school-admin.staff');
+            Route::get('attendance', [ReportController::class, 'attendance'])->name('reports.school-admin.attendance');
+            Route::get('fees', [ReportController::class, 'fees'])->name('reports.school-admin.fees');
+            Route::get('exam-results', [ReportController::class, 'examResults'])->name('reports.school-admin.exam-results');
+            Route::get('library', [ReportController::class, 'library'])->name('reports.school-admin.library');
+        });
 
     // Teacher Reports
     Route::get('reports/teacher/class-students', [ReportController::class, 'classStudents'])->name('reports.teacher.class-students');
