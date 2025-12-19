@@ -300,6 +300,62 @@
                                 </h5>
                             </div>
                             <div class="card-body">
+                                @if($subscriptionPlan)
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info">
+                                                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                                    <div>
+                                                        <h6 class="mb-2">
+                                                            <i class="ri-checkbox-circle-line me-2"></i>Current Plan: <strong>{{ $subscriptionPlan->name }}</strong>
+                                                        </h6>
+                                                        <div class="mb-2">
+                                                            <span class="badge bg-{{ $subscriptionPlan->tier === 'premium' ? 'warning' : ($subscriptionPlan->tier === 'standard' ? 'primary' : 'secondary') }}-subtle text-{{ $subscriptionPlan->tier === 'premium' ? 'warning' : ($subscriptionPlan->tier === 'standard' ? 'primary' : 'secondary') }}">
+                                                                {{ ucfirst($subscriptionPlan->tier) }}
+                                                            </span>
+                                                            <span class="badge bg-info-subtle text-info ms-2">
+                                                                {{ ucfirst($subscriptionPlan->type) }}
+                                                            </span>
+                                                            @if($subscriptionStatus === 'active')
+                                                                <span class="badge bg-success-subtle text-success ms-2">Active</span>
+                                                            @elseif($subscriptionStatus === 'expired')
+                                                                <span class="badge bg-danger-subtle text-danger ms-2">Expired</span>
+                                                            @endif
+                                                        </div>
+                                                        @if($subscriptionPlan->description)
+                                                            <p class="mb-2 text-muted">{{ $subscriptionPlan->description }}</p>
+                                                        @endif
+                                                    </div>
+                                                    <div class="mt-2 mt-md-0">
+                                                        <a href="{{ route('subscription-plan.plans') }}" class="btn btn-sm btn-primary">
+                                                            <i class="ri-refresh-line me-1"></i> Manage Subscription
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-warning">
+                                                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                                    <div>
+                                                        <h6 class="mb-2">
+                                                            <i class="ri-alert-line me-2"></i>No Active Subscription Plan
+                                                        </h6>
+                                                        <p class="mb-0">You don't have an active subscription plan. Please purchase a plan to continue using the system.</p>
+                                                    </div>
+                                                    <div class="mt-2 mt-md-0">
+                                                        <a href="{{ route('subscription-plan.plans') }}" class="btn btn-sm btn-primary">
+                                                            <i class="ri-shopping-cart-line me-1"></i> View Plans
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <div class="form-check form-switch form-switch-md">

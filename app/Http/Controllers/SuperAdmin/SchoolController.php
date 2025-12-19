@@ -10,9 +10,19 @@ use App\Models\SubscriptionPlan;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 
 class SchoolController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(static function ($request, $next) {
+            Gate::authorize('access-super-admin');
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         return view('super-admin.school.index');

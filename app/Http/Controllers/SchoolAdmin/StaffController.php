@@ -7,6 +7,7 @@ use App\Http\Requests\SchoolAdmin\Staff\StoreStaffRequest;
 use App\Http\Requests\SchoolAdmin\Staff\UpdateStaffRequest;
 use App\Models\School;
 use App\Models\User;
+use App\Services\EmployeeIdService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,11 +19,14 @@ class StaffController extends Controller
         return view('school-admin.staff.index');
     }
 
-    public function create()
+    public function create(EmployeeIdService $employeeIdService)
     {
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+        $schoolId = auth()->user()->school_id;
+        $autoGenerateEnabled = $employeeIdService->isAutoGenerateEnabled($schoolId);
+        $generatedEmployeeId = $autoGenerateEnabled ? $employeeIdService->generate($schoolId, 'staff') : null;
 
-        return view('school-admin.staff.create', compact('schools'));
+        return view('school-admin.staff.create', compact('schools', 'autoGenerateEnabled', 'generatedEmployeeId'));
     }
 
     public function show(User $staff)
@@ -41,10 +45,17 @@ class StaffController extends Controller
         return view('school-admin.staff.edit', compact('staff', 'schools'));
     }
 
-    public function store(StoreStaffRequest $request, ImageUploadService $imageUploadService): RedirectResponse
+    public function store(StoreStaffRequest $request, ImageUploadService $imageUploadService, EmployeeIdService $employeeIdService): RedirectResponse
     {
         $data = $request->validated();
-        $data['school_id'] = auth()->user()->school_id;
+        $schoolId = auth()->user()->school_id;
+        $data['school_id'] = $schoolId;
+
+        // Auto-generate employee ID if enabled
+        if ($employeeIdService->isAutoGenerateEnabled($schoolId)) {
+            $data['employee_id'] = $employeeIdService->generate($schoolId, 'staff');
+        }
+
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),

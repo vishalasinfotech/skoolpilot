@@ -19,11 +19,45 @@
             </div>
             <div class="col-sm-12 col-md-6">
                 <div class="dataTables_filter text-md-end">
-                    <label class="d-inline-flex align-items-center">
-                        {{ __('common.search') }}:
-                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="{{ __('common.search_placeholder') }}" style="width: 200px;">
+                    <div class="d-inline-flex align-items-center gap-2">
+                        <label class="d-inline-flex align-items-center">
+                            {{ __('common.search') }}:
+                            <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="{{ __('common.search_placeholder') }}" style="width: 200px;">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="d-inline-flex align-items-center mb-0">
+                        {{ __('common.status') }}:
+                        <select wire:model.live="statusFilter" class="form-select form-select-sm ms-2" style="width: auto;">
+                            <option value="">{{ __('common.all') }}</option>
+                            <option value="active">{{ __('common.active') }}</option>
+                            <option value="inactive">{{ __('common.inactive') }}</option>
+                        </select>
+                    </label>
+                    <label class="d-inline-flex align-items-center mb-0">
+                        {{ __('common.subscription_plan') }}:
+                        <select wire:model.live="planFilter" class="form-select form-select-sm ms-2" style="width: auto;">
+                            <option value="">{{ __('common.all_plans') }}</option>
+                            @foreach($subscriptionPlans as $plan)
+                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>
+                            @endforeach
+                        </select>
                     </label>
                 </div>
+            </div>
+            <div class="col-sm-12 col-md-6 text-md-end">
+                @if($statusFilter || $planFilter)
+                    <button wire:click="$set('statusFilter', ''); $set('planFilter', '')" class="btn btn-soft-secondary btn-sm">
+                        <i class="ri-close-line align-middle me-1"></i> {{ __('common.clear_filters') }}
+                    </button>
+                @endif
             </div>
         </div>
 

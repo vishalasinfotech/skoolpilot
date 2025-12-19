@@ -6,10 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperAdmin\Feedback\UpdateFeedbackRequest;
 use App\Models\Feedback;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class FeedbackController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(static function ($request, $next) {
+            Gate::authorize('access-super-admin');
+
+            return $next($request);
+        });
+    }
+
     public function index(): View
     {
         return view('super-admin.feedback.index');

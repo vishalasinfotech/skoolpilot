@@ -14,6 +14,7 @@ use App\Models\StudentFeeTransaction;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class ReportController extends Controller
@@ -36,6 +37,8 @@ class ReportController extends Controller
      */
     public function revenue(Request $request): View
     {
+        Gate::authorize('access-super-admin');
+
         $startDate = $request->get('start_date', date('Y-m-01'));
         $endDate = $request->get('end_date', date('Y-m-t'));
         $status = $request->get('status', 'all');
@@ -69,6 +72,8 @@ class ReportController extends Controller
      */
     public function schools(Request $request): View
     {
+        Gate::authorize('access-super-admin');
+
         $status = $request->get('status', 'all');
 
         $query = School::with(['subscriptionPlan', 'transactions']);
@@ -98,6 +103,8 @@ class ReportController extends Controller
      */
     public function transactions(Request $request): View
     {
+        Gate::authorize('access-super-admin');
+
         $startDate = $request->get('start_date', date('Y-m-01'));
         $endDate = $request->get('end_date', date('Y-m-t'));
         $schoolId = $request->get('school_id');
@@ -129,6 +136,8 @@ class ReportController extends Controller
      */
     public function students(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $classId = $request->get('class_id');
         $sectionId = $request->get('section_id');
@@ -178,6 +187,8 @@ class ReportController extends Controller
      */
     public function teachers(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $status = $request->get('status', 'all');
 
@@ -208,6 +219,8 @@ class ReportController extends Controller
      */
     public function staff(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $status = $request->get('status', 'all');
 
@@ -238,6 +251,8 @@ class ReportController extends Controller
      */
     public function attendance(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $role = $request->get('role', 'student');
         $startDate = $request->get('start_date', date('Y-m-01'));
@@ -304,6 +319,8 @@ class ReportController extends Controller
      */
     public function fees(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $startDate = $request->get('start_date', date('Y-m-01'));
         $endDate = $request->get('end_date', date('Y-m-t'));
@@ -355,6 +372,8 @@ class ReportController extends Controller
      */
     public function examResults(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $examId = $request->get('exam_id');
         $classId = $request->get('class_id');
@@ -407,6 +426,8 @@ class ReportController extends Controller
      */
     public function library(Request $request): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $status = $request->get('status', 'all');
 
@@ -448,6 +469,8 @@ class ReportController extends Controller
      */
     public function classStudents(Request $request): View
     {
+        Gate::authorize('access-teacher');
+
         $schoolId = auth()->user()->school_id;
         $teacherId = auth()->user()->id;
         $classId = $request->get('class_id');
@@ -492,6 +515,8 @@ class ReportController extends Controller
      */
     public function teacherAttendance(Request $request): View
     {
+        Gate::authorize('access-teacher');
+
         $schoolId = auth()->user()->school_id;
         $startDate = $request->get('start_date', date('Y-m-01'));
         $endDate = $request->get('end_date', date('Y-m-t'));
@@ -553,6 +578,8 @@ class ReportController extends Controller
      */
     public function teacherResults(Request $request): View
     {
+        Gate::authorize('access-teacher');
+
         $schoolId = auth()->user()->school_id;
         $examId = $request->get('exam_id');
         $classId = $request->get('class_id');
@@ -607,6 +634,8 @@ class ReportController extends Controller
      */
     public function studentReports(Request $request): View
     {
+        Gate::authorize('access-student');
+
         $student = auth()->user();
         $schoolId = $student->school_id;
         $academicSessionId = $request->get('academic_session_id');
@@ -659,6 +688,8 @@ class ReportController extends Controller
      */
     public function parentStudentReports(Request $request): View
     {
+        Gate::authorize('access-parent');
+
         $parent = auth()->user();
         $schoolId = $parent->school_id;
         $studentId = $request->get('student_id');

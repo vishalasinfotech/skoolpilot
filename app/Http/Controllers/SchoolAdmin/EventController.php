@@ -13,30 +13,35 @@ class EventController extends Controller
 {
     public function index()
     {
+
         return view('school-admin.event.index');
     }
 
     public function create()
     {
-        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+
+        $schools = School::whereNull('deleted_at')->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.event.create', compact('schools'));
     }
 
     public function show(Event $event)
     {
+
         return view('school-admin.event.show', compact('event'));
     }
 
     public function edit(Event $event)
     {
-        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+
+        $schools = School::whereNull('deleted_at')->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.event.edit', compact('event', 'schools'));
     }
 
     public function store(StoreEventRequest $request): RedirectResponse
     {
+
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -48,6 +53,7 @@ class EventController extends Controller
 
     public function update(UpdateEventRequest $request, Event $event): RedirectResponse
     {
+
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -59,6 +65,7 @@ class EventController extends Controller
 
     public function destroy(Event $event): RedirectResponse
     {
+
         $event->delete();
 
         return redirect()->route('school-admin.event.index')

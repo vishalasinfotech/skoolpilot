@@ -7,6 +7,7 @@ use App\Http\Requests\SchoolAdmin\Teacher\StoreTeacherRequest;
 use App\Http\Requests\SchoolAdmin\Teacher\UpdateTeacherRequest;
 use App\Models\School;
 use App\Models\User;
+use App\Services\EmployeeIdService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,36 +16,51 @@ class TeacherController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', User::class);
+
         return view('school-admin.teacher.index');
     }
 
-    public function create()
+    public function create(EmployeeIdService $employeeIdService)
     {
-        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+        $this->authorize('create', User::class);
 
-        return view('school-admin.teacher.create', compact('schools'));
+        $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
+        $schoolId = auth()->user()->school_id;
+        $autoGenerateEnabled = $employeeIdService->isAutoGenerateEnabled($schoolId);
+        $generatedEmployeeId = $autoGenerateEnabled ? $employeeIdService->generate($schoolId, 'teacher') : null;
+
+        return view('school-admin.teacher.create', compact('schools', 'autoGenerateEnabled', 'generatedEmployeeId'));
     }
 
     public function show(User $teacher)
     {
-        abort_unless($teacher->isTeacher(), 404);
+        $this->authorize('view', $teacher);
 
         return view('school-admin.teacher.show', compact('teacher'));
     }
 
     public function edit(User $teacher)
     {
-        abort_unless($teacher->isTeacher(), 404);
+        $this->authorize('update', $teacher);
 
         $schools = School::where('id', auth()->user()->school_id)->where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.teacher.edit', compact('teacher', 'schools'));
     }
 
-    public function store(StoreTeacherRequest $request, ImageUploadService $imageUploadService): RedirectResponse
+    public function store(StoreTeacherRequest $request, ImageUploadService $imageUploadService, EmployeeIdService $employeeIdService): RedirectResponse
     {
+        $this->authorize('create', User::class);
+
         $data = $request->validated();
-        $data['school_id'] = auth()->user()->school_id;
+        $schoolId = auth()->user()->school_id;
+        $data['school_id'] = $schoolId;
+
+        // Auto-generate employee ID if enabled
+        if ($employeeIdService->isAutoGenerateEnabled($schoolId)) {
+            $data['employee_id'] = $employeeIdService->generate($schoolId, 'teacher');
+        }
 
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
@@ -77,7 +93,7 @@ class TeacherController extends Controller
 
     public function update(UpdateTeacherRequest $request, User $teacher, ImageUploadService $imageUploadService): RedirectResponse
     {
-        abort_unless($teacher->isTeacher(), 404);
+        $this->authorize('update', $teacher);
 
         $data = $request->validated();
 
@@ -111,7 +127,7 @@ class TeacherController extends Controller
 
     public function destroy(User $teacher): RedirectResponse
     {
-        abort_unless($teacher->isTeacher(), 404);
+        $this->authorize('delete', $teacher);
 
         if ($teacher->profile_image && file_exists(public_path($teacher->profile_image))) {
             unlink(public_path($teacher->profile_image));
@@ -129,6 +145,8 @@ class TeacherController extends Controller
 
     public function bulkImport()
     {
+        $this->authorize('create', User::class);
+
         $schools = School::where('id', auth()->user()->school_id)->where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.teacher.bulk-import', compact('schools'));
@@ -136,6 +154,8 @@ class TeacherController extends Controller
 
     public function processBulkImport(Request $request): RedirectResponse
     {
+        $this->authorize('create', User::class);
+
         $request->validate([
             'file' => ['required', 'file', 'mimes:csv,xlsx,xls', 'max:5120'],
             'school_id' => ['required', 'exists:schools,id'],

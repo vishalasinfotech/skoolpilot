@@ -6,12 +6,22 @@ use App\Http\Requests\SuperAdmin\Role\StoreRoleRequest;
 use App\Http\Requests\SuperAdmin\Role\UpdateRoleRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(static function ($request, $next) {
+            Gate::authorize('access-super-admin');
+
+            return $next($request);
+        });
+    }
+
     public function index(): View
     {
         return view('roles.index');
@@ -19,6 +29,7 @@ class RoleController extends Controller
 
     public function create(): View
     {
+
         $permissions = Permission::query()
             ->orderBy('name')
             ->get();
@@ -50,6 +61,7 @@ class RoleController extends Controller
 
     public function edit(Role $role): View
     {
+
         $permissions = Permission::query()
             ->orderBy('name')
             ->get();
@@ -80,12 +92,13 @@ class RoleController extends Controller
 
     public function destroy(Role $role, PermissionRegistrar $permissionRegistrar): RedirectResponse
     {
+        Gate::authorize('delete', $role);
+
         $protectedRoleNames = [
             'Super Admin',
             'School Admin',
             'Teacher',
             'Student',
-            'Parent',
         ];
 
         if (in_array($role->name, $protectedRoleNames, true)) {

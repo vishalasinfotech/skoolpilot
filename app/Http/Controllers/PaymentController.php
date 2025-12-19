@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -154,11 +155,8 @@ class PaymentController extends Controller
             $school = $transaction->school;
             $plan = $transaction->subscriptionPlan;
 
-            // Calculate expires_at: now + trial_days from subscription_plans table
-            $expiresAt = null;
-            if ($plan->trial_days > 0) {
-                $expiresAt = now()->addDays($plan->trial_days);
-            }
+            // Calculate expires_at based on plan type
+            $expiresAt = $this->calculateExpiryDate($plan);
 
             $transaction->update([
                 'razorpay_payment_id' => $request->razorpay_payment_id,
@@ -178,10 +176,15 @@ class PaymentController extends Controller
                 'status' => true,
             ]);
 
-            // Set trial end date if applicable
-            if ($plan->trial_days > 0) {
+            // Set trial end date if applicable (only for non-lifetime plans)
+            if ($expiresAt && $plan->trial_days > 0) {
                 $school->update([
-                    'trial_ends_at' => now()->addDays($plan->trial_days),
+                    'trial_ends_at' => $expiresAt,
+                ]);
+            } elseif ($plan->type === 'lifetime') {
+                // For lifetime plans, ensure trial_ends_at is null
+                $school->update([
+                    'trial_ends_at' => null,
                 ]);
             }
 
@@ -223,17 +226,41 @@ class PaymentController extends Controller
     }
 
     /**
+     * Calculate expiry date based on subscription plan type.
+     */
+    protected function calculateExpiryDate(SubscriptionPlan $plan): ?\Carbon\Carbon
+    {
+        // For lifetime plans, no expiry - return null
+        if ($plan->type === 'lifetime') {
+            return null;
+        }
+
+        // Calculate based on plan type
+        $expiresAt = match ($plan->type) {
+            'monthly' => now()->addMonth(),
+            'quarterly' => now()->addMonths(3),
+            'yearly' => now()->addYear(),
+            'lifetime' => null, // Explicitly handle lifetime (shouldn't reach here due to check above)
+            default => now()->addMonth(),
+        };
+
+        // Add trial days if applicable (only for non-lifetime plans)
+        if ($expiresAt && $plan->trial_days > 0) {
+            $expiresAt = $expiresAt->addDays($plan->trial_days);
+        }
+
+        return $expiresAt;
+    }
+
+    /**
      * Handle free plan assignment
      */
     protected function handleFreePlan(School $school, SubscriptionPlan $plan): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            // Calculate expires_at: now + trial_days from subscription_plans table
-            $expiresAt = null;
-            if ($plan->trial_days > 0) {
-                $expiresAt = now()->addDays($plan->trial_days);
-            }
+            // Calculate expires_at based on plan type
+            $expiresAt = $this->calculateExpiryDate($plan);
 
             // Create transaction record for free plan
             Transaction::create([
@@ -253,9 +280,15 @@ class PaymentController extends Controller
                 'status' => true,
             ]);
 
-            if ($plan->trial_days > 0) {
+            // Set trial end date if applicable (only for non-lifetime plans)
+            if ($expiresAt && $plan->trial_days > 0) {
                 $school->update([
-                    'trial_ends_at' => now()->addDays($plan->trial_days),
+                    'trial_ends_at' => $expiresAt,
+                ]);
+            } elseif ($plan->type === 'lifetime') {
+                // For lifetime plans, ensure trial_ends_at is null
+                $school->update([
+                    'trial_ends_at' => null,
                 ]);
             }
 
@@ -293,6 +326,8 @@ class PaymentController extends Controller
      */
     public function transactionHistory(): View
     {
+        Gate::authorize('access-super-admin');
+
         return view('payment.transaction-history');
     }
 
@@ -301,6 +336,8 @@ class PaymentController extends Controller
      */
     public function show(Transaction $transaction): View
     {
+        Gate::authorize('access-super-admin');
+
         $transaction->load(['school', 'subscriptionPlan']);
 
         return view('payment.invoice', compact('transaction'));

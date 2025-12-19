@@ -31,6 +31,7 @@
                 </li>
 
                 <!-- Super Admin -->
+                @can('access-super-admin')
                 <li class="menu-title"><span data-key="t-menu">{{ __('common.super_admin') }}</span></li>
 
                 <li class="nav-item" data-role="super_admin">
@@ -96,8 +97,10 @@
                         <i class="ri-global-line"></i> <span>{{ __('common.language_management') }}</span>
                     </a>
                 </li>
+                @endcan
 
                 <!-- School Admin -->
+                @can('access-school-admin')
                 <li class="menu-title"><span data-key="t-menu">{{ __('common.school_admin') }}</span></li>
 
                 <li class="nav-item" data-role="school_admin">
@@ -113,6 +116,8 @@
                                     class="nav-link">{{ __('common.students') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.staff.index') }}"
                                     class="nav-link">{{ __('common.staff') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('school-admin.leave-application.index') }}" class="nav-link">{{ __('common.leave_applications') }}</a></li>
+
                             <li class="nav-item"><a href="{{ route('school-admin.promotions.index') }}" class="nav-link">{{ __('common.promotions') }}</a></li>
                         </ul>
                     </div>
@@ -242,15 +247,11 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
                 <!-- Teacher -->
+                @can('access-teacher')
                 <li class="menu-title"><span data-key="t-menu">{{ __('common.teacher') }}</span></li>
-
-                <li class="nav-item" data-role="teacher">
-                    <a class="nav-link menu-link" href="#">
-                        <i class="ri-user-3-line"></i> <span>{{ __('common.profile') }}</span>
-                    </a>
-                </li>
 
                 <li class="nav-item" data-role="teacher">
                     <a class="nav-link menu-link" href="#sidebarClassroom" data-bs-toggle="collapse" role="button"
@@ -259,16 +260,13 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarClassroom">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.attendance') }}</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.assignments') }}</a></li>
-                            <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}"
-                                    class="nav-link">{{ __('common.exams') }}</a></li>
-                            <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}"
-                                    class="nav-link">{{ __('common.exam_schedules') }}</a></li>
-                            <li class="nav-item"><a href="{{ route('school-admin.result.index') }}"
-                                    class="nav-link">{{ __('common.results') }}</a></li>
+                            <li class="nav-item"><a href="" class="nav-link">{{ __('common.attendance') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('teacher.assignment.index') }}" class="nav-link">{{ __('common.assignments') }}</a></li>
+                                <li class="nav-item"><a href="{{ route('school-admin.exam.index') }}" class="nav-link">{{ __('common.exams') }}</a></li>
+                                <li class="nav-item"><a href="{{ route('school-admin.exam-schedule.index') }}" class="nav-link">{{ __('common.exam_schedules') }}</a></li>
+                                <li class="nav-item"><a href="{{ route('school-admin.result.index') }}" class="nav-link">{{ __('common.results') }}</a></li>
 
-                            <li class="nav-item"><a href="#" class="nav-link">{{ __('common.apply_for_leave') }}</a></li>
+                            <li class="nav-item"><a href="{{ route('teacher.leave-application.index') }}" class="nav-link">{{ __('common.apply_for_leave') }}</a></li>
                         </ul>
                     </div>
                 </li>
@@ -293,9 +291,14 @@
                         <i class="ri-feedback-line"></i> <span>{{ __('common.add_student_complaint') }}</span>
                     </a>
                 </li>
+                @endcan
 
                 <!-- Student & Parent -->
-                <li class="menu-title"><span data-key="t-menu">{{ __('common.student_parent') }}</span></li>
+                    @canany(['access-student', 'access-parent'])
+                        <li class="menu-title"><span data-key="t-menu">{{ __('common.student_parent') }}</span></li>
+                    @endcanany
+
+                @can('access-student')
                 <li class="nav-item" data-role="student">
                     <a class="nav-link menu-link" href="{{ route('student.fee') }}">
                         <i class="ri-wallet-3-line"></i> <span>{{ __('common.fees') }}</span>
@@ -313,7 +316,9 @@
                         <i class="ri-file-chart-line"></i> <span>{{ __('common.student_reports') }}</span>
                     </a>
                 </li>
+                @endcan
 
+                @can('access-parent')
                 <li class="nav-item" data-role="parent">
                     <a class="nav-link menu-link" href="{{ route('parent.my-children') }}">
                         <i class="ri-parent-line"></i> <span>{{ __('common.my_children') }}</span>
@@ -331,6 +336,7 @@
                         <i class="ri-feedback-line"></i> <span>{{ __('common.view_student_complaints') }}</span>
                     </a>
                 </li>
+                @endcan
             </ul>
         </div>
         <!-- Sidebar -->

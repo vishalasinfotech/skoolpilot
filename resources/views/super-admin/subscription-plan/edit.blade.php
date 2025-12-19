@@ -80,6 +80,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="type" class="form-label">{{ __('common.plan_type') }} <span class="text-danger">*</span></label>
                                         <x-select name="type" id="type" :options="[
+                                            'days' => __('common.days'),
                                             'monthly' => __('common.monthly'),
                                             'quarterly' => __('common.quarterly'),
                                             'yearly' => __('common.yearly'),
@@ -111,7 +112,7 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="trial_days" class="form-label">{{ __('common.trial_days') }} <span class="text-danger">*</span></label>
+                                        <label for="trial_days" class="form-label">{{ __('common.days') }} <span class="text-danger">*</span></label>
                                         <x-input type="number" name="trial_days" id="trial_days" :value="old('trial_days', $subscriptionPlan->trial_days)" required min="0" max="365" />
                                         @error('trial_days')
                                             <small class="text-danger d-block">{{ $message }}</small>

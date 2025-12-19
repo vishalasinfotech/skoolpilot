@@ -90,6 +90,7 @@ return [
     'apply_for_leave' => 'छुट्टी के लिए आवेदन करें',
     'class_students' => 'कक्षा के छात्र',
     'add_student_complaint' => 'छात्र शिकायत जोड़ें',
+    'leave_applications' => 'छुट्टियां आवेदन',
 
     // Student & Parent
     'student_parent' => 'छात्र और अभिभावक',

@@ -90,6 +90,7 @@ return [
     'apply_for_leave' => 'Apply for Leave',
     'class_students' => 'Class Students',
     'add_student_complaint' => 'Add Student Complaint',
+    'leave_applications' => 'Leave Applications',
 
     // Student & Parent
     'student_parent' => 'Student & Parent',
@@ -259,7 +260,7 @@ return [
     'premium' => 'Premium',
     'free' => 'Free',
     'paid' => 'Paid',
-    'days' => 'days',
+    'days' => 'Days',
     'no_features_added' => 'No features added',
     'associated_schools' => 'Associated Schools',
     'schools_count' => 'school(s)',
@@ -333,4 +334,6 @@ return [
     'remove_image' => 'Remove Image',
     'no_image_selected' => 'No image selected',
     'current_image' => 'Current Image',
+    'all' => 'All',
+    'clear_filters' => 'Clear Filters',
 ];

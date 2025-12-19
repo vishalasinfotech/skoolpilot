@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Setting\UpdateGeneralSettingRequest;
 use App\Http\Requests\Setting\UpdateSettingRequest;
+use App\Models\School;
 use App\Models\Setting;
+use App\Models\Transaction;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Jackiedo\DotenvEditor\DotenvEditor;
 
@@ -25,7 +28,31 @@ class SettingController extends Controller
      */
     public function index(): View
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
+
+        // Get school subscription plan information
+        $school = School::with('subscriptionPlan')->find($schoolId);
+
+        // Get latest completed transaction for subscription details
+        $latestTransaction = Transaction::query()
+            ->with('subscriptionPlan')
+            ->where('school_id', $schoolId)
+            ->where('status', 'completed')
+            ->orderByDesc('paid_at')
+            ->orderByDesc('id')
+            ->first();
+
+        $subscriptionPlan = $latestTransaction?->subscriptionPlan ?? $school?->subscriptionPlan;
+        $subscriptionExpiresAt = $latestTransaction?->expires_at;
+        $subscriptionStatus = 'none';
+
+        if ($latestTransaction) {
+            $subscriptionStatus = ($subscriptionExpiresAt !== null && $subscriptionExpiresAt->isPast())
+                ? 'expired'
+                : 'active';
+        }
 
         // Default values
         $defaults = [
@@ -57,7 +84,7 @@ class SettingController extends Controller
             'auto_generate_employee_id' => filter_var(Setting::get('auto_generate_employee_id', false, $schoolId), FILTER_VALIDATE_BOOLEAN),
         ];
 
-        return view('setting.index', compact('defaults'));
+        return view('setting.index', compact('defaults', 'subscriptionPlan', 'subscriptionExpiresAt', 'subscriptionStatus'));
     }
 
     /**
@@ -65,6 +92,8 @@ class SettingController extends Controller
      */
     public function update(UpdateSettingRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
+        Gate::authorize('access-school-admin');
+
         $schoolId = auth()->user()->school_id;
         $data = $request->validated();
 
@@ -139,6 +168,8 @@ class SettingController extends Controller
      */
     public function general(): View
     {
+        Gate::authorize('access-super-admin');
+
         // Get all general settings (global settings, not school-specific)
         $settings = [
             // Business Settings
@@ -194,6 +225,8 @@ class SettingController extends Controller
      */
     public function updateGeneral(UpdateGeneralSettingRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
+        Gate::authorize('access-super-admin');
+
         $data = $request->validated();
 
         // Handle logo upload
@@ -307,6 +340,8 @@ class SettingController extends Controller
      */
     public function payment(): View
     {
+        Gate::authorize('access-super-admin');
+
         $env = $this->dotenvEditor->load();
 
         $paymentSettings = [
@@ -322,6 +357,8 @@ class SettingController extends Controller
      */
     public function updatePayment(Request $request): RedirectResponse
     {
+        Gate::authorize('access-super-admin');
+
         $request->validate([
             'RAZORPAY_KEY_ID' => ['required', 'string', 'max:255'],
             'RAZORPAY_KEY_SECRET' => ['required', 'string', 'max:255'],

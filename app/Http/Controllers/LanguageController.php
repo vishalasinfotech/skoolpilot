@@ -8,10 +8,20 @@ use App\Models\Language;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 
 class LanguageController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(static function ($request, $next) {
+            Gate::authorize('access-super-admin');
+
+            return $next($request);
+        })->except(['switch']);
+    }
+
     /**
      * Switch application language.
      */
@@ -144,6 +154,8 @@ class LanguageController extends Controller
      */
     public function toggleStatus(Language $language): RedirectResponse
     {
+        Gate::authorize('update', $language);
+
         // Cannot deactivate default language
         if ($language->is_default) {
             return redirect()->route('super-admin.language.index')
@@ -161,6 +173,8 @@ class LanguageController extends Controller
      */
     public function setAsDefault(Language $language): RedirectResponse
     {
+        Gate::authorize('update', $language);
+
         // Cannot set inactive language as default
         if (! $language->is_active) {
             return redirect()->route('super-admin.language.index')

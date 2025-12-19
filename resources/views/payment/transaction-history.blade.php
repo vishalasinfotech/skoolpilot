@@ -24,12 +24,12 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    {{-- <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">All Transactions</h5>
                         <a href="{{ route('subscription-plan.plans') }}" class="btn btn-primary">
                             <i class="ri-add-line align-middle me-1"></i> Purchase Plan
                         </a>
-                    </div>
+                    </div> --}}
                     @livewire('payment.transaction-table')
                 </div>
             </div>

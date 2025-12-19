@@ -9,9 +9,11 @@ use App\Models\ExamSchedule;
 use App\Models\Library;
 use App\Models\Result;
 use App\Models\School;
+use App\Models\SubscriptionPlan;
 use App\Models\Subject;
 use App\Models\Transaction;
 use App\Models\Transportation;
+
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -28,11 +30,66 @@ class DashboardController extends Controller
 
         // Super Admin Dashboard Data
         if ($role === 'super_admin') {
+            // Get recent transactions
+            $recentTransactions = Transaction::with(['school', 'subscriptionPlan'])
+                ->latest()
+                ->take(10)
+                ->get();
+
+            // Transaction statistics
+            $totalRevenue = Transaction::where('status', 'completed')->sum('amount');
+            $totalTransactions = Transaction::count();
+            $completedTransactions = Transaction::where('status', 'completed')->count();
+            $pendingTransactions = Transaction::where('status', 'pending')->count();
+            $failedTransactions = Transaction::where('status', 'failed')->count();
+
+            // Monthly revenue data for last 6 months
+            $monthlyRevenue = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $month = now()->subMonths($i);
+                $monthlyRevenue[] = [
+                    'month' => $month->format('M Y'),
+                    'revenue' => (float) Transaction::where('status', 'completed')
+                        ->whereYear('paid_at', $month->year)
+                        ->whereMonth('paid_at', $month->month)
+                        ->sum('amount'),
+                ];
+            }
+
+            // Transaction status distribution
+            $statusDistribution = [
+                'completed' => Transaction::where('status', 'completed')->count(),
+                'pending' => Transaction::where('status', 'pending')->count(),
+                'failed' => Transaction::where('status', 'failed')->count(),
+                'processing' => Transaction::where('status', 'processing')->count(),
+                'cancelled' => Transaction::where('status', 'cancelled')->count(),
+                'refunded' => Transaction::where('status', 'refunded')->count(),
+            ];
+
+            // Daily transaction count for last 30 days
+            $dailyTransactions = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $date = now()->subDays($i);
+                $dailyTransactions[] = [
+                    'date' => $date->format('M d'),
+                    'count' => Transaction::whereDate('created_at', $date->toDateString())->count(),
+                ];
+            }
+
             $data = [
                 'total_schools' => School::count(),
                 'active_schools' => School::where('status', true)->count(),
-                'total_subscriptions' => School::whereNotNull('subscription_plan_id')->count(),
+                'total_subscriptions' => SubscriptionPlan::count(),
                 'recent_schools' => School::latest()->take(5)->get(),
+                'recent_transactions' => $recentTransactions,
+                'total_revenue' => $totalRevenue,
+                'total_transactions' => $totalTransactions,
+                'completed_transactions' => $completedTransactions,
+                'pending_transactions' => $pendingTransactions,
+                'failed_transactions' => $failedTransactions,
+                'monthly_revenue' => $monthlyRevenue,
+                'status_distribution' => $statusDistribution,
+                'daily_transactions' => $dailyTransactions,
             ];
         }
 

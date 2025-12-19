@@ -63,7 +63,7 @@
                     @forelse($roles as $index => $role)
                         <tr wire:key="role-{{ $role->id }}">
                             <td>{{ str_pad($roles->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}</td>
-                            <td class="fw-medium">{{ $role->name }}</td>
+                            <td class="fw-medium">{{ Str::of($role->name)->lower()->replace(['-', '_'], ' ') }}</td>
                             <td>
                                 <span class="badge bg-info-subtle text-info">
                                     {{ $role->permissions_count ?? 0 }}

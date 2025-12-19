@@ -134,9 +134,8 @@
 
                                         <div class="mb-3">
                                             <label for="school_address" class="form-label">School Address</label>
-                                            <textarea name="school_address" id="school_address"
-                                                class="form-control @error('school_address') is-invalid @enderror" rows="3"
-                                                placeholder="Enter school address">{{ old('school_address') }}</textarea>
+                                            <textarea name="school_address" id="school_address" class="form-control @error('school_address') is-invalid @enderror"
+                                                rows="3" placeholder="Enter school address">{{ old('school_address') }}</textarea>
                                             @error('school_address')
                                                 <div class="invalid-feedback d-block">
                                                     {{ $message }}
@@ -261,5 +260,3 @@
 </body>
 
 </html>
-
-

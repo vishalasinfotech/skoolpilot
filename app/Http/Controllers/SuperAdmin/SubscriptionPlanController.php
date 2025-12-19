@@ -7,9 +7,19 @@ use App\Http\Requests\SuperAdmin\SubscriptionPlan\StoreSubscriptionPlanRequest;
 use App\Http\Requests\SuperAdmin\SubscriptionPlan\UpdateSubscriptionPlanRequest;
 use App\Models\SubscriptionPlan;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 
 class SubscriptionPlanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(static function ($request, $next) {
+            Gate::authorize('access-super-admin');
+
+            return $next($request);
+        })->except(['plans']);
+    }
+
     public function index()
     {
         return view('super-admin.subscription-plan.index');
@@ -72,6 +82,8 @@ class SubscriptionPlanController extends Controller
 
     public function plans()
     {
+        Gate::authorize('view-subscription-plans');
+
         $subscriptionPlans = SubscriptionPlan::where('is_active', true)->paginate(10);
 
         return view('super-admin.subscription-plan.plans', compact('subscriptionPlans'));

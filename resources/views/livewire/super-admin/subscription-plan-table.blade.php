@@ -69,7 +69,7 @@
                             @endif
                         </th>
                         <th style="width: 100px;">{{ __('common.plan_status') }}</th>
-                        <th style="width: 100px;">{{ __('common.trial_days') }}</th>
+                        <th style="width: 100px;">{{ __('common.days') }}</th>
                         <th style="width: 100px;">{{ __('common.status') }}</th>
                         <th style="width: 80px;">{{ __('common.action') }}</th>
                     </tr>

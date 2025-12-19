@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\SchoolAdmin\Staff;
 
+use App\Models\Setting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,13 +15,23 @@ class StoreStaffRequest extends FormRequest
 
     public function rules(): array
     {
+        $schoolId = auth()->user()->school_id ?? null;
+        $autoGenerateEnabled = $schoolId && filter_var(
+            Setting::get('auto_generate_employee_id', false, $schoolId),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
+        $employeeIdRules = $autoGenerateEnabled
+            ? ['nullable', 'string', 'max:50']
+            : ['required', 'string', 'max:50', Rule::unique('users', 'employee_id')->where('role', 'staff')->where('school_id', $schoolId)];
+
         return [
             // 'school_id' => ['required', 'exists:schools,id'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'staff')],
             'phone' => ['nullable', 'string', 'max:20'],
-            'employee_id' => ['required', 'string', 'max:50', Rule::unique('users', 'employee_id')->where('role', 'staff')],
+            'employee_id' => $employeeIdRules,
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'address' => ['nullable', 'string', 'max:500'],

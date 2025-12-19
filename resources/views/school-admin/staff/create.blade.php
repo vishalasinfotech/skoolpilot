@@ -54,7 +54,14 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="staff_id" class="form-label">Staff ID <span class="text-danger">*</span></label>
-                                        <x-input type="text" name="employee_id" id="employee_id" :value="old('employee_id')" required placeholder="Enter staff ID" />
+                                        @if($autoGenerateEnabled ?? false)
+                                            <x-input type="text" name="employee_id" id="employee_id" :value="old('employee_id', $generatedEmployeeId)" readonly placeholder="Auto-generated" />
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="ri-information-line"></i> Staff ID will be automatically generated.
+                                            </small>
+                                        @else
+                                            <x-input type="text" name="employee_id" id="employee_id" :value="old('employee_id')" required placeholder="Enter staff ID" />
+                                        @endif
                                         @error('employee_id')
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror

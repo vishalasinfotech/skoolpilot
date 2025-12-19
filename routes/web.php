@@ -28,6 +28,8 @@ use App\Http\Controllers\SchoolAdmin\StudentController;
 use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
 use App\Http\Controllers\SchoolAdmin\TransportationController;
+use App\Http\Controllers\SchoolAdmin\LeaveApplicationController;
+use App\Http\Controllers\SchoolAdmin\AssignmentController;
 use App\Http\Controllers\SchoolController as PublicSchoolController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SuperAdmin\FeedbackController as SuperAdminFeedbackController;
@@ -73,6 +75,7 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('payment/failed', [PaymentController::class, 'failed'])->name('payment.failed');
     Route::get('payment/success-page', [PaymentController::class, 'successPage'])->name('payment.success-page');
     Route::get('payment/failed-page', [PaymentController::class, 'failedPage'])->name('payment.failed-page');
+
     Route::get('payment/transaction-history', [PaymentController::class, 'transactionHistory'])->name('payment.transaction-history');
     Route::get('payment/transaction/{transaction}', [PaymentController::class, 'show'])->name('payment.transaction.show');
 
@@ -93,8 +96,7 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     // Permission Management Routes (Super Admin only)
     Route::resource('roles', RoleController::class)
         ->except(['show'])
-        ->names('roles')
-        ->middleware('role:super_admin');
+        ->names('roles');
 
     Route::middleware('active-subscription')
         ->prefix('school-admin')
@@ -139,6 +141,16 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
             Route::get('attendance/show', [AttendanceController::class, 'show'])->name('school-admin.attendance.show');
             Route::put('attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
             Route::delete('attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
+
+
+            // Leave Application Routes
+            Route::get('/leave-application', [LeaveApplicationController::class, 'index'])->name('school-admin.leave-application.index');
+            Route::get('teacher/leave-application/create', [LeaveApplicationController::class, 'create'])->name('teacher.leave-application.create');
+            Route::post('teacher/leave-application', [LeaveApplicationController::class, 'store'])->name('teacher.leave-application.store');
+            Route::delete('teacher/leave-application/{leaveApplication}', [LeaveApplicationController::class, 'destroy'])->name('teacher.leave-application.destroy');
+            Route::get('teacher/leave-application/{leaveApplication}', [LeaveApplicationController::class, 'show'])->name('teacher.leave-application.show');
+
+
 
             // Feedback Routes (School Admin)
             Route::get('feedback', [SchoolAdminFeedbackController::class, 'index'])->name('school-admin.feedback.index');
@@ -201,5 +213,15 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     // Parent Routes
     Route::get('parent/my-children', [StudentController::class, 'myChildren'])->name('parent.my-children');
     Route::get('parent/student-reports', [ReportController::class, 'parentStudentReports'])->name('parent.student-reports');
+
+    Route::get('teacher/leave-application', [LeaveApplicationController::class, 'teacherIndex'])->name('teacher.leave-application.index');
+ // Assignment Routes
+ Route::get('teacher/assignment', [AssignmentController::class, 'teacherIndex'])->name('teacher.assignment.index');
+ Route::get('teacher/assignment/create', [AssignmentController::class, 'create'])->name('teacher.assignment.create');
+ Route::post('teacher/assignment', [AssignmentController::class, 'store'])->name('teacher.assignment.store');
+ Route::get('teacher/assignment/{assignment}', [AssignmentController::class, 'show'])->name('teacher.assignment.show');
+ Route::get('teacher/assignment/{assignment}/edit', [AssignmentController::class, 'edit'])->name('teacher.assignment.edit');
+ Route::put('teacher/assignment/{assignment}', [AssignmentController::class, 'update'])->name('teacher.assignment.update');
+ Route::delete('teacher/assignment/{assignment}', [AssignmentController::class, 'destroy'])->name('teacher.assignment.destroy');
 
 });

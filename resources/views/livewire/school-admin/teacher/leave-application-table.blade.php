@@ -1,0 +1,156 @@
+<div>
+    <div class="card-body">
+        <!-- Search and Per Page Controls -->
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                    <label class="d-inline-flex align-items-center">
+                        Show
+                        <select wire:model.live="perPage" class="form-select form-select-sm mx-2" style="width: auto;">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        entries
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <div class="dataTables_filter text-md-end">
+                    <label class="d-inline-flex align-items-center">
+                        Search:
+                        <input type="search" wire:model.live.debounce.300ms="search" class="form-control form-control-sm ms-2" placeholder="Search..." style="width: 200px;">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div wire:loading.delay class="text-center py-3">
+            <div class="spinner-border text-primary spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading...</span>
+        </div>
+
+        <!-- Table -->
+        <div  wire:loading.remove.delay>
+            <table class="table table-bordered table-nowrap align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 80px;">#</th>
+                        <th wire:click="sortBy('leave_type')" style="cursor: pointer;">
+                            Leave Type
+                            @if($sortField === 'leave_type')
+                                <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('start_date')" style="cursor: pointer;">
+                            Start Date
+                            @if($sortField === 'start_date')
+                                <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
+                            @endif
+                        </th>
+                        <th wire:click="sortBy('end_date')" style="cursor: pointer;">
+                            End Date
+                            @if($sortField === 'end_date')
+                                <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
+                            @endif
+                        </th>
+                        <th>Total Days</th>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th wire:click="sortBy('status')" style="cursor: pointer;">
+                            Status
+                            @if($sortField === 'status')
+                                <i class="ri-arrow-{{ $sortDirection === 'asc' ? 'up' : 'down' }}-s-line"></i>
+                            @endif
+                        </th>
+                        <th>Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($leaveApplications as $index => $leaveApplication)
+                        <tr wire:key="leave-{{ $leaveApplication->id }}">
+                            <td>{{ str_pad($leaveApplications->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}</td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info">{{ ucfirst($leaveApplication->leave_type) }}</span>
+                            </td>
+                            <td>{{ $leaveApplication->start_date->format('M d, Y') }}</td>
+                            <td>{{ $leaveApplication->end_date->format('M d, Y') }}</td>
+                            <td><span class="badge bg-primary-subtle text-primary">{{ $leaveApplication->total_days }} {{ $leaveApplication->total_days == 1 ? 'day' : 'days' }}</span></td>
+                            <td>{{ ucfirst($leaveApplication->type) }}</td>
+                            <td>
+                                <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $leaveApplication->reason }}">
+                                    {{ $leaveApplication->reason }}
+                                </div>
+                            </td>
+                            <td>
+                                @if($leaveApplication->status === 'approved')
+                                    <span class="badge bg-success-subtle text-success">Approved</span>
+                                @elseif($leaveApplication->status === 'rejected')
+                                    <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                @else
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('teacher.leave-application.show', $leaveApplication->id) }}">
+                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                            </a>
+                                        </li>
+                                        @if($leaveApplication->status === 'pending')
+                                            <li class="dropdown-divider"></li>
+                                            <li>
+                                                <button class="dropdown-item text-danger" wire:click="openDeleteModal({{ $leaveApplication->id }}, '{{ $leaveApplication->start_date->format('M d, Y') }} to {{ $leaveApplication->end_date->format('M d, Y') }}')">
+                                                    <i class="ri-delete-bin-fill align-bottom me-2"></i> Delete
+                                                </button>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="ri-search-line fs-2"></i>
+                                    <p class="mt-2 mb-0">No leave applications found</p>
+                                    @if($search)
+                                        <small>Try adjusting your search</small>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if($leaveApplications->hasPages())
+            <div class="row mt-3 align-items-center">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" role="status" aria-live="polite">
+                        Showing {{ $leaveApplications->firstItem() ?? 0 }} to {{ $leaveApplications->lastItem() ?? 0 }} of {{ $leaveApplications->total() }} entries
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <div class="dataTables_paginate paging_simple_numbers float-end">
+                        {{ $leaveApplications->links() }}
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>
