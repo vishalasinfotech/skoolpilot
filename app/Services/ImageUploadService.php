@@ -28,8 +28,21 @@ class ImageUploadService
             File::makeDirectory($destinationPath, 0755, true);
         }
 
-        // Move the file
-        $image->move($destinationPath, $filename);
+        // Get the temporary file path - this is more reliable than using move()
+        $tempPath = $image->getRealPath();
+
+        // Verify the file is valid and the temp path exists
+        if (! $image->isValid()) {
+            throw new \RuntimeException('The uploaded file is not valid.');
+        }
+
+        if (! $tempPath || ! File::exists($tempPath)) {
+            throw new \RuntimeException('The temporary file does not exist. Please try uploading again.');
+        }
+
+        // Copy the file instead of moving to avoid issues with temp file cleanup
+        $destinationFile = $destinationPath.'/'.$filename;
+        File::copy($tempPath, $destinationFile);
 
         // Return the relative path to the image
         return $directory.'/'.$filename;

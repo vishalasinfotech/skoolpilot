@@ -77,7 +77,7 @@ class AuthController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'users/profiles',
+                'uploads/users/profiles',
                 $user->profile_image
             );
         }

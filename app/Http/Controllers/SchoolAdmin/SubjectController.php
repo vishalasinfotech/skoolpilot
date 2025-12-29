@@ -13,11 +13,14 @@ class SubjectController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Subject::class);
+
         return view('school-admin.subject.index');
     }
 
     public function create()
     {
+        $this->authorize('create', Subject::class);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.subject.create', compact('schools'));
@@ -25,11 +28,14 @@ class SubjectController extends Controller
 
     public function show(Subject $subject)
     {
+        $this->authorize('view', $subject);
+
         return view('school-admin.subject.show', compact('subject'));
     }
 
     public function edit(Subject $subject)
     {
+        $this->authorize('update', $subject);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.subject.edit', compact('subject', 'schools'));
@@ -37,6 +43,7 @@ class SubjectController extends Controller
 
     public function store(StoreSubjectRequest $request): RedirectResponse
     {
+        $this->authorize('create', Subject::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -48,6 +55,7 @@ class SubjectController extends Controller
 
     public function update(UpdateSubjectRequest $request, Subject $subject): RedirectResponse
     {
+        $this->authorize('update', $subject);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -59,6 +67,7 @@ class SubjectController extends Controller
 
     public function destroy(Subject $subject): RedirectResponse
     {
+        $this->authorize('delete', $subject);
         $subject->delete();
 
         return redirect()->route('school-admin.subject.index')

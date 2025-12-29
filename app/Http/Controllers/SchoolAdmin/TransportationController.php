@@ -17,6 +17,8 @@ class TransportationController extends Controller
      */
     public function index(): View
     {
+        $this->authorize('viewAny', Transportation::class);
+
         return view('school-admin.transportation.index');
     }
 
@@ -35,6 +37,7 @@ class TransportationController extends Controller
      */
     public function store(StoreTransportationRequest $request): RedirectResponse
     {
+        $this->authorize('create', Transportation::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -49,6 +52,7 @@ class TransportationController extends Controller
      */
     public function show(Transportation $transportation): View
     {
+        $this->authorize('view', $transportation);
         $transportation->load('school');
 
         return view('school-admin.transportation.show', compact('transportation'));
@@ -59,6 +63,7 @@ class TransportationController extends Controller
      */
     public function edit(Transportation $transportation): View
     {
+        $this->authorize('update', $transportation);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.transportation.edit', compact('transportation', 'schools'));
@@ -69,6 +74,7 @@ class TransportationController extends Controller
      */
     public function update(UpdateTransportationRequest $request, Transportation $transportation): RedirectResponse
     {
+        $this->authorize('update', $transportation);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -83,6 +89,7 @@ class TransportationController extends Controller
      */
     public function destroy(Transportation $transportation): RedirectResponse
     {
+        $this->authorize('delete', $transportation);
         $transportation->delete();
 
         return redirect()->route('school-admin.transportation.index')

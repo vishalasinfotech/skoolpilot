@@ -11,6 +11,7 @@ use App\Services\EmployeeIdService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class TeacherController extends Controller
 {
@@ -65,13 +66,13 @@ class TeacherController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'teachers/profiles'
+                'uploads/teachers/profiles'
             );
         }
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'teachers/docs'
+                'uploads/teachers/docs'
             );
         }
 
@@ -87,6 +88,11 @@ class TeacherController extends Controller
 
         User::create($data);
 
+        $user = User::where('email', $data['email'])->first();
+        if ($user && Role::where('name', 'teacher')->exists()) {
+            $user->syncRoles('teacher');
+        }
+
         return redirect()->route('school-admin.teacher.index')
             ->with('success', 'Teacher created successfully.');
     }
@@ -100,7 +106,7 @@ class TeacherController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'teachers/profiles',
+                'uploads/teachers/profiles',
                 $teacher->profile_image
             );
         }
@@ -108,7 +114,7 @@ class TeacherController extends Controller
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'teachers/docs',
+                'uploads/teachers/docs',
                 $teacher->doc_image
             );
         }

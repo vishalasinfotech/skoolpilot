@@ -81,6 +81,10 @@ return [
     'fees_report' => 'Fees Report',
     'exam_results_report' => 'Exam & Results Report',
     'library_report' => 'Library Report',
+    'notification_templates' => 'Notification Templates',
+    'notification_history' => 'Notification History',
+    'notification_details' => 'Notification Details',
+    'notification_template_used' => 'Notification Template Used',
 
     // Teacher
     'teacher' => 'Teacher',
@@ -106,6 +110,11 @@ return [
     'create_notification' => 'Create Notification',
     'notification_history' => 'Notification History',
     'templates' => 'Templates',
+    'no_notifications' => 'No notifications',
+    'new' => 'New',
+    'new_plural' => 'New',
+    'view_all_notifications' => 'View All Notifications',
+    'back' => 'Back',
 
     // Topbar
     'search' => 'Search',

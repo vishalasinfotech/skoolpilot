@@ -44,7 +44,7 @@ class SchoolController extends Controller
             if ($request->hasFile('logo')) {
                 $schoolData['logo'] = $imageUploadService->uploadImage(
                     $request->file('logo'),
-                    'schools/logos'
+                    'uploads/schools/logos'
                 );
             }
 

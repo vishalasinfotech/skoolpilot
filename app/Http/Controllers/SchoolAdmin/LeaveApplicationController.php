@@ -13,21 +13,28 @@ class LeaveApplicationController extends Controller
 {
     public function index(): View
     {
+        $this->authorize('viewAny', LeaveApplication::class);
+
         return view('school-admin.leave-application.index');
     }
 
     public function teacherIndex(): View
     {
+        $this->authorize('viewAny', LeaveApplication::class);
+
         return view('school-admin.leave-application.teacher-index');
     }
 
     public function create(): View
     {
+        $this->authorize('create', LeaveApplication::class);
+
         return view('school-admin.leave-application.create');
     }
 
     public function store(StoreLeaveApplicationRequest $request): RedirectResponse
     {
+        $this->authorize('create', LeaveApplication::class);
         $validated = $request->validated();
 
         $startDate = Carbon::parse($validated['start_date']);
@@ -53,6 +60,8 @@ class LeaveApplicationController extends Controller
 
     public function show(LeaveApplication $leaveApplication): View
     {
+        $this->authorize('view', $leaveApplication);
+
         return view('school-admin.leave-application.show', [
             'leaveApplication' => $leaveApplication,
         ]);
@@ -60,6 +69,7 @@ class LeaveApplicationController extends Controller
 
     public function destroy(LeaveApplication $leaveApplication): RedirectResponse
     {
+        $this->authorize('delete', $leaveApplication);
         $leaveApplication->delete();
 
         return redirect()

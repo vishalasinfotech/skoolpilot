@@ -22,6 +22,8 @@ class LibraryController extends Controller
      */
     public function index(): View
     {
+        $this->authorize('viewAny', Library::class);
+
         return view('school-admin.library.index');
     }
 
@@ -30,6 +32,7 @@ class LibraryController extends Controller
      */
     public function create(): View
     {
+        $this->authorize('create', Library::class);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.library.create', compact('schools'));
@@ -40,13 +43,14 @@ class LibraryController extends Controller
      */
     public function store(StoreLibraryRequest $request, ImageUploadService $imageUploadService): RedirectResponse
     {
+        $this->authorize('create', Library::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
         if ($request->hasFile('book_image')) {
             $data['book_image'] = $imageUploadService->uploadImage(
                 $request->file('book_image'),
-                'library/books'
+                'uploads/library/books'
             );
         }
 
@@ -61,6 +65,7 @@ class LibraryController extends Controller
      */
     public function show(Library $library): View
     {
+        $this->authorize('view', $library);
         $library->load('school');
 
         return view('school-admin.library.show', compact('library'));
@@ -71,6 +76,7 @@ class LibraryController extends Controller
      */
     public function edit(Library $library): View
     {
+        $this->authorize('update', $library);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.library.edit', compact('library', 'schools'));
@@ -81,13 +87,14 @@ class LibraryController extends Controller
      */
     public function update(UpdateLibraryRequest $request, Library $library, ImageUploadService $imageUploadService): RedirectResponse
     {
+        $this->authorize('update', $library);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
         if ($request->hasFile('book_image')) {
             $data['book_image'] = $imageUploadService->uploadImage(
                 $request->file('book_image'),
-                'library/books',
+                'uploads/library/books',
                 $library->book_image
             );
         }
@@ -103,6 +110,7 @@ class LibraryController extends Controller
      */
     public function destroy(Library $library): RedirectResponse
     {
+        $this->authorize('delete', $library);
         if ($library->book_image && file_exists(public_path($library->book_image))) {
             unlink(public_path($library->book_image));
         }
@@ -146,6 +154,7 @@ class LibraryController extends Controller
      */
     public function issueBook(IssueBookRequest $request): RedirectResponse
     {
+        $this->authorize('create', BookIssue::class);
         $data = $request->validated();
         $library = Library::findOrFail($data['library_id']);
 
@@ -185,6 +194,7 @@ class LibraryController extends Controller
      */
     public function returnBook(ReturnBookRequest $request, BookIssue $bookIssue): RedirectResponse
     {
+        $this->authorize('update', $bookIssue);
         if ($bookIssue->status === 'returned') {
             return redirect()->back()
                 ->with('error', 'This book has already been returned.');

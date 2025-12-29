@@ -72,6 +72,7 @@ class SettingController extends Controller
             'mail_encryption' => Setting::get('mail_encryption', 'tls', $schoolId),
             'mail_from_name' => Setting::get('mail_from_name', '', $schoolId),
             'mail_from_address' => Setting::get('mail_from_address', '', $schoolId),
+            'mail_password' => Setting::get('mail_password', '', $schoolId),
             'support_email' => Setting::get('support_email', null, $schoolId),
             'support_phone' => Setting::get('support_phone', null, $schoolId),
             'address' => Setting::get('address', null, $schoolId),
@@ -101,7 +102,7 @@ class SettingController extends Controller
         if ($request->hasFile('school_logo')) {
             $logoPath = $imageUploadService->uploadImage(
                 $request->file('school_logo'),
-                'settings/logo',
+                'uploads/settings/logo',
                 Setting::get('school_logo', null, $schoolId)
             );
             Setting::set('school_logo', $logoPath, $schoolId, 'file', 'branding');
@@ -111,7 +112,7 @@ class SettingController extends Controller
         if ($request->hasFile('school_favicon')) {
             $faviconPath = $imageUploadService->uploadImage(
                 $request->file('school_favicon'),
-                'settings/favicon',
+                'uploads/settings/favicon',
                 Setting::get('school_favicon', null, $schoolId)
             );
             Setting::set('school_favicon', $faviconPath, $schoolId, 'file', 'branding');
@@ -125,6 +126,7 @@ class SettingController extends Controller
             'mail_encryption' => $data['mail_encryption'] ?? null,
             'mail_from_name' => $data['mail_from_name'] ?? null,
             'mail_from_address' => $data['mail_from_address'] ?? null,
+            'mail_password' => $data['mail_password'] ?? null,
         ];
 
         foreach ($emailSettings as $key => $value) {
@@ -233,7 +235,7 @@ class SettingController extends Controller
         if ($request->hasFile('logo')) {
             $logoPath = $imageUploadService->uploadImage(
                 $request->file('logo'),
-                'settings/logo',
+                'uploads/settings/logo',
                 Setting::get('logo', null, null)
             );
             Setting::set('logo', $logoPath, null, 'file', 'branding');
@@ -243,7 +245,7 @@ class SettingController extends Controller
         if ($request->hasFile('favicon')) {
             $faviconPath = $imageUploadService->uploadImage(
                 $request->file('favicon'),
-                'settings/favicon',
+                'uploads/settings/favicon',
                 Setting::get('favicon', null, null)
             );
             Setting::set('favicon', $faviconPath, null, 'file', 'branding');

@@ -13,7 +13,9 @@ use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class StudentController extends Controller
 {
@@ -85,13 +87,13 @@ class StudentController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'students/profiles'
+                'uploads/students/profiles'
             );
         }
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'students/docs'
+                'uploads/students/docs'
             );
         }
 
@@ -107,6 +109,11 @@ class StudentController extends Controller
 
         User::create($data);
 
+        $user = User::where('email', $data['email'])->first();
+        if ($user && Role::where('name', 'student')->exists()) {
+            $user->syncRoles('student');
+        }
+
         return redirect()->route('school-admin.student.index')
             ->with('success', 'Student created successfully.');
     }
@@ -120,14 +127,14 @@ class StudentController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'students/profiles',
+                'uploads/students/profiles',
                 $student->profile_image
             );
         }
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'students/docs',
+                'uploads/students/docs',
                 $student->doc_image
             );
         }
@@ -148,11 +155,11 @@ class StudentController extends Controller
     {
         abort_unless($student->isStudent(), 404);
 
-        if ($student->profile_image && file_exists(public_path($student->profile_image))) {
+        if ($student->profile_image && File::exists(public_path($student->profile_image))) {
             unlink(public_path($student->profile_image));
         }
 
-        if ($student->doc_image && file_exists(public_path($student->doc_image))) {
+        if ($student->doc_image && File::exists(public_path($student->doc_image))) {
             unlink(public_path($student->doc_image));
         }
 

@@ -81,6 +81,9 @@ return [
     'fees_report' => 'शुल्क रिपोर्ट',
     'exam_results_report' => 'परीक्षा और परिणाम रिपोर्ट',
     'library_report' => 'पुस्तकालय रिपोर्ट',
+    'notification_templates' => 'सूचना टेम्प्लेट्स',
+    'notification_history' => 'सूचना इतिहास',
+    'notification_details' => 'सूचना विवरण',
 
     // Teacher
     'teacher' => 'शिक्षक',

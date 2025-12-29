@@ -95,10 +95,12 @@ class RoleController extends Controller
         Gate::authorize('delete', $role);
 
         $protectedRoleNames = [
-            'Super Admin',
-            'School Admin',
-            'Teacher',
-            'Student',
+            'super_admin',
+            'school_admin',
+            'teacher',
+            'student',
+            'staff',
+            'parent',
         ];
 
         if (in_array($role->name, $protectedRoleNames, true)) {

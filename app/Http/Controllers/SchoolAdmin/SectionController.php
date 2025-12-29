@@ -13,20 +13,27 @@ class SectionController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Section::class);
+
         return view('school-admin.section.index');
     }
 
     public function create()
     {
+        $this->authorize('create', Section::class);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.section.create', compact('schools'));
     }
 
-    public function show(Section $section) {}
+    public function show(Section $section)
+    {
+        $this->authorize('view', $section);
+    }
 
     public function edit(Section $section)
     {
+        $this->authorize('update', $section);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.section.edit', compact('section', 'schools'));
@@ -34,6 +41,7 @@ class SectionController extends Controller
 
     public function store(StoreSectionRequest $request): RedirectResponse
     {
+        $this->authorize('create', Section::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -45,6 +53,7 @@ class SectionController extends Controller
 
     public function update(UpdateSectionRequest $request, Section $section): RedirectResponse
     {
+        $this->authorize('update', $section);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -56,6 +65,7 @@ class SectionController extends Controller
 
     public function destroy(Section $section): RedirectResponse
     {
+        $this->authorize('delete', $section);
         $section->delete();
 
         return redirect()->route('school-admin.section.index')

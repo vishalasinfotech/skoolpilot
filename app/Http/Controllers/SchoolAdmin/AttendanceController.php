@@ -19,6 +19,8 @@ class AttendanceController extends Controller
      */
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', Attendance::class);
+
         $role = $request->get('role', 'student'); // student, teacher, staff
         $date = $request->get('date', date('Y-m-d'));
         $classId = $request->get('class_id');
@@ -74,6 +76,8 @@ class AttendanceController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', Attendance::class);
+
         $request->validate([
             'date' => ['required', 'date', 'before_or_equal:today'],
             'role' => ['required', 'in:student,teacher,staff'],
@@ -165,6 +169,8 @@ class AttendanceController extends Controller
      */
     public function update(UpdateAttendanceRequest $request, Attendance $attendance): RedirectResponse
     {
+        $this->authorize('update', $attendance);
+
         $data = $request->validated();
         $data['marked_by'] = auth()->id();
 
@@ -178,6 +184,8 @@ class AttendanceController extends Controller
      */
     public function destroy(Attendance $attendance): RedirectResponse
     {
+        $this->authorize('delete', $attendance);
+
         $attendance->delete();
 
         return redirect()->back()->with('success', 'Attendance deleted successfully.');

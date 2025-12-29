@@ -6,14 +6,22 @@
                 <div class="navbar-brand-box horizontal-logo">
                     <a href="{{ route('dashboard') }}" class="logo logo-dark d-flex align-items-center">
                         <span class="logo-sm">
-                            @if(file_exists(public_path('assets/images/logo-sm.png')))
+                            @php
+                                $schoolId = auth()->user()->school_id ?? null;
+                                $schoolLogo = setting('school_logo', $schoolId);
+                            @endphp
+                            @if($schoolLogo)
+                                <img src="{{ asset($schoolLogo) }}" alt="{{ config('app.name') }}" height="22">
+                            @elseif(file_exists(public_path('assets/images/logo-sm.png')))
                                 <img src="{{ asset('assets/images/logo-sm.png') }}" alt="{{ config('app.name') }}" height="22">
                             @else
                                 <span class="fw-bold fs-5">{{ config('app.name', 'App Name') }}</span>
                             @endif
                         </span>
                         <span class="logo-lg">
-                            @if(file_exists(public_path('assets/images/logo-dark.png')))
+                            @if($schoolLogo)
+                                <img src="{{ asset($schoolLogo) }}" alt="{{ config('app.name') }}" height="17">
+                            @elseif(file_exists(public_path('assets/images/logo-dark.png')))
                                 <img src="{{ asset('assets/images/logo-dark.png') }}" alt="{{ config('app.name') }}" height="17">
                             @else
                                 <span class="fw-bold fs-4">{{ config('app.name', 'App Name') }}</span>
@@ -169,14 +177,30 @@
 
 
 
+                @php
+                    $userNotifications = \App\Models\NotificationRecipient::where('user_id', auth()->id())
+                        ->with(['notification.sender'])
+                        ->orderBy('created_at', 'desc')
+                        ->limit(20)
+                        ->get()
+                        ->filter(function($recipient) {
+                            return $recipient->notification !== null;
+                        });
+                    $unreadCount = \App\Models\NotificationRecipient::where('user_id', auth()->id())
+                        ->where('is_read', false)
+                        ->whereHas('notification')
+                        ->count();
+                @endphp
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown"
                         data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-bell fs-22'></i>
-                        <span
-                            class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">3<span
-                                class="visually-hidden">unread messages</span></span>
+                        @if($unreadCount > 0)
+                            <span
+                                class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger notification-badge-count">{{ $unreadCount > 99 ? '99+' : $unreadCount }}<span
+                                    class="visually-hidden">unread notifications</span></span>
+                        @endif
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                         aria-labelledby="page-header-notifications-dropdown">
@@ -185,308 +209,69 @@
                             <div class="p-3">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h6 class="m-0 fs-16 fw-semibold text-white"> Notifications </h6>
+                                        <h6 class="m-0 fs-16 fw-semibold text-white">{{ __('common.notifications') }}</h6>
                                     </div>
-                                    <div class="col-auto dropdown-tabs">
-                                        <span class="badge bg-light-subtle text-body fs-13"> 4 New</span>
-                                    </div>
+                                    @if($unreadCount > 0)
+                                        <div class="col-auto dropdown-tabs">
+                                            <span class="badge bg-light-subtle text-body fs-13 notification-unread-count">{{ $unreadCount }} {{ $unreadCount == 1 ? __('common.new') : __('common.new_plural') }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
-
-                            <div class="px-2 pt-2">
-                                <ul class="nav nav-tabs dropdown-tabs nav-tabs-custom" data-dropdown-tabs="true"
-                                    id="notificationItemsTab" role="tablist">
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#all-noti-tab"
-                                            role="tab" aria-selected="true">
-                                            All (4)
-                                        </a>
-                                    </li>
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#messages-tab" role="tab"
-                                            aria-selected="false">
-                                            Messages
-                                        </a>
-                                    </li>
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#alerts-tab" role="tab"
-                                            aria-selected="false">
-                                            Alerts
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
                         </div>
 
                         <div class="tab-content position-relative" id="notificationItemsTabContent">
                             <div class="tab-pane fade show active py-2 ps-2" id="all-noti-tab" role="tabpanel">
-                                <div data-simplebar style="max-height: 300px;" class="pe-2">
-                                    <div
-                                        class="text-reset notification-item d-block dropdown-item position-relative">
-                                        <div class="d-flex">
-                                            <div class="avatar-xs me-3 flex-shrink-0">
-                                                <span
-                                                    class="avatar-title bg-info-subtle text-info rounded-circle fs-16">
-                                                    <i class="bx bx-badge-check"></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-2 lh-base">Your <b>Elite</b> author
-                                                        Graphic
-                                                        Optimization <span class="text-secondary">reward</span>
-                                                        is
-                                                        ready!
+                                <div data-simplebar style="max-height: 300px;" class="pe-2" id="notifications-list">
+                                    @forelse($userNotifications as $notificationRecipient)
+                                        @php
+                                            $notification = $notificationRecipient->notification;
+                                            $sender = $notification->sender ?? null;
+                                            $isUnread = !$notificationRecipient->is_read;
+                                        @endphp
+                                        <a href="{{ route('notification.show', $notificationRecipient->id) }}"
+                                           class="text-reset notification-item d-block dropdown-item position-relative {{ $isUnread ? 'bg-light-subtle' : '' }}"
+                                           data-notification-id="{{ $notificationRecipient->id }}">
+                                            <div class="d-flex">
+                                                <div class="avatar-xs me-3 flex-shrink-0">
+                                                    @if($sender && $sender->profile_image && file_exists(public_path($sender->profile_image)))
+                                                        <img src="{{ asset($sender->profile_image) }}"
+                                                             class="rounded-circle avatar-xs"
+                                                             alt="{{ $sender->name ?? 'User' }}">
+                                                    @else
+                                                        <span class="avatar-title bg-{{ $isUnread ? 'primary' : 'secondary' }}-subtle text-{{ $isUnread ? 'primary' : 'secondary' }} rounded-circle fs-16">
+                                                            <i class="bx bx-bell"></i>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mt-0 mb-1 fs-13 {{ $isUnread ? 'fw-semibold' : '' }} lh-base">
+                                                        {{ $notification->title ?? 'No Title' }}
+                                                        @if($isUnread)
+                                                            <span class="badge bg-danger ms-1">{{ __('common.new') }}</span>
+                                                        @endif
                                                     </h6>
-                                                </a>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> Just 30 sec
-                                                        ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="all-notification-check01">
-                                                    <label class="form-check-label"
-                                                        for="all-notification-check01"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="text-reset notification-item d-block dropdown-item position-relative">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-2.jpg"
-                                                class="me-3 rounded-circle avatar-xs flex-shrink-0"
-                                                alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">Answered to your comment on the cash flow
-                                                        forecast's
-                                                        graph 🔔.</p>
-                                                </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 48 min
-                                                        ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="all-notification-check02">
-                                                    <label class="form-check-label"
-                                                        for="all-notification-check02"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="text-reset notification-item d-block dropdown-item position-relative">
-                                        <div class="d-flex">
-                                            <div class="avatar-xs me-3 flex-shrink-0">
-                                                <span
-                                                    class="avatar-title bg-danger-subtle text-danger rounded-circle fs-16">
-                                                    <i class='bx bx-message-square-dots'></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-2 fs-13 lh-base">You have received <b
-                                                            class="text-success">20</b> new messages in the
-                                                        conversation
-                                                    </h6>
-                                                </a>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="all-notification-check03">
-                                                    <label class="form-check-label"
-                                                        for="all-notification-check03"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        class="text-reset notification-item d-block dropdown-item position-relative">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-8.jpg"
-                                                class="me-3 rounded-circle avatar-xs flex-shrink-0"
-                                                alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">We talked about a project on linkedin.</p>
-                                                </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 4 hrs ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="all-notification-check04">
-                                                    <label class="form-check-label"
-                                                        for="all-notification-check04"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="my-3 text-center view-all">
-                                        <button type="button"
-                                            class="btn btn-soft-success waves-effect waves-light">View
-                                            All Notifications <i
-                                                class="ri-arrow-right-line align-middle"></i></button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="tab-pane fade py-2 ps-2" id="messages-tab" role="tabpanel"
-                                aria-labelledby="messages-tab">
-                                <div data-simplebar style="max-height: 300px;" class="pe-2">
-                                    <div class="text-reset notification-item d-block dropdown-item">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-3.jpg"
-                                                class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">James Lemire</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">We talked about a project on linkedin.</p>
-                                                </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 30 min
-                                                        ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="messages-notification-check01">
-                                                    <label class="form-check-label"
-                                                        for="messages-notification-check01"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-reset notification-item d-block dropdown-item">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-2.jpg"
-                                                class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Angela Bernier</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">Answered to your comment on the cash flow
-                                                        forecast's
-                                                        graph 🔔.</p>
-                                                </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 2 hrs ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="messages-notification-check02">
-                                                    <label class="form-check-label"
-                                                        for="messages-notification-check02"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-reset notification-item d-block dropdown-item">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-6.jpg"
-                                                class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Kenneth Brown</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">Mentionned you in his comment on 📃 invoice
-                                                        #12501.
+                                                    @if($notification->message)
+                                                        <div class="fs-13 text-muted mb-1">
+                                                            <p class="mb-0">{{ \Illuminate\Support\Str::limit(strip_tags($notification->message), 80) }}</p>
+                                                        </div>
+                                                    @endif
+                                                    <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                                                        <span><i class="mdi mdi-clock-outline"></i> {{ $notificationRecipient->created_at->diffForHumans() }}</span>
+                                                        @if($sender)
+                                                            <span class="ms-2">• {{ $sender->name ?? 'System' }}</span>
+                                                        @endif
                                                     </p>
                                                 </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 10 hrs
-                                                        ago</span>
-                                                </p>
                                             </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="messages-notification-check03">
-                                                    <label class="form-check-label"
-                                                        for="messages-notification-check03"></label>
-                                                </div>
-                                            </div>
+                                        </a>
+                                    @empty
+                                        <div class="dropdown-item text-center py-4">
+                                            <i class="bx bx-bell-off fs-48 text-muted mb-2 d-block"></i>
+                                            <p class="text-muted mb-0">{{ __('common.no_notifications') }}</p>
                                         </div>
-                                    </div>
+                                    @endforelse
 
-                                    <div class="text-reset notification-item d-block dropdown-item">
-                                        <div class="d-flex">
-                                            <img src="assets/images/users/avatar-8.jpg"
-                                                class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                            <div class="flex-grow-1">
-                                                <a href="#!" class="stretched-link">
-                                                    <h6 class="mt-0 mb-1 fs-13 fw-semibold">Maureen Gibson</h6>
-                                                </a>
-                                                <div class="fs-13 text-muted">
-                                                    <p class="mb-1">We talked about a project on linkedin.</p>
-                                                </div>
-                                                <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                                                    <span><i class="mdi mdi-clock-outline"></i> 3 days
-                                                        ago</span>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 fs-15">
-                                                <div class="form-check notification-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="messages-notification-check04">
-                                                    <label class="form-check-label"
-                                                        for="messages-notification-check04"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="my-3 text-center view-all">
-                                        <button type="button"
-                                            class="btn btn-soft-success waves-effect waves-light">View
-                                            All Messages <i
-                                                class="ri-arrow-right-line align-middle"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel"
-                                aria-labelledby="alerts-tab"></div>
-
-                            <div class="notification-actions" id="notification-actions">
-                                <div class="d-flex text-muted justify-content-center">
-                                    Select <div id="select-content" class="text-body fw-semibold px-1">0</div>
-                                    Result <button type="button" class="btn btn-link link-danger p-0 ms-3"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#removeNotificationModal">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -557,33 +342,6 @@
     </div>
 </header>
 
-<!-- removeNotificationModal -->
-<div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                    id="NotificationModalbtn-close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mt-2 text-center">
-                    <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                        colors="primary:#f7b84b,secondary:#f06548" style="width:100px;height:100px"></lord-icon>
-                    <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                        <h4>Are you sure ?</h4>
-                        <p class="text-muted mx-4 mb-0">Are you sure you want to remove this Notification ?</p>
-                    </div>
-                </div>
-                <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                    <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn w-sm btn-danger" id="delete-notification">Yes, Delete
-                        It!</button>
-                </div>
-            </div>
-
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 <script>
     // Language Switcher
@@ -600,5 +358,93 @@
                 languageForm.submit();
             });
         });
+
+        // Notification handling - mark as read when clicked
+        const notificationItems = document.querySelectorAll('.notification-item[data-notification-id]');
+        notificationItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                const notificationId = this.getAttribute('data-notification-id');
+                const notificationUrl = this.getAttribute('href');
+
+                // Mark as read via AJAX (non-blocking)
+                if (notificationId) {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                                     document.querySelector('input[name="_token"]')?.value || '';
+
+                    fetch(`/notification/${notificationId}/read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            // Update UI - remove unread styling
+                            this.classList.remove('bg-light-subtle');
+                            const newBadge = this.querySelector('.badge.bg-danger');
+                            if (newBadge) {
+                                newBadge.remove();
+                            }
+
+                            // Update badge count
+                            updateNotificationBadge();
+                        }
+                    }).catch(error => {
+                        console.error('Error marking notification as read:', error);
+                    });
+                }
+            });
+        });
+
+        // Function to update notification badge count
+        function updateNotificationBadge() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                             document.querySelector('input[name="_token"]')?.value || '';
+
+            fetch('/notifications', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('.notification-badge-count');
+                const unreadBadge = document.querySelector('.notification-unread-count');
+
+                if (data.unread_count > 0) {
+                    if (badge) {
+                        badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                        badge.style.display = '';
+                    } else {
+                        // Create badge if it doesn't exist
+                        const button = document.getElementById('page-header-notifications-dropdown');
+                        if (button) {
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger notification-badge-count';
+                            newBadge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                            newBadge.innerHTML = newBadge.textContent + '<span class="visually-hidden">unread notifications</span>';
+                            button.appendChild(newBadge);
+                        }
+                    }
+
+                    if (unreadBadge) {
+                        unreadBadge.textContent = `${data.unread_count} ${data.unread_count == 1 ? 'New' : 'New'}`;
+                    }
+                } else {
+                    if (badge) {
+                        badge.remove();
+                    }
+                    if (unreadBadge) {
+                        unreadBadge.remove();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+            });
+        }
     });
 </script>

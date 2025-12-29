@@ -20,11 +20,15 @@ class ResultController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Result::class);
+
         return view('school-admin.result.index');
     }
 
     public function create()
     {
+        $this->authorize('create', Result::class);
+
         $schoolId = auth()->user()->school_id;
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
         $academicSessions = AcademicSession::where('school_id', $schoolId)
@@ -68,6 +72,8 @@ class ResultController extends Controller
 
     public function store(StoreResultRequest $request): RedirectResponse
     {
+        $this->authorize('create', Result::class);
+
         $data = $request->validated();
         $data['school_id'] = auth()->user()->school_id;
         // Calculate percentage if not provided
@@ -113,6 +119,8 @@ class ResultController extends Controller
 
     public function show(Result $result)
     {
+        $this->authorize('view', $result);
+
         $result->load(['student', 'exam', 'subject', 'academicClass', 'section', 'academicSession', 'examSchedule', 'enteredBy']);
 
         return view('school-admin.result.show', compact('result'));
@@ -120,6 +128,8 @@ class ResultController extends Controller
 
     public function edit(Result $result)
     {
+        $this->authorize('update', $result);
+
         $schoolId = $result->school_id;
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
         $academicSessions = AcademicSession::where('school_id', $schoolId)
@@ -163,6 +173,8 @@ class ResultController extends Controller
 
     public function update(UpdateResultRequest $request, Result $result): RedirectResponse
     {
+        $this->authorize('update', $result);
+
         $data = $request->validated();
 
         // Calculate percentage if not provided
@@ -205,6 +217,8 @@ class ResultController extends Controller
 
     public function destroy(Result $result): RedirectResponse
     {
+        $this->authorize('delete', $result);
+
         $result->delete();
 
         return redirect()->route('school-admin.result.index')

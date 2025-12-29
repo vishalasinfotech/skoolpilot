@@ -19,11 +19,15 @@ class ExamScheduleController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', ExamSchedule::class);
+
         return view('school-admin.exam-schedule.index');
     }
 
     public function create()
     {
+        $this->authorize('create', ExamSchedule::class);
+
         $schoolId = auth()->user()->school_id;
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
         $exams = Exam::where('school_id', $schoolId)
@@ -48,6 +52,8 @@ class ExamScheduleController extends Controller
 
     public function store(StoreExamScheduleRequest $request): RedirectResponse
     {
+        $this->authorize('create', ExamSchedule::class);
+
         $data = $request->validated();
         $data['school_id'] = auth()->user()->school_id;
 
@@ -59,6 +65,8 @@ class ExamScheduleController extends Controller
 
     public function show(ExamSchedule $examSchedule)
     {
+        $this->authorize('view', $examSchedule);
+
         $examSchedule->load(['exam', 'academicClass', 'section', 'subject', 'school']);
 
         return view('school-admin.exam-schedule.show', compact('examSchedule'));
@@ -66,6 +74,8 @@ class ExamScheduleController extends Controller
 
     public function edit(ExamSchedule $examSchedule)
     {
+        $this->authorize('update', $examSchedule);
+
         $schoolId = $examSchedule->school_id;
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
         $exams = Exam::where('school_id', $schoolId)
@@ -90,6 +100,8 @@ class ExamScheduleController extends Controller
 
     public function update(UpdateExamScheduleRequest $request, ExamSchedule $examSchedule): RedirectResponse
     {
+        $this->authorize('update', $examSchedule);
+
         $data = $request->validated();
 
         $examSchedule->update($data);
@@ -100,6 +112,8 @@ class ExamScheduleController extends Controller
 
     public function destroy(ExamSchedule $examSchedule): RedirectResponse
     {
+        $this->authorize('delete', $examSchedule);
+
         $examSchedule->delete();
 
         return redirect()->route('school-admin.exam-schedule.index')

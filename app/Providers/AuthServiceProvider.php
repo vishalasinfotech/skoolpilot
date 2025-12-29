@@ -2,18 +2,24 @@
 
 namespace App\Providers;
 
+use App\Models\AcademicClass;
 use App\Models\Attendance;
+use App\Models\CustomNotification;
 use App\Models\Exam;
 use App\Models\ExamSchedule;
 use App\Models\Language;
+use App\Models\NotificationTemplate;
 use App\Models\Result;
 use App\Models\School;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
+use App\Policies\AcademicClassPolicy;
 use App\Policies\AttendancePolicy;
+use App\Policies\CustomNotificationPolicy;
 use App\Policies\ExamPolicy;
 use App\Policies\ExamSchedulePolicy;
 use App\Policies\LanguagePolicy;
+use App\Policies\NotificationTemplatePolicy;
 use App\Policies\ResultPolicy;
 use App\Policies\SchoolPolicy;
 use App\Policies\SpatieRolePolicy;
@@ -42,7 +48,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::policy(ExamSchedule::class, ExamSchedulePolicy::class);
         Gate::policy(Result::class, ResultPolicy::class);
         Gate::policy(Attendance::class, AttendancePolicy::class);
+        Gate::policy(AcademicClass::class, AcademicClassPolicy::class);
         Gate::policy(User::class, TeacherPolicy::class);
+        Gate::policy(NotificationTemplate::class, NotificationTemplatePolicy::class);
+        Gate::policy(CustomNotification::class, CustomNotificationPolicy::class);
 
         Gate::define('access-super-admin', static fn (User $user): bool => $user->role === 'super_admin');
         Gate::define('access-school-admin', static fn (User $user): bool => in_array($user->role, ['school_admin', 'school-admin'], true));

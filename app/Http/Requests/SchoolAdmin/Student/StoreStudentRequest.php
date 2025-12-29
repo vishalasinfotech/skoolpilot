@@ -21,6 +21,7 @@ class StoreStudentRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->where('role', 'student')],
+
             'phone' => ['nullable', 'string', 'max:20'],
             'parent_phone' => ['nullable', 'string', 'max:20'],
             'admission_number' => ['required', 'string', 'max:50', Rule::unique('users', 'admission_number')->where('role', 'student')],

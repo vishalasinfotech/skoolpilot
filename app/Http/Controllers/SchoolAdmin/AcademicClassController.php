@@ -13,11 +13,14 @@ class AcademicClassController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', AcademicClass::class);
+
         return view('school-admin.academic-class.index');
     }
 
     public function create()
     {
+        $this->authorize('create', AcademicClass::class);
         $schools = School::where('status', true)->pluck('name', 'id');
 
         return view('school-admin.academic-class.create', compact('schools'));
@@ -25,11 +28,14 @@ class AcademicClassController extends Controller
 
     public function show(AcademicClass $academicClass)
     {
+        $this->authorize('view', $academicClass);
+
         return view('school-admin.academic-class.show', compact('academicClass'));
     }
 
     public function edit(AcademicClass $academicClass)
     {
+        $this->authorize('update', $academicClass);
         $schools = School::where('status', true)->pluck('name', 'id');
 
         return view('school-admin.academic-class.edit', compact('academicClass', 'schools'));
@@ -37,6 +43,7 @@ class AcademicClassController extends Controller
 
     public function store(StoreAcademicClassRequest $request): RedirectResponse
     {
+        $this->authorize('create', AcademicClass::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -49,6 +56,7 @@ class AcademicClassController extends Controller
 
     public function update(UpdateAcademicClassRequest $request, AcademicClass $academicClass): RedirectResponse
     {
+        $this->authorize('update', $academicClass);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -60,6 +68,7 @@ class AcademicClassController extends Controller
 
     public function destroy(AcademicClass $academicClass): RedirectResponse
     {
+        $this->authorize('delete', $academicClass);
         $academicClass->delete();
 
         return redirect()->route('school-admin.academic-class.index')

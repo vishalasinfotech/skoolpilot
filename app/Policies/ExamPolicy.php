@@ -4,31 +4,54 @@ namespace App\Policies;
 
 use App\Models\Exam;
 use App\Models\User;
+use App\Policies\Concerns\ChecksSchoolAccess;
 
 class ExamPolicy
 {
+    use ChecksSchoolAccess;
+
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_exam');
+        if (! $this->sameSchool($user)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'view_any_exam');
     }
 
     public function view(User $user, Exam $exam): bool
     {
-        return $user->can('view_exam') && $user->school_id === $exam->school_id;
+        if (! $this->sameSchool($user, $exam)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'view_exam');
     }
 
     public function create(User $user): bool
     {
-        return $user->can('create_exam') && $user->school_id !== null;
+        if (! $this->sameSchool($user)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'create_exam');
     }
 
     public function update(User $user, Exam $exam): bool
     {
-        return $user->can('edit_exam') && $user->school_id === $exam->school_id;
+        if (! $this->sameSchool($user, $exam)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'edit_exam');
     }
 
     public function delete(User $user, Exam $exam): bool
     {
-        return $user->can('delete_exam') && $user->school_id === $exam->school_id;
+        if (! $this->sameSchool($user, $exam)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'delete_exam');
     }
 }

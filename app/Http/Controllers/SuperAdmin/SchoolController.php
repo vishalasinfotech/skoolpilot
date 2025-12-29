@@ -11,6 +11,7 @@ use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
 
 class SchoolController extends Controller
 {
@@ -54,13 +55,18 @@ class SchoolController extends Controller
         if ($request->hasFile('logo')) {
             $data['logo'] = $imageUploadService->uploadImage(
                 $request->file('logo'),
-                'schools/logos'
+                'uploads/schools/logos'
             );
         }
 
         $data['status'] = $request->boolean('status', true);
 
         School::create($data);
+
+        $user = User::where('email', $data['email'])->first();
+        if ($user && Role::where('name', 'school_admin')->exists()) {
+            $user->syncRoles('school_admin');
+        }
 
         return redirect()->route('super-admin.school.index')->with('success', 'School created successfully.');
     }
@@ -72,7 +78,7 @@ class SchoolController extends Controller
         if ($request->hasFile('logo')) {
             $data['logo'] = $imageUploadService->uploadImage(
                 $request->file('logo'),
-                'schools/logos',
+                'uploads/schools/logos',
                 $school->logo
             );
         }

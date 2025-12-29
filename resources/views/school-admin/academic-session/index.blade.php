@@ -29,93 +29,74 @@
                                 <i class="ri-add-line align-middle me-1"></i> Add Session
                             </a>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-nowrap align-middle mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Session Name</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>School</th>
-                                            <th>Status</th>
-                                            <th>Current</th>
-                                            <th style="width: 100px;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($academicSessions ?? [] as $index => $session)
-                                            <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td><span class="fw-medium">{{ $session->name }}</span></td>
-                                                <td>{{ $session->start_date->format('d M Y') }}</td>
-                                                <td>{{ $session->end_date->format('d M Y') }}</td>
-                                                <td>{{ $session->school->name ?? 'N/A' }}</td>
-                                                <td>
-                                                    @if($session->is_active)
-                                                        <span class="badge bg-success-subtle text-success">Active</span>
-                                                    @else
-                                                        <span class="badge bg-danger-subtle text-danger">Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($session->is_current)
-                                                        <span class="badge bg-primary-subtle text-primary">Current</span>
-                                                    @else
-                                                        <span class="badge bg-secondary-subtle text-secondary">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="ri-more-fill"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('school-admin.academic-session.show', $session->id) }}">
-                                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('school-admin.academic-session.edit', $session->id) }}">
-                                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
-                                                                </a>
-                                                            </li>
-                                                            <li class="dropdown-divider"></li>
-                                                            <li>
-                                                                <form action="{{ route('school-admin.academic-session.destroy', $session->id) }}" method="POST" class="d-inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete this session?')">
-                                                                        <i class="ri-delete-bin-fill align-bottom me-2"></i> Delete
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        </ul>
+                        @livewire('school-admin.academic-session-table')
+                    </div>
+                </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="8" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="ri-inbox-line fs-2"></i>
-                                                        <p class="mt-2 mb-0">No academic sessions found</p>
-                                                        <a href="{{ route('school-admin.academic-session.create') }}" class="btn btn-primary btn-sm mt-2">Create First Session</a>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
                             </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteAcademicSessionModal" tabindex="-1" role="dialog" aria-labelledby="deleteAcademicSessionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <lord-icon src="https://cdn.lordicon.com/hrqwmuhr.json"
+                               trigger="loop"
+                               colors="primary:#121331,secondary:#08a88a"
+                               style="width:120px;height:120px"></lord-icon>
+                    <div class="mt-4">
+                        <h4 class="mb-3">Delete Academic Session</h4>
+                        <p class="text-muted mb-4">
+                            Are you sure you want to delete <strong id="deleteAcademicSessionName"></strong>?
+                            This action cannot be undone.
+                        </p>
+                        <div class="hstack gap-2 justify-content-center">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Session</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:init', function () {
+            let deleteAcademicSessionId = null;
+
+            Livewire.on('openDeleteModal', (data) => {
+                deleteAcademicSessionId = data[0].academicSessionId;
+                document.getElementById('deleteAcademicSessionName').textContent = data[0].academicSessionName;
+                const modal = new bootstrap.Modal(document.getElementById('deleteAcademicSessionModal'));
+                modal.show();
+            });
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (deleteAcademicSessionId) {
+                    const livewireElement = document.querySelector('[wire\\:id]');
+                    if (livewireElement) {
+                        const wireId = livewireElement.getAttribute('wire:id');
+                        const component = Livewire.find(wireId);
+                        if (component) {
+                            component.call('delete', deleteAcademicSessionId);
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAcademicSessionModal'));
+                            modal.hide();
+                            deleteAcademicSessionId = null;
+                        }
+                    }
+                }
+            });
+
+            Livewire.on('alert', (data) => {
+                if (data[0].type === 'success') {
+                    toastr.success(data[0].message);
+                }
+            });
+        });
+    </script>
+    @endpush
 
 @endsection
 

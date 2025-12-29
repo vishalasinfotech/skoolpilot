@@ -4,31 +4,54 @@ namespace App\Policies;
 
 use App\Models\Attendance;
 use App\Models\User;
+use App\Policies\Concerns\ChecksSchoolAccess;
 
 class AttendancePolicy
 {
+    use ChecksSchoolAccess;
+
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_attendance');
+        if (! $this->sameSchool($user)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'view_any_attendance');
     }
 
     public function view(User $user, Attendance $attendance): bool
     {
-        return $user->can('view_attendance') && $user->school_id === $attendance->school_id;
+        if (! $this->sameSchool($user, $attendance)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'view_attendance');
     }
 
     public function create(User $user): bool
     {
-        return $user->can('create_attendance') && $user->school_id !== null;
+        if (! $this->sameSchool($user)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'create_attendance');
     }
 
     public function update(User $user, Attendance $attendance): bool
     {
-        return $user->can('edit_attendance') && $user->school_id === $attendance->school_id;
+        if (! $this->sameSchool($user, $attendance)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'edit_attendance');
     }
 
     public function delete(User $user, Attendance $attendance): bool
     {
-        return $user->can('delete_attendance') && $user->school_id === $attendance->school_id;
+        if (! $this->sameSchool($user, $attendance)) {
+            return false;
+        }
+
+        return $this->hasPermissionOrIsAdmin($user, 'delete_attendance');
     }
 }

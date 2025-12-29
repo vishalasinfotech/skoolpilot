@@ -13,11 +13,14 @@ class HolidayController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Holiday::class);
+
         return view('school-admin.holiday.index');
     }
 
     public function create()
     {
+        $this->authorize('create', Holiday::class);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.holiday.create', compact('schools'));
@@ -25,11 +28,14 @@ class HolidayController extends Controller
 
     public function show(Holiday $holiday)
     {
+        $this->authorize('view', $holiday);
+
         return view('school-admin.holiday.show', compact('holiday'));
     }
 
     public function edit(Holiday $holiday)
     {
+        $this->authorize('update', $holiday);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.holiday.edit', compact('holiday', 'schools'));
@@ -37,6 +43,7 @@ class HolidayController extends Controller
 
     public function store(StoreHolidayRequest $request): RedirectResponse
     {
+        $this->authorize('create', Holiday::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['school_id'] = auth()->user()->school_id;
@@ -48,6 +55,7 @@ class HolidayController extends Controller
 
     public function update(UpdateHolidayRequest $request, Holiday $holiday): RedirectResponse
     {
+        $this->authorize('update', $holiday);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
 
@@ -59,6 +67,7 @@ class HolidayController extends Controller
 
     public function destroy(Holiday $holiday): RedirectResponse
     {
+        $this->authorize('delete', $holiday);
         $holiday->delete();
 
         return redirect()->route('school-admin.holiday.index')

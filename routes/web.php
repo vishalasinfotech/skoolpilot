@@ -4,11 +4,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolAdmin\AcademicClassController;
 use App\Http\Controllers\SchoolAdmin\AcademicSessionController;
+use App\Http\Controllers\SchoolAdmin\AssignmentController;
 use App\Http\Controllers\SchoolAdmin\AttendanceController;
 use App\Http\Controllers\SchoolAdmin\CalendarController;
 use App\Http\Controllers\SchoolAdmin\EventController;
@@ -18,8 +20,10 @@ use App\Http\Controllers\SchoolAdmin\FeeCollectionController;
 use App\Http\Controllers\SchoolAdmin\FeedbackController as SchoolAdminFeedbackController;
 use App\Http\Controllers\SchoolAdmin\FeeStructureController;
 use App\Http\Controllers\SchoolAdmin\HolidayController;
+use App\Http\Controllers\SchoolAdmin\LeaveApplicationController;
 use App\Http\Controllers\SchoolAdmin\LibraryController;
-use App\Http\Controllers\SchoolAdmin\NotificationController;
+use App\Http\Controllers\SchoolAdmin\NotificationController as SchoolAdminNotificationController;
+use App\Http\Controllers\SchoolAdmin\NotificationTemplateController;
 use App\Http\Controllers\SchoolAdmin\PromotionController;
 use App\Http\Controllers\SchoolAdmin\ResultController;
 use App\Http\Controllers\SchoolAdmin\SectionController;
@@ -28,8 +32,6 @@ use App\Http\Controllers\SchoolAdmin\StudentController;
 use App\Http\Controllers\SchoolAdmin\SubjectController;
 use App\Http\Controllers\SchoolAdmin\TeacherController;
 use App\Http\Controllers\SchoolAdmin\TransportationController;
-use App\Http\Controllers\SchoolAdmin\LeaveApplicationController;
-use App\Http\Controllers\SchoolAdmin\AssignmentController;
 use App\Http\Controllers\SchoolController as PublicSchoolController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SuperAdmin\FeedbackController as SuperAdminFeedbackController;
@@ -60,6 +62,11 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
 
     // Dashboard Routes
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // User Notification Routes
+    Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.get');
+    Route::get('/notification/{notificationRecipient}', [NotificationController::class, 'show'])->name('notification.show')->where('notificationRecipient', '[0-9]+');
+    Route::post('/notification/{notificationRecipient}/read', [NotificationController::class, 'markAsRead'])->name('notification.mark-read')->where('notificationRecipient', '[0-9]+');
 
     // Profile Routes
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
@@ -142,7 +149,6 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
             Route::put('attendance/{attendance}', [AttendanceController::class, 'update'])->name('school-admin.attendance.update');
             Route::delete('attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('school-admin.attendance.destroy');
 
-
             // Leave Application Routes
             Route::get('/leave-application', [LeaveApplicationController::class, 'index'])->name('school-admin.leave-application.index');
             Route::get('teacher/leave-application/create', [LeaveApplicationController::class, 'create'])->name('teacher.leave-application.create');
@@ -150,15 +156,20 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
             Route::delete('teacher/leave-application/{leaveApplication}', [LeaveApplicationController::class, 'destroy'])->name('teacher.leave-application.destroy');
             Route::get('teacher/leave-application/{leaveApplication}', [LeaveApplicationController::class, 'show'])->name('teacher.leave-application.show');
 
-
-
             // Feedback Routes (School Admin)
             Route::get('feedback', [SchoolAdminFeedbackController::class, 'index'])->name('school-admin.feedback.index');
             Route::get('feedback/create', [SchoolAdminFeedbackController::class, 'create'])->name('school-admin.feedback.create');
             Route::post('feedback', [SchoolAdminFeedbackController::class, 'store'])->name('school-admin.feedback.store');
 
             // Notification Routes
-            Route::get('notification', [NotificationController::class, 'index'])->name('school-admin.notification.index');
+            Route::get('notification', [SchoolAdminNotificationController::class, 'index'])->name('school-admin.notification.index');
+            Route::get('notification/create', [SchoolAdminNotificationController::class, 'create'])->name('school-admin.notification.create');
+            Route::post('notification', [SchoolAdminNotificationController::class, 'store'])->name('school-admin.notification.store');
+            Route::get('notification/{notification}', [SchoolAdminNotificationController::class, 'show'])->name('school-admin.notification.show');
+            Route::get('notification/users/search', [SchoolAdminNotificationController::class, 'getUsers'])->name('school-admin.notification.get-users');
+
+            // Notification Template Routes
+            Route::resource('notification-template', NotificationTemplateController::class)->names('school-admin.notification-template');
 
             // Library & Transportation Routes
             // Custom library routes must be defined BEFORE resource route to avoid route conflicts
@@ -215,13 +226,13 @@ Route::middleware('auth', 'prevent-back-history')->group(function () {
     Route::get('parent/student-reports', [ReportController::class, 'parentStudentReports'])->name('parent.student-reports');
 
     Route::get('teacher/leave-application', [LeaveApplicationController::class, 'teacherIndex'])->name('teacher.leave-application.index');
- // Assignment Routes
- Route::get('teacher/assignment', [AssignmentController::class, 'teacherIndex'])->name('teacher.assignment.index');
- Route::get('teacher/assignment/create', [AssignmentController::class, 'create'])->name('teacher.assignment.create');
- Route::post('teacher/assignment', [AssignmentController::class, 'store'])->name('teacher.assignment.store');
- Route::get('teacher/assignment/{assignment}', [AssignmentController::class, 'show'])->name('teacher.assignment.show');
- Route::get('teacher/assignment/{assignment}/edit', [AssignmentController::class, 'edit'])->name('teacher.assignment.edit');
- Route::put('teacher/assignment/{assignment}', [AssignmentController::class, 'update'])->name('teacher.assignment.update');
- Route::delete('teacher/assignment/{assignment}', [AssignmentController::class, 'destroy'])->name('teacher.assignment.destroy');
+    // Assignment Routes
+    Route::get('teacher/assignment', [AssignmentController::class, 'teacherIndex'])->name('teacher.assignment.index');
+    Route::get('teacher/assignment/create', [AssignmentController::class, 'create'])->name('teacher.assignment.create');
+    Route::post('teacher/assignment', [AssignmentController::class, 'store'])->name('teacher.assignment.store');
+    Route::get('teacher/assignment/{assignment}', [AssignmentController::class, 'show'])->name('teacher.assignment.show');
+    Route::get('teacher/assignment/{assignment}/edit', [AssignmentController::class, 'edit'])->name('teacher.assignment.edit');
+    Route::put('teacher/assignment/{assignment}', [AssignmentController::class, 'update'])->name('teacher.assignment.update');
+    Route::delete('teacher/assignment/{assignment}', [AssignmentController::class, 'destroy'])->name('teacher.assignment.destroy');
 
 });

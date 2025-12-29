@@ -2,8 +2,9 @@
 
 namespace App\Livewire\SchoolAdmin;
 
+use App\Models\NotificationTemplate;
 use App\Models\User;
-use App\Notifications\SchoolNotification;
+use App\Services\NotificationService;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -25,6 +26,10 @@ class SendNotification extends Component
 
     public bool $showUserSearch = false;
 
+    public ?int $notificationTemplateId = null;
+
+    public bool $sendEmail = true;
+
     protected array $availableRoles = [
         'teacher' => 'Teacher',
         'student' => 'Student',
@@ -39,7 +44,18 @@ class SendNotification extends Component
         $this->userSearch = '';
     }
 
-    public function sendNotification(): void
+    public function updatedNotificationTemplateId(): void
+    {
+        if ($this->notificationTemplateId) {
+            $template = NotificationTemplate::find($this->notificationTemplateId);
+            if ($template) {
+                $this->title = $template->subject;
+                $this->message = $template->body;
+            }
+        }
+    }
+
+    public function sendNotification(NotificationService $notificationService): void
     {
         $validated = $this->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -50,6 +66,8 @@ class SendNotification extends Component
             'selectedRoles.*' => ['string', 'in:teacher,student,parent,staff'],
             'selectedUserIds' => ['required_if:sendType,user', 'array', 'min:1'],
             'selectedUserIds.*' => ['integer', 'exists:users,id'],
+            'notificationTemplateId' => ['nullable', 'integer', 'exists:notification_templates,id'],
+            'sendEmail' => ['nullable', 'boolean'],
         ], [
             'title.required' => 'The title field is required.',
             'title.max' => 'The title may not be greater than 255 characters.',
@@ -66,36 +84,27 @@ class SendNotification extends Component
         ]);
 
         $schoolId = auth()->user()->school_id;
-        $users = collect();
+        $senderId = auth()->id();
 
-        if ($this->sendType === 'role') {
-            $users = User::where('school_id', $schoolId)
-                ->whereIn('role', $this->selectedRoles)
-                ->where('is_active', true)
-                ->get();
-        } else {
-            $users = User::where('school_id', $schoolId)
-                ->whereIn('id', $this->selectedUserIds)
-                ->where('is_active', true)
-                ->get();
-        }
-
-        $notification = new SchoolNotification(
+        $notification = $notificationService->sendNotification(
+            schoolId: $schoolId,
+            senderId: $senderId,
             title: $this->title,
             message: $this->message,
-            url: $this->url
+            type: $this->sendType,
+            roles: $this->sendType === 'role' ? $this->selectedRoles : null,
+            userIds: $this->sendType === 'user' ? $this->selectedUserIds : null,
+            url: $this->url,
+            templateId: $this->notificationTemplateId,
+            sendEmail: $this->sendEmail
         );
-
-        foreach ($users as $user) {
-            $user->notify($notification);
-        }
 
         $this->dispatch('alert', [
             'type' => 'success',
-            'message' => "Notification sent successfully to {$users->count()} user(s)!",
+            'message' => "Notification sent successfully to {$notification->total_recipients} recipient(s)!",
         ]);
 
-        $this->reset(['title', 'message', 'url', 'selectedRoles', 'selectedUserIds', 'userSearch']);
+        return $this->redirect(route('school-admin.notification.index'), navigate: true);
     }
 
     public function getUsersProperty()
@@ -135,12 +144,17 @@ class SendNotification extends Component
 
     public function render(): View
     {
+        $schoolId = auth()->user()->school_id;
         $selectedUsers = User::whereIn('id', $this->selectedUserIds)->get();
+        $templates = NotificationTemplate::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->get();
 
         return view('livewire.school-admin.send-notification', [
             'availableRoles' => $this->availableRoles,
             'users' => $this->users,
             'selectedUsers' => $selectedUsers,
+            'templates' => $templates,
         ]);
     }
 }

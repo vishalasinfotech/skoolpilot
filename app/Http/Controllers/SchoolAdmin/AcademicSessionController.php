@@ -13,16 +13,14 @@ class AcademicSessionController extends Controller
 {
     public function index()
     {
-        $academicSessions = AcademicSession::with('school')
-            ->where('school_id', auth()->user()->school_id)
-            ->orderBy('start_date', 'desc')
-            ->get();
+        $this->authorize('viewAny', AcademicSession::class);
 
-        return view('school-admin.academic-session.index', compact('academicSessions'));
+        return view('school-admin.academic-session.index');
     }
 
     public function create()
     {
+        $this->authorize('create', AcademicSession::class);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.academic-session.create', compact('schools'));
@@ -30,6 +28,7 @@ class AcademicSessionController extends Controller
 
     public function store(StoreAcademicSessionRequest $request): RedirectResponse
     {
+        $this->authorize('create', AcademicSession::class);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', true);
         $data['is_current'] = $request->boolean('is_current', false);
@@ -49,11 +48,14 @@ class AcademicSessionController extends Controller
 
     public function show(AcademicSession $academicSession)
     {
+        $this->authorize('view', $academicSession);
+
         return view('school-admin.academic-session.show', compact('academicSession'));
     }
 
     public function edit(AcademicSession $academicSession)
     {
+        $this->authorize('update', $academicSession);
         $schools = School::where('deleted_at', null)->where('status', true)->pluck('name', 'id');
 
         return view('school-admin.academic-session.edit', compact('academicSession', 'schools'));
@@ -61,6 +63,7 @@ class AcademicSessionController extends Controller
 
     public function update(UpdateAcademicSessionRequest $request, AcademicSession $academicSession): RedirectResponse
     {
+        $this->authorize('update', $academicSession);
         $data = $request->validated();
         $data['is_active'] = $request->boolean('is_active', false);
         $data['is_current'] = $request->boolean('is_current', false);
@@ -81,6 +84,7 @@ class AcademicSessionController extends Controller
 
     public function destroy(AcademicSession $academicSession): RedirectResponse
     {
+        $this->authorize('delete', $academicSession);
         $academicSession->delete();
 
         return redirect()->route('school-admin.academic-session.index')

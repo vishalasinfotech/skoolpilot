@@ -11,6 +11,7 @@ use App\Services\EmployeeIdService;
 use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class StaffController extends Controller
 {
@@ -59,13 +60,13 @@ class StaffController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'staff/profiles'
+                'uploads/staff/profiles'
             );
         }
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'staff/docs'
+                'uploads/staff/docs'
             );
         }
 
@@ -81,6 +82,11 @@ class StaffController extends Controller
 
         User::create($data);
 
+        $user = User::where('email', $data['email'])->first();
+        if ($user && Role::where('name', 'staff')->exists()) {
+            $user->syncRoles('staff');
+        }
+
         return redirect()->route('school-admin.staff.index')
             ->with('success', 'Staff member created successfully.');
     }
@@ -94,7 +100,7 @@ class StaffController extends Controller
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $imageUploadService->uploadImage(
                 $request->file('profile_image'),
-                'staff/profiles',
+                'uploads/staff/profiles',
                 $staff->profile_image
             );
         }
@@ -102,7 +108,7 @@ class StaffController extends Controller
         if ($request->hasFile('doc_image')) {
             $data['doc_image'] = $imageUploadService->uploadImage(
                 $request->file('doc_image'),
-                'staff/docs',
+                'uploads/staff/docs',
                 $staff->doc_image
             );
         }

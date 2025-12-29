@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\StudentFeeTransaction;
-use Illuminate\Database\Eloquent\Model;
+use App\Services\SettingService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(SettingService::class);
     }
 
     /**
@@ -25,9 +25,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
-        // Route model binding for fee collection
         Route::bind('fee_collection', function ($value) {
-            return StudentFeeTransaction::findOrFail($value);
+            return StudentFeeTransaction::query()->findOrFail($value);
         });
     }
 }

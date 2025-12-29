@@ -2,13 +2,21 @@
 <div class="app-menu navbar-menu">
     <!-- LOGO -->
     <div class="navbar-brand-box">
-        <a href="#" class="logo logo-dark">
-            <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="" height="22"></span>
-            <span class="logo-lg"><img src="assets/images/logo-dark.png" alt="" height="17"></span>
+        <a href="{{ route('dashboard') }}" class="logo logo-dark">
+            <span class="logo-sm">
+                <img src="{{ asset(setting('school_logo', auth()->user()->school_id ?? null) ?? 'assets/images/logo-sm.png') }}" alt="Logo" height="22">
+            </span>
+            <span class="logo-lg">
+                <img src="{{ asset(setting('school_logo', auth()->user()->school_id ?? null) ?? 'assets/images/logo-dark.png') }}" alt="Logo" height="17">
+            </span>
         </a>
-        <a href="#" class="logo logo-light">
-            <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="" height="22"></span>
-            <span class="logo-lg"><img src="assets/images/logo-light.png" alt="" height="17"></span>
+        <a href="{{ route('dashboard') }}" class="logo logo-light">
+            <span class="logo-sm">
+                <img src="{{ asset(setting('school_logo', auth()->user()->school_id ?? null) ?? 'assets/images/logo-sm.png') }}" alt="Logo" height="22">
+            </span>
+            <span class="logo-lg">
+                <img src="{{ asset(setting('school_logo', auth()->user()->school_id ?? null) ?? 'assets/images/logo-light.png') }}" alt="Logo" height="17">
+            </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
@@ -130,6 +138,7 @@
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAcademic">
                         <ul class="nav nav-sm flex-column">
+
                             <li class="nav-item"><a href="{{ route('school-admin.academic-class.index') }}"
                                     class="nav-link">{{ __('common.classes') }}</a></li>
                             <li class="nav-item"><a href="{{ route('school-admin.section.index') }}"
@@ -224,9 +233,24 @@
                 </li>
 
                 <li class="nav-item" data-role="school_admin">
-                    <a class="nav-link menu-link" href="{{ route('school-admin.notification.index') }}">
-                        <i class="ri-notification-line"></i> <span>{{ __('common.send_notification') }}</span>
+                    <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarNotifications">
+                        <i class="ri-notification-line"></i> <span>{{ __('common.notifications') }}</span>
                     </a>
+                    <div class="collapse menu-dropdown" id="sidebarNotifications">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('school-admin.notification.index') }}">
+                                     <span>{{ __('common.send_notification') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('school-admin.notification-template.index') }}">
+                                     <span>{{ __('common.notification_templates') }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item" data-role="school_admin">

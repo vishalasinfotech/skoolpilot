@@ -9,10 +9,10 @@ use App\Models\AcademicClass;
 use App\Models\Assignment;
 use App\Models\Section;
 use App\Models\Subject;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
 use App\Services\ImageUploadService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
+use Illuminate\View\View;
 
 class AssignmentController extends Controller
 {
@@ -25,11 +25,14 @@ class AssignmentController extends Controller
 
     public function teacherIndex(): View
     {
+        $this->authorize('viewAny', Assignment::class);
+
         return view('school-admin.assignment.teacher-index');
     }
 
     public function create(): View
     {
+        $this->authorize('create', Assignment::class);
         $classes = AcademicClass::where('deleted_at', null)
             ->where('school_id', auth()->user()->school_id)
             ->where('is_active', true)
@@ -50,12 +53,13 @@ class AssignmentController extends Controller
 
     public function store(StoreAssignmentRequest $request): RedirectResponse
     {
+        $this->authorize('create', Assignment::class);
         $data = $request->validated();
 
         if ($request->hasFile('attachment')) {
             $data['attachment'] = $this->imageUploadService->uploadImage(
                 $request->file('attachment'),
-                'assignments'
+                'uploads/assignments'
             );
         }
 
@@ -71,7 +75,7 @@ class AssignmentController extends Controller
 
     public function show(Assignment $assignment): View
     {
-        abort_unless($assignment->teacher_id === auth()->id(), 403);
+        $this->authorize('view', $assignment);
 
         return view('school-admin.assignment.show', [
             'assignment' => $assignment->load(['teacher', 'academicClass', 'subject', 'section']),
@@ -80,7 +84,7 @@ class AssignmentController extends Controller
 
     public function edit(Assignment $assignment): View
     {
-        abort_unless($assignment->teacher_id === auth()->id(), 403);
+        $this->authorize('update', $assignment);
 
         $classes = AcademicClass::where('deleted_at', null)
             ->where('school_id', auth()->user()->school_id)
@@ -102,14 +106,14 @@ class AssignmentController extends Controller
 
     public function update(UpdateAssignmentRequest $request, Assignment $assignment): RedirectResponse
     {
-        abort_unless($assignment->teacher_id === auth()->id(), 403);
+        $this->authorize('delete', $assignment);
 
         $data = $request->validated();
 
         if ($request->hasFile('attachment')) {
             $data['attachment'] = $this->imageUploadService->uploadImage(
                 $request->file('attachment'),
-                'assignments',
+                'uploads/assignments',
                 $assignment->attachment
             );
         }
@@ -123,11 +127,11 @@ class AssignmentController extends Controller
 
     public function destroy(Assignment $assignment): RedirectResponse
     {
-        abort_unless($assignment->teacher_id === auth()->id(), 403);
+        $this->authorize('delete', $assignment);
 
         // Delete attachment if exists
-        if ($assignment->attachment && Storage::disk('public')->exists($assignment->attachment)) {
-            Storage::disk('public')->delete($assignment->attachment);
+        if ($assignment->attachment && File::exists(public_path($assignment->attachment))) {
+            File::delete(public_path($assignment->attachment));
         }
 
         $assignment->delete();

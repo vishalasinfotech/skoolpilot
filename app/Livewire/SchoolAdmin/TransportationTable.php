@@ -41,7 +41,7 @@ class TransportationTable extends DataTable
     {
         $this->dispatch('openDeleteModal', [
             'transportationId' => $id,
-            'transportationVehicleNumber' => $vehicleNumber,
+            'transportationName' => $vehicleNumber,
         ]);
     }
 

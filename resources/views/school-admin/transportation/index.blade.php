@@ -36,5 +36,67 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteTransportationModal" tabindex="-1" role="dialog" aria-labelledby="deleteTransportationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <lord-icon src="https://cdn.lordicon.com/hrqwmuhr.json"
+                               trigger="loop"
+                               colors="primary:#121331,secondary:#08a88a"
+                               style="width:120px;height:120px"></lord-icon>
+                    <div class="mt-4">
+                        <h4 class="mb-3">Delete Vehicle</h4>
+                        <p class="text-muted mb-4">
+                            Are you sure you want to delete <strong id="deleteTransportationName"></strong>?
+                            This action cannot be undone.
+                        </p>
+                        <div class="hstack gap-2 justify-content-center">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Vehicle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:init', function () {
+            let deleteTransportationId = null;
+
+            Livewire.on('openDeleteModal', (data) => {
+                deleteTransportationId = data[0].transportationId;
+                document.getElementById('deleteTransportationName').textContent = data[0].transportationName;
+                const modal = new bootstrap.Modal(document.getElementById('deleteTransportationModal'));
+                modal.show();
+            });
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                if (deleteTransportationId) {
+                    const livewireElement = document.querySelector('[wire\\:id]');
+                    if (livewireElement) {
+                        const wireId = livewireElement.getAttribute('wire:id');
+                        const component = Livewire.find(wireId);
+                        if (component) {
+                            component.call('delete', deleteTransportationId);
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteTransportationModal'));
+                            modal.hide();
+                            deleteTransportationId = null;
+                        }
+                    }
+                }
+            });
+
+            Livewire.on('alert', (data) => {
+                if (data[0].type === 'success') {
+                    toastr.success(data[0].message);
+                }
+            });
+        });
+    </script>
+    @endpush
+
 @endsection
 

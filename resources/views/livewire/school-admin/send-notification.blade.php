@@ -1,14 +1,34 @@
 <div>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="card-title mb-0">
                 <i class="ri-notification-line me-2"></i>Send Notification
             </h5>
+            <a href="{{ route('school-admin.notification.index') }}" class="btn btn-secondary btn-sm">
+                <i class="ri-arrow-left-line"></i> Back
+            </a>
         </div>
         <div class="card-body">
             @include('layouts.badge')
 
             <form wire:submit="sendNotification">
+                <!-- Notification Template Selection -->
+                <div class="row mb-4">
+                    <div class="col-md-12 mb-3">
+                        <label for="notificationTemplateId" class="form-label">Notification Template (Optional)</label>
+                        <select wire:model.live="notificationTemplateId" id="notificationTemplateId" class="form-select @error('notificationTemplateId') is-invalid @enderror">
+                            <option value="">Select a template (optional)</option>
+                            @foreach($templates as $template)
+                                <option value="{{ $template->id }}">{{ $template->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('notificationTemplateId')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Selecting a template will auto-fill the title and message</small>
+                    </div>
+                </div>
+
                 <!-- Notification Details -->
                 <div class="row mb-4">
                     <div class="col-md-12 mb-3">
@@ -147,6 +167,21 @@
                     @endif
                 @endif
 
+                <!-- Email Notification Option -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="form-check form-switch form-switch-md">
+                            <input class="form-check-input" type="checkbox" wire:model="sendEmail" id="sendEmail" value="1">
+                            <label class="form-check-label ms-2" for="sendEmail">
+                                Send Email Notification
+                            </label>
+                        </div>
+                        @error('sendEmail')
+                            <small class="text-danger d-block">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="d-flex justify-content-start gap-2">
                     <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
@@ -158,7 +193,7 @@
                             Sending...
                         </span>
                     </button>
-                    <button type="button" class="btn btn-secondary" wire:click="$set('title', ''); $set('message', ''); $set('url', null); $set('selectedRoles', []); $set('selectedUserIds', []);">
+                    <button type="button" class="btn btn-secondary" wire:click="$set('title', ''); $set('message', ''); $set('url', null); $set('selectedRoles', []); $set('selectedUserIds', []); $set('notificationTemplateId', null); $set('sendEmail', true);">
                         <i class="ri-refresh-line me-1"></i> Reset
                     </button>
                 </div>
